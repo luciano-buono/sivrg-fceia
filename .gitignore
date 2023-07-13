@@ -1,0 +1,14 @@
+.vscode/
+.DS_Store
+*.pyc
+
+#api
+api/venv/
+
+#lpr
+lpr/ConvALPR/.git
+lpr/ConvALPR/alpr/__pycache__/
+
+#To Remove 
+FOTOS
+OLD/
