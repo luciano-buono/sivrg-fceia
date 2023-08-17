@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import glob
 
+import requests, json
 
 CONFIGFILE = "config.yaml"
 
@@ -15,19 +16,20 @@ with open(CONFIGFILE, 'r') as stream:
 # %%
 
 
-SOURCE_DIR =glob.glob('../FOTOS/*.jpg')
-SOURCE_DIR =glob.glob('../FOTOS/img8.jpg')
+SOURCE_DIR =glob.glob('../../FOTOS/*.jpg')
+SOURCE_DIR =glob.glob('../../FOTOS/img8.jpg')
 SHOW_PREVIEW_IMAGE = False
 SHOW_INTERACTIVE_IMAGE2 = False
 
 def get_LPR():
     # Get all images in directory
-    # print(SOURCE_DIR)
+    print(f"Source dir:{SOURCE_DIR}")
     cv2_images = []
     plt_images = []
     name_images = []
     images = [cv2.imread(file) for file in SOURCE_DIR]
     for file in SOURCE_DIR:
+        print("Loading source files..")
         name_images.append(file)
         cv2_images.append(cv2.imread(file))
         plt_images.append(mpimg.imread(file))
@@ -49,10 +51,12 @@ def get_LPR():
 
     # %%
     alpr = ALPR(cfg['modelo'], cfg['db'])
-
-    if SHOW_INTERACTIVE_IMAGE2:
         # Show interactively the photos with the recognized box and License
-        for i, x in enumerate(cv2_images):
+    for i, x in enumerate(cv2_images):
+        print("Predicting..")
+        predicciones = alpr.predict(cv2_images[i])
+
+        if SHOW_INTERACTIVE_IMAGE2:
             frame = cv2_images[i]
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame_w_pred, total_time = alpr.mostrar_predicts(frame)
@@ -61,14 +65,8 @@ def get_LPR():
             cv2.namedWindow("result", cv2.WINDOW_AUTOSIZE)
             cv2.imshow("result", frame_w_pred_r)
             cv2.waitKey()
-
-    # Print out the recognized license
-    # %%
-    for i, x in enumerate(cv2_images):
-        predicciones = alpr.predict(cv2_images[i])
-        if SHOW_INTERACTIVE_IMAGE2:
             print(f"{name_images[i]}: {predicciones}")
-    
+
     if len(predicciones) == 1:
         return predicciones[0]
     else:
@@ -76,5 +74,12 @@ def get_LPR():
         exit(1)
 
 if __name__ == "__main__":
-    prediccion = get_LPR()
-    print({"LICENSE_PLATE":prediccion})
+    # prediccion = get_LPR()
+    # print({"LICENSE_PLATE":prediccion})
+    tag_id = "10ABA3"
+    data= {
+        'tag_id': tag_id,
+        'license_plate': 'prediccion'
+    }
+    response = requests.post(url='http://localhost:5000/validate', data=json.dumps(data))
+    print(response.text)
