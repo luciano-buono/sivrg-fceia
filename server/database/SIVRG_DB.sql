@@ -10,12 +10,9 @@ create table attendance(
    PRIMARY KEY ( id )
 );
 
-create table users(
-   id INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
-   rfid_uid VARCHAR(255) NOT NULL,
-   name VARCHAR(255) NOT NULL,
-   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-   PRIMARY KEY ( id )
+create table rfid(
+  rfid_uid PRIMARY
+  chofer_id FOREIGN
 );
 
 create table choferes(
@@ -28,17 +25,7 @@ create table choferes(
    habilitado TINYINT NOT NULL,
    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY ( chofer_id )
-);
-
-create table empresas(
-   chofer_id INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
-   rfid_uid VARCHAR(255) NOT NULL,
-   nombre VARCHAR(255) NOT NULL,
-   apellido VARCHAR(255) NOT NULL,
-   dni INT UNSIGNED NOT NULL,
-   empresa_id INT UNSIGNED NOT NULL,
-   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-   PRIMARY KEY ( chofer_id )
+  --  Agregar FOREIGN key de empresa
 );
 
 CREATE TABLE `empresas` (
@@ -110,7 +97,7 @@ CREATE TABLE `turnos` (
   `turno_id` INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
   `turno_fecha_hora` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `chofer_id` INT UNSIGNED NOT NULL,
-  `patente` INT UNSIGNED NOT NULL,
+  `patente` INT UNSIGNED NOT NULL, -- FOREIGN KEY DE vehiculos
   `empresa_id` INT UNSIGNED NOT NULL,
   `producto_id` INT UNSIGNED NOT NULL,
   `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -123,6 +110,12 @@ CREATE TABLE `turnos` (
   CONSTRAINT `turnos_ibfk_3` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`producto_id`) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-
-
-
+CREATE TABLE `vehiculos`(
+  patente PRIMARY |  en las otras tablas, referencian a esta como una FOREIGN key
+  capidad max de toneladas a trasnportar
+  seguro
+  modelo
+  año
+  marca
+  habilitado
+)
