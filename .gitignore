@@ -5,6 +5,7 @@
 #api
 api/venv/
 venv/
+.venv/
 #lpr
 lpr/ConvALPR/.git
 lpr/ConvALPR/alpr/__pycache__/
