@@ -16,8 +16,8 @@ with open(CONFIGFILE, 'r') as stream:
 # %%
 
 
-SOURCE_DIR =glob.glob('../../FOTOS/*.jpg')
-SOURCE_DIR =glob.glob('../../FOTOS/img8.jpg')
+SOURCE_DIR =glob.glob('../../../FOTOS/*.jpg')
+SOURCE_DIR =glob.glob('../../../FOTOS/img8.jpg')
 SHOW_PREVIEW_IMAGE = False
 SHOW_INTERACTIVE_IMAGE2 = False
 
@@ -74,12 +74,12 @@ def get_LPR():
         exit(1)
 
 if __name__ == "__main__":
-    # prediccion = get_LPR()
-    # print({"LICENSE_PLATE":prediccion})
-    tag_id = "10ABA3"
-    data= {
-        'tag_id': tag_id,
-        'license_plate': 'prediccion'
-    }
-    response = requests.post(url='http://localhost:5000/validate', data=json.dumps(data))
-    print(response.text)
+    prediccion = get_LPR()
+    print({"LICENSE_PLATE":prediccion})
+    # tag_id = "10ABA3"
+    # data= {
+    #     'tag_id': tag_id,
+    #     'license_plate': 'prediccion'
+    # }
+    # response = requests.post(url='http://localhost:5000/validate', data=json.dumps(data))
+    # print(response.text)

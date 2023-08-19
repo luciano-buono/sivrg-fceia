@@ -10,5 +10,5 @@ lpr/ConvALPR/.git
 lpr/ConvALPR/alpr/__pycache__/
 
 #To Remove 
-FOTOS
+FOTOS/*.mp4
 OLD/
