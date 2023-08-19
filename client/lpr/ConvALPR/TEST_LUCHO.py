@@ -17,7 +17,7 @@ SOURCE_DIR =glob.glob('../FOTOS/img8.jpg')
 SHOW_PREVIEW_IMAGE = False
 SHOW_INTERACTIVE_IMAGE2 = False
 
-print(SOURCE_DIR)
+print(f"Source dir: {SOURCE_DIR}")
 cv2_images = []
 plt_images = []
 name_images = []
