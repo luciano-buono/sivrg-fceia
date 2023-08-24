@@ -16,8 +16,11 @@
     "@mantine/form": "^6.0.19",
     "@mantine/hooks": "^6.0.19",
     "@mantine/notifications": "^6.0.19",
+    "@types/react-bootstrap": "^0.32.32",
+    "bootstrap": "^5.3.1",
     "dayjs": "^1.11.9",
     "react": "^18.2.0",
+    "react-bootstrap": "^2.8.0",
     "react-dom": "^18.2.0",
     "react-router": "^6.15.0",
     "react-router-dom": "^6.15.0"
