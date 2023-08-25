@@ -8,24 +8,31 @@ import Navbar from './components/Navbar/Navbar';
 import Login from './pages/Login';
 import { Container } from "react-bootstrap";
 import { MantineProvider } from '@mantine/core';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools'
 
+const queryClient = new QueryClient()
 
 function App() {
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS>
-      <Router>
-        <Navbar />
-        <Container className='d-flex flex-wrap'>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            <Route element={<NotFound />} />
-          </Routes>
-        </Container>
-      </Router >
-    </MantineProvider>
+    <QueryClientProvider client={queryClient}>
+      <MantineProvider withGlobalStyles withNormalizeCSS>
+        <Router>
+          <Navbar />
+          <Container className='d-flex flex-wrap'>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/login" element={<Login />} />
+              <Route element={<NotFound />} />
+            </Routes>
+          </Container>
+        </Router >
+      </MantineProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+
   );
 }
 
