@@ -3,7 +3,7 @@ import { FC } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import { Card, Container, Nav, OverlayTrigger, Popover } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
-import './Navbar.css';
+import './AdminNavbar.css';
 import { useSession } from '../../contexts/SessionContext';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useNavigate } from 'react-router';
@@ -47,7 +47,7 @@ const UserButton: FC = () => {
   );
 };
 
-const MyNavbar: FC = () => {
+const AdminNavbar: FC = () => {
   const [{ isLoggedIn }, { init }] = useSession();
 
   const navigate = useNavigate();
@@ -56,13 +56,13 @@ const MyNavbar: FC = () => {
     <Navbar expand="lg" className="bg-body-tertiary" sticky="top">
       <Container>
         <Nav>
-          <LinkContainer to="/">
-            <Nav.Link>Home</Nav.Link>
+          <LinkContainer to="/admin">
+            <Nav.Link>Home Admin </Nav.Link>
           </LinkContainer>
-          <LinkContainer to="/about">
+          <LinkContainer to="/admin/about">
             <Nav.Link>Sobre nosotros</Nav.Link>
           </LinkContainer>
-          <LinkContainer to="/contact">
+          <LinkContainer to="/admin/contact">
             <Nav.Link>Contacto</Nav.Link>
           </LinkContainer>
         </Nav>
@@ -78,7 +78,7 @@ const MyNavbar: FC = () => {
               variant="secondary"
               onClick={() => {
                 init();
-                navigate('/');
+                navigate('/admin');
               }}
             >
               Iniciar sesión
@@ -90,4 +90,4 @@ const MyNavbar: FC = () => {
   );
 };
 
-export default MyNavbar;
+export default AdminNavbar;
