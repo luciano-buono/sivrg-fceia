@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import './Navbar.css';
 import { useSession } from '../../contexts/SessionContext';
 import { LinkContainer } from 'react-router-bootstrap';
+import { useNavigate } from 'react-router';
 
 const UserButton: FC = () => {
   const [, { finish }] = useSession();
@@ -49,6 +50,8 @@ const UserButton: FC = () => {
 const MyNavbar: FC = () => {
   const [{ isLoggedIn }, { init }] = useSession();
 
+  const navigate = useNavigate();
+
   return (
     <Navbar expand="lg" className="bg-body-tertiary" sticky="top">
       <Container>
@@ -71,7 +74,13 @@ const MyNavbar: FC = () => {
               </Card.Body>
             </Card>
           ) : (
-            <Button variant="secondary" onClick={() => init()}>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                init();
+                navigate('/');
+              }}
+            >
               Iniciar sesión
             </Button>
           )}

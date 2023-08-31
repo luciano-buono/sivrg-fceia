@@ -1,4 +1,4 @@
-import { Box, Checkbox, Group, PasswordInput, TextInput } from '@mantine/core';
+import { Box, Group, PasswordInput, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { Button, Card, Container, Row } from 'react-bootstrap';
 

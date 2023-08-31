@@ -1,30 +1,34 @@
+import { Loader } from '@mantine/core';
+import { DatePicker } from '@mantine/dates';
 import { FC } from 'react';
-import { Container, Card, Button } from 'react-bootstrap';
+import { Container, Card, Row } from 'react-bootstrap';
+import { useQuery } from 'react-query';
 
 const About: FC = () => {
+  const { isLoading, data } = useQuery('data', () =>
+    fetch('https://pokeapi.co/api/v2/pokemon/').then((res) => res.json()),
+  );
   return (
-    <Container className="d-flex flex-column justify-content-center align-content-center pt-2">
-      <Card style={{ width: '300px' }} className="d-flex flex-wrap justify-content-center mb-2">
-        <Card.Body className="d-flex flex-wrap justify-content-center">
-          <Button
-            style={{ width: '250px', height: '70px', borderRadius: '25px' }}
-            className="d-flex flex-wrap justify-content-center align-content-center bg-primary"
-          >
-            <span className="text-white fw-bold fs-5">Sacar un turno</span>
-          </Button>
-        </Card.Body>
-      </Card>
-      <Card>
+    <Container className="d-flex flex-wrap flex-column justify-content-center align-content-center pt-2">
+      <Card className="d-flex justify-content-center h-100 w-100">
         <Card.Body>
-          <h1>Noticias</h1>
-          <Card>
-            <Card.Body>
-              <ul>
-                <li>a</li>
-                <li>b</li>
-              </ul>
-            </Card.Body>
-          </Card>
+          <h1> Home </h1>
+          {isLoading ? (
+            <div className="d-flex justify-content-center">
+              <Loader />{' '}
+            </div>
+          ) : (
+            <>
+              <ol>{data?.results?.map((pokemon: any, index: number) => <li key={index}>{pokemon.name}</li>)}</ol>
+              <Row className="d-flex justify-content-center">
+                <Card style={{ height: '300px', width: '300px' }}>
+                  <Card.Body>
+                    <DatePicker />
+                  </Card.Body>
+                </Card>
+              </Row>
+            </>
+          )}
         </Card.Body>
       </Card>
     </Container>

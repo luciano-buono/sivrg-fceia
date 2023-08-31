@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate } from 'react-router-dom';
+import { Outlet, Route, Routes } from 'react-router';
 
 import Home from './pages/Home';
 import About from './pages/About';
@@ -10,31 +11,39 @@ import { Container } from 'react-bootstrap';
 import { MantineProvider } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { SessionProvider } from './contexts/SessionContext';
+import { SessionProvider, useSession } from './contexts/SessionContext';
 
 const queryClient = new QueryClient();
 
+const PrivateRoutes = () => {
+  const [sessionState] = useSession();
+  // @HINT: "Outlet" component should be used in parent route elements to render their child route elements
+  return !sessionState.isLoggedIn ? <Navigate to="/login" /> : <Outlet />;
+};
+
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <MantineProvider withGlobalStyles withNormalizeCSS>
-        <SessionProvider>
-          <Router>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <MantineProvider withGlobalStyles withNormalizeCSS>
+          <SessionProvider>
             <MyNavbar />
             <Container className="d-flex flex-wrap">
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
+                <Route element={<PrivateRoutes />}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route element={<NotFound />} />
+                </Route>
                 <Route path="/login" element={<Login />} />
-                <Route element={<NotFound />} />
               </Routes>
             </Container>
-          </Router>
-        </SessionProvider>
-      </MantineProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+          </SessionProvider>
+        </MantineProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </BrowserRouter>
   );
 }
 
