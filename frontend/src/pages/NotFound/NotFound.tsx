@@ -1,7 +1,7 @@
-import { FC } from "react"
+import { FC } from 'react';
 
 const NotFound: FC = () => {
-    return <div> NotFound </div>
-}
+  return <div> NotFound </div>;
+};
 
-export default NotFound
+export default NotFound;
