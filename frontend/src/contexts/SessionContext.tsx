@@ -3,16 +3,19 @@ import PropTypes from 'prop-types';
 
 interface SessionContextActions {
   init: () => void;
+  initAdmin: () => void;
   finish: () => void;
 }
 type SessionContextState = {
   isLoggedIn: boolean;
+  isAdmin: boolean;
 };
 
 const SessionContext = React.createContext<[SessionContextState, SessionContextActions] | undefined>(undefined);
 
 const initialState: SessionContextState = {
   isLoggedIn: false,
+  isAdmin: false,
 };
 
 export type ActionMapper<T> = {
@@ -24,6 +27,7 @@ export type ActionMapper<T> = {
 
 type SessionContextActionsMap = {
   SESSION_INIT: SessionContextState;
+  SESSION_INIT_ADMIN: SessionContextState;
   SESSION_FINISH: SessionContextState;
 };
 
@@ -35,6 +39,13 @@ const reducer = (state: SessionContextState, action: SessionContextAction) => {
       return {
         ...state,
         isLoggedIn: true,
+      };
+    }
+    case 'SESSION_INIT_ADMIN': {
+      return {
+        ...state,
+        isLoggedIn: true,
+        isAdmin: true,
       };
     }
     case 'SESSION_FINISH': {
@@ -59,6 +70,10 @@ const SessionProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       init: () =>
         dispatch({
           type: 'SESSION_INIT',
+        }),
+      initAdmin: () =>
+        dispatch({
+          type: 'SESSION_INIT_ADMIN',
         }),
       finish: () =>
         dispatch({

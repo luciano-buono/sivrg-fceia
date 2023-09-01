@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 import Navbar from 'react-bootstrap/Navbar';
-import { Card, Container, Nav, OverlayTrigger, Popover } from 'react-bootstrap';
+import { Card, Container, Nav, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import './ClientNavbar.css';
 import { useSession } from '../../contexts/SessionContext';
@@ -48,7 +48,7 @@ const UserButton: FC = () => {
 };
 
 const ClientNavbar: FC = () => {
-  const [{ isLoggedIn }, { init }] = useSession();
+  const [{ isLoggedIn }, { init, initAdmin }] = useSession();
 
   const navigate = useNavigate();
 
@@ -74,15 +74,29 @@ const ClientNavbar: FC = () => {
               </Card.Body>
             </Card>
           ) : (
-            <Button
-              variant="secondary"
-              onClick={() => {
-                init();
-                navigate('/admin');
-              }}
-            >
-              Iniciar sesión
-            </Button>
+            <Row>
+              <Button
+                style={{ width: '160px' }}
+                className="me-2"
+                variant="secondary"
+                onClick={() => {
+                  init();
+                  navigate('/');
+                }}
+              >
+                Iniciar sesión
+              </Button>
+              <Button
+                style={{ width: '180px' }}
+                variant="secondary"
+                onClick={() => {
+                  initAdmin();
+                  navigate('/admin');
+                }}
+              >
+                Iniciar sesión Admin
+              </Button>
+            </Row>
           )}
         </Nav>
       </Container>
