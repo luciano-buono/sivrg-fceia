@@ -36,7 +36,7 @@ const UserButton: FC = () => {
       >
         <div className="d-flex flex-wrap align-content-center">
           <span style={{ cursor: 'pointer' }} className="no-select d-flex flex-wrap align-content-center pe-2">
-            Bienvenido {'Methizul'}!
+            Bienvenido {'Methizul Cliente'}!
           </span>
           <Button style={{ borderRadius: '50%', height: '40px' }} variant="primary">
             <i className="fa-solid fa-circle-user"></i>
@@ -53,7 +53,7 @@ const ClientNavbar: FC = () => {
   const navigate = useNavigate();
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary" sticky="top">
+    <Navbar style={{height: '80px'}} expand="lg" className="bg-body-tertiary" sticky="top">
       <Container>
         <Nav>
           <LinkContainer to="/">
@@ -69,7 +69,7 @@ const ClientNavbar: FC = () => {
         <Nav>
           {isLoggedIn ? (
             <Card>
-              <Card.Body>
+              <Card.Body className="p-2">
                 <UserButton />
               </Card.Body>
             </Card>
