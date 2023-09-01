@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Card, Container } from 'react-bootstrap';
 import BookingModal from '../../components/Modals/BookingModal';
 
-const Home = () => {
+const HomeClient = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -39,4 +39,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomeClient;
