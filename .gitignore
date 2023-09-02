@@ -4,11 +4,20 @@
 
 #api
 api/venv/
+
+
 venv/
 .venv/
+.virtualenv
+
 #lpr
 lpr/ConvALPR/.git
 lpr/ConvALPR/alpr/__pycache__/
+
+#rfid
+client/rfid/MFRC522_python/build
+client/rfid/MFRC522_python/dist
+client/rfid/MFRC522_python/mfrc522.egg-info
 
 #To Remove 
 FOTOS/*.mp4

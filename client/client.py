@@ -12,22 +12,16 @@ def get_LPR():
     # Get into the module directory. Avoid errors in relative paths used there
     os.chdir("lpr/ConvALPR")
     CONFIGFILE = "config.yaml"
-
     with open(CONFIGFILE, 'r') as stream:
         cfg = yaml.safe_load(stream)
-
     SOURCE_DIR =glob.glob('../../../FOTOS/img8.jpg')
 
     # Get all images in directory
     print(f"Source dir:{SOURCE_DIR}")
     cv2_images = []
-    plt_images = []
-    name_images = []
-    images = [cv2.imread(file) for file in SOURCE_DIR]
     for file in SOURCE_DIR:
         print("Loading source files..")
         cv2_images.append(cv2.imread(file))
-
     # %%
     alpr = ALPR(cfg['modelo'], cfg['db'])
         # Show interactively the photos with the recognized box and License
@@ -44,9 +38,14 @@ def get_LPR():
         print("Hay mas de una patente reconozida\nRevisar cuantas imagenes de entrada hay\Exitting..")
         exit(1)
 
+def get_RFID():
+    pass
+
 if __name__ == "__main__":
     prediccion = get_LPR()
     print({"LICENSE_PLATE":prediccion})
+
+    tag_id = get_RFID()
     # tag_id = "10ABA3"
     # data= {
     #     'tag_id': tag_id,

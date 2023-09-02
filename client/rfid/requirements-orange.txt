@@ -1,0 +1,6 @@
+# mfrc522
+
+#orange pi:
+spidev
+cd MFRC522_python
+python setup.py install
