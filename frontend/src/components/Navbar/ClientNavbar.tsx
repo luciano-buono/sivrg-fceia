@@ -4,13 +4,9 @@ import Navbar from 'react-bootstrap/Navbar';
 import { Card, Container, Nav, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import './ClientNavbar.css';
-import { useSession } from '../../contexts/SessionContext';
 import { LinkContainer } from 'react-router-bootstrap';
-import { useNavigate } from 'react-router';
 
 const UserButton: FC = () => {
-  const [, { finish }] = useSession();
-
   return (
     <div className="d-flex flex-row flex-wrap align-content-center">
       <OverlayTrigger
@@ -27,7 +23,7 @@ const UserButton: FC = () => {
                   </Nav.Link>
                 </LinkContainer>
               </Button>
-              <Button variant="secondary" onClick={() => finish()}>
+              <Button variant="secondary" onClick={() => {}}>
                 <i className="fa-solid fa-right-from-bracket" /> Cerrar sesión
               </Button>
             </Popover.Body>
@@ -48,12 +44,8 @@ const UserButton: FC = () => {
 };
 
 const ClientNavbar: FC = () => {
-  const [{ isLoggedIn }, { init, initAdmin }] = useSession();
-
-  const navigate = useNavigate();
-
   return (
-    <Navbar style={{height: '80px'}} expand="lg" className="bg-body-tertiary" sticky="top">
+    <Navbar style={{ height: '80px' }} expand="lg" className="bg-body-tertiary" sticky="top">
       <Container>
         <Nav>
           <LinkContainer to="/">
@@ -67,7 +59,7 @@ const ClientNavbar: FC = () => {
           </LinkContainer>
         </Nav>
         <Nav>
-          {isLoggedIn ? (
+          {true ? (
             <Card>
               <Card.Body className="p-2">
                 <UserButton />
@@ -75,25 +67,10 @@ const ClientNavbar: FC = () => {
             </Card>
           ) : (
             <Row>
-              <Button
-                style={{ width: '160px' }}
-                className="me-2"
-                variant="secondary"
-                onClick={() => {
-                  init();
-                  navigate('/');
-                }}
-              >
+              <Button style={{ width: '160px' }} className="me-2" variant="secondary" onClick={() => {}}>
                 Iniciar sesión
               </Button>
-              <Button
-                style={{ width: '180px' }}
-                variant="secondary"
-                onClick={() => {
-                  initAdmin();
-                  navigate('/admin');
-                }}
-              >
+              <Button style={{ width: '180px' }} variant="secondary" onClick={() => {}}>
                 Iniciar sesión Admin
               </Button>
             </Row>
