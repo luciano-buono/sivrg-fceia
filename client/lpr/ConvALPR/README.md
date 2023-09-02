@@ -21,7 +21,7 @@ detector **[aca](https://github.com/ankandrew/LocalizadorPatentes)**. Se convirt
 Darknet a TensorFlow usando este **[repo](https://github.com/hunglc007/tensorflow-yolov4-tflite)**.
 
 En este repo se pueden encontrar **3** versiones del localizador de patentes, misma arquitectura (**yolo v4 tiny sin
-spp**), pero con distinta resolucion de entrada. Los modelos usan res. de entrada de {*384x384*, *512x512*, *608x608*},
+spp**), pero con distinta resolucion de entrada. Los modelos usan res. de entrada de {_384x384_, _512x512_, _608x608_},
 donde a mayor la resolucion **mayor es la precision** (y puede detectar mejor patentes alejadas) pero mayor es el tiempo
 de inferencia (es **mas lento**). Estos modelos se encuentran [`alpr/models/detection`](alpr/models/detection/)
 
@@ -58,7 +58,7 @@ se usa el comando:
 python detector_demo.py --fuente-video /path/a/tu/video.mp4 --mostrar-resultados --input-size 608
 ```
 
-*Intenta con los distintos modelos {608, 512, 384} para ver cual se ajusta mejor a tu caso*
+_Intenta con los distintos modelos {608, 512, 384} para ver cual se ajusta mejor a tu caso_
 
 ## Reconocedor Automatico
 
@@ -67,7 +67,7 @@ python detector_demo.py --fuente-video /path/a/tu/video.mp4 --mostrar-resultados
 La **configuracion** del [ALPR](https://es.wikipedia.org/wiki/Reconocimiento_autom%C3%A1tico_de_matr%C3%ADculas) se
 puede encontrar en [`config.yaml`](config.yaml). Este contiene los ajustes del Reconocedor y Localizador. Las distintas
 opciones estan descriptas en el mismo archivo (que hacen). El modelo de OCR es **independiente** del detector de
-objetos, y cualquiera deberia funcionar bien con cualquiera. Ejemplo para correr en la CPU y *priorizar velocidad*, se
+objetos, y cualquiera deberia funcionar bien con cualquiera. Ejemplo para correr en la CPU y _priorizar velocidad_, se
 puede elegir el modelo 3 o 4 y el detector 384. Si se prefiere **mayor precision** se puede elegir el detector con res.
 de entrada 608 y OCR 1 o 2.
 
@@ -129,11 +129,11 @@ print(predicciones)
 
 ### Notas
 
-* **Aclaracion**: Si bien el **localizador** funciona para patentes de cualquier pais el **reconocedor** actual esta
+- **Aclaracion**: Si bien el **localizador** funciona para patentes de cualquier pais el **reconocedor** actual esta
   hecho especialmente para **Argentina**,
   si queres **entrenar uno [personalizado](https://github.com/ankandrew/cnn-ocr-lp/wiki/Entrenamiento)**
 
-* *Este trabajo forma parte de un proyecto integrador para la Universidad*
+- _Este trabajo forma parte de un proyecto integrador para la Universidad_
 
 ## TODO
 

@@ -13,8 +13,8 @@ const HomeAdmin = () => {
       <Card className="d-flex flex-wrap justify-content-center mb-2">
         <Card.Body>
           <Row className="justify-content-between px-3">
-            {mockResources.map((r) => (
-              <ResourceCard {...r} />
+            {mockResources.map((r, index) => (
+              <ResourceCard key={index} {...r} />
             ))}
           </Row>
         </Card.Body>

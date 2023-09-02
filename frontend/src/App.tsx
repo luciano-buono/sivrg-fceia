@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate } from 'react-router-dom';
 import { Outlet, Route, Routes } from 'react-router';
-
+import { Auth0Provider } from '@auth0/auth0-react';
 import { MantineProvider } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -11,22 +11,30 @@ import AdminPage from './pages/AdminPage';
 const queryClient = new QueryClient();
 
 export const PrivateRoutes = () => {
-  const [sessionState] = useSession();
+  const { role } = useSession();
   // @HINT: "Outlet" component should be used in parent route elements to render their child route elements
-  return !sessionState.isLoggedIn ? <Navigate to="/login" /> : <Outlet />;
+  return !role ? <Navigate to="/login" /> : <Outlet />;
 };
 
 function AppWrapper() {
   return (
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <MantineProvider withGlobalStyles withNormalizeCSS>
-          <SessionProvider>
-            <App />
-          </SessionProvider>
-        </MantineProvider>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+      <Auth0Provider
+        domain="methizul.us.auth0.com"
+        clientId="vum6xRm32RbmlDjMEaQb84dAxGD0AbgV"
+        authorizationParams={{
+          redirect_uri: window.location.origin,
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <MantineProvider withGlobalStyles withNormalizeCSS>
+            <SessionProvider>
+              <App />
+            </SessionProvider>
+          </MantineProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </Auth0Provider>
     </BrowserRouter>
   );
 }

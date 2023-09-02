@@ -1,36 +1,46 @@
-import { Box, Group, PasswordInput, TextInput } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { useAuth0 } from '@auth0/auth0-react';
+import { Loader } from '@mantine/core';
+// import { useEffect } from 'react';
 import { Button, Card, Container, Row } from 'react-bootstrap';
+import { useSession } from '../../contexts/SessionContext';
+// import { useQuery } from 'react-query';
 
 const Login = () => {
-  const form = useForm({
-    initialValues: {
-      email: '',
-      password: '',
-    },
+  const { loginWithPopup, logout, user, isLoading, isAuthenticated } = useAuth0();
 
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-    },
-  });
+  const { role } = useSession();
+  console.log(role);
 
   return (
     <Container className="d-flex flex-wrap flex-column justify-content-center align-content-center pt-2">
       <Card className="d-flex justify-content-center h-100 w-100">
         <Card.Body>
-          <h1> Iniciar sesión </h1>
           <Row className="d-flex justify-content-center">
-            <Card style={{ height: '300px', width: '300px' }}>
+            <Card style={{ height: 'auto', width: 'auto' }}>
               <Card.Body>
-                <Box maw={300} mx="auto">
-                  <form onSubmit={form.onSubmit((values) => console.log(values))}>
-                    <TextInput label="Email" placeholder="your@email.com" {...form.getInputProps('email')} />
-                    <PasswordInput label="Contraseña" placeholder="contraseña" {...form.getInputProps('password')} />
-                    <Group position="right" mt="md">
-                      <Button type="submit">Iniciar Sesión</Button>
-                    </Group>
-                  </form>
-                </Box>
+                {isLoading ? (
+                  <Loader />
+                ) : (
+                  <div>
+                    {!isAuthenticated ? (
+                      <Button onClick={() => loginWithPopup()}>Iniciar Sesión</Button>
+                    ) : (
+                      <div>
+                        <div>
+                          <img src={user?.picture} alt={user?.name} />
+                          <h2>{user?.name}</h2>
+                          <p>{user?.email}</p>
+                        </div>
+                        <Button
+                          variant="secondary"
+                          onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                        >
+                          Cerrar Sesión
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </Card.Body>
             </Card>
           </Row>

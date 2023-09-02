@@ -4,13 +4,9 @@ import Navbar from 'react-bootstrap/Navbar';
 import { Card, Container, Nav, OverlayTrigger, Popover } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import './AdminNavbar.css';
-import { useSession } from '../../contexts/SessionContext';
 import { LinkContainer } from 'react-router-bootstrap';
-import { useNavigate } from 'react-router';
 
 const UserButton: FC = () => {
-  const [, { finish }] = useSession();
-
   return (
     <div className="d-flex flex-row flex-wrap align-content-center">
       <OverlayTrigger
@@ -27,7 +23,7 @@ const UserButton: FC = () => {
                   </Nav.Link>
                 </LinkContainer>
               </Button>
-              <Button variant="secondary" onClick={() => finish()}>
+              <Button variant="secondary" onClick={() => {}}>
                 <i className="fa-solid fa-right-from-bracket" /> Cerrar sesión
               </Button>
             </Popover.Body>
@@ -48,12 +44,8 @@ const UserButton: FC = () => {
 };
 
 const AdminNavbar: FC = () => {
-  const [{ isLoggedIn }, { init }] = useSession();
-
-  const navigate = useNavigate();
-
   return (
-    <Navbar style={{height: '80px'}} expand="lg" className="bg-body-tertiary" sticky="top">
+    <Navbar style={{ height: '80px' }} expand="lg" className="bg-body-tertiary" sticky="top">
       <Container>
         <Nav>
           <LinkContainer to="/admin">
@@ -67,20 +59,14 @@ const AdminNavbar: FC = () => {
           </LinkContainer>
         </Nav>
         <Nav>
-          {isLoggedIn ? (
+          {true ? (
             <Card>
               <Card.Body className="p-2">
                 <UserButton />
               </Card.Body>
             </Card>
           ) : (
-            <Button
-              variant="secondary"
-              onClick={() => {
-                init();
-                navigate('/admin');
-              }}
-            >
+            <Button variant="secondary" onClick={() => {}}>
               Iniciar sesión
             </Button>
           )}
