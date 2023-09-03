@@ -6,6 +6,10 @@ import glob
 
 import requests, json
 
+
+from time import sleep
+from rfid.MFRC522_python.mfrc522 import SimpleMFRC522
+from utils import *
 import os
 
 def get_LPR():
@@ -39,13 +43,29 @@ def get_LPR():
         exit(1)
 
 def get_RFID():
-    pass
+    reader = SimpleMFRC522()
+
+    try:
+        while True:
+            prGreen("Hold a tag near the reader")
+            id, text = reader.read()
+            print(f"ID: {id}\nText: {text}")
+            sleep(5)
+            print(f"Reading lisence from image..")
+            prediccion = get_LPR()
+            print({"LICENSE_PLATE":prediccion})
+            print("Verifying truck credentials against the database..")
+
+            prCyan(f"End of process flow..\nRestarting..\n")
+    except KeyboardInterrupt:
+        raise
 
 if __name__ == "__main__":
-    prediccion = get_LPR()
-    print({"LICENSE_PLATE":prediccion})
+    # prediccion = get_LPR()
+    # print({"LICENSE_PLATE":prediccion})
 
-    tag_id = get_RFID()
+    get_RFID()
+
     # tag_id = "10ABA3"
     # data= {
     #     'tag_id': tag_id,
@@ -53,3 +73,9 @@ if __name__ == "__main__":
     # }
     # response = requests.post(url='http://localhost:5000/validate', data=json.dumps(data))
     # print(response.text)
+
+
+
+
+
+
