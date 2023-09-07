@@ -1,12 +1,16 @@
-import { FC } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 
-import Navbar from 'react-bootstrap/Navbar';
+import BaseNavbar from 'react-bootstrap/Navbar';
 import { Card, Container, Nav, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
-import './ClientNavbar.css';
+import './Navbar.css';
 import { LinkContainer } from 'react-router-bootstrap';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router';
 
 const UserButton: FC = () => {
+  const { user, logout } = useAuth0();
+
   return (
     <div className="d-flex flex-row flex-wrap align-content-center">
       <OverlayTrigger
@@ -23,7 +27,7 @@ const UserButton: FC = () => {
                   </Nav.Link>
                 </LinkContainer>
               </Button>
-              <Button variant="secondary" onClick={() => {}}>
+              <Button variant="secondary" onClick={() => logout()}>
                 <i className="fa-solid fa-right-from-bracket" /> Cerrar sesión
               </Button>
             </Popover.Body>
@@ -31,25 +35,38 @@ const UserButton: FC = () => {
         }
       >
         <div className="d-flex flex-wrap align-content-center">
-          <span style={{ cursor: 'pointer' }} className="no-select d-flex flex-wrap align-content-center pe-2">
-            Bienvenido {'Methizul Cliente'}!
-          </span>
-          <Button style={{ borderRadius: '50%', height: '40px' }} variant="primary">
-            <i className="fa-solid fa-circle-user"></i>
-          </Button>
+          <div style={{ cursor: 'pointer' }} className="no-select d-flex flex-wrap align-items-center">
+            <div className="pe-2">Bienvenido {`${user?.name} Cliente`}!</div>
+            <img style={{ borderRadius: '50%', height: '40px' }} src={user?.picture} alt={user?.name} />
+          </div>
         </div>
       </OverlayTrigger>
     </div>
   );
 };
 
-const ClientNavbar: FC = () => {
+const Navbar: FC = () => {
+  const { loginWithPopup, isAuthenticated, user } = useAuth0();
+  const [shouldRedirect, setShouldRedirect] = useState(true);
+
+  const navigate = useNavigate();
+
+  const roles = user ? user['https://sivrg.methizul.com/roles'] : [];
+  const isEmployee = roles.includes('employee');
+
+  useEffect(() => {
+    if (isAuthenticated && shouldRedirect) {
+      navigate(isEmployee ? '/admin' : '/');
+      setShouldRedirect(false);
+    }
+  }, [navigate, isEmployee, isAuthenticated, shouldRedirect]);
+
   return (
-    <Navbar style={{ height: '80px' }} expand="lg" className="bg-body-tertiary" sticky="top">
+    <BaseNavbar style={{ height: 'auto' }} expand="lg" className="bg-body-tertiary" sticky="top">
       <Container>
         <Nav>
-          <LinkContainer to="/">
-            <Nav.Link>Home Cliente </Nav.Link>
+          <LinkContainer to={isEmployee ? '/admin' : '/'}>
+            <Nav.Link>Home {roles} </Nav.Link>
           </LinkContainer>
           <LinkContainer to="/about">
             <Nav.Link>Sobre nosotros</Nav.Link>
@@ -59,7 +76,7 @@ const ClientNavbar: FC = () => {
           </LinkContainer>
         </Nav>
         <Nav>
-          {true ? (
+          {isAuthenticated ? (
             <Card>
               <Card.Body className="p-2">
                 <UserButton />
@@ -67,18 +84,20 @@ const ClientNavbar: FC = () => {
             </Card>
           ) : (
             <Row>
-              <Button style={{ width: '160px' }} className="me-2" variant="secondary" onClick={() => {}}>
+              <Button
+                style={{ width: '160px' }}
+                className="me-2"
+                variant="secondary"
+                onClick={() => loginWithPopup({})}
+              >
                 Iniciar sesión
-              </Button>
-              <Button style={{ width: '180px' }} variant="secondary" onClick={() => {}}>
-                Iniciar sesión Admin
               </Button>
             </Row>
           )}
         </Nav>
       </Container>
-    </Navbar>
+    </BaseNavbar>
   );
 };
 
-export default ClientNavbar;
+export default Navbar;
