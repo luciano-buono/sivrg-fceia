@@ -1,11 +1,8 @@
-import { useState } from 'react';
 import { Button, Card, Container } from 'react-bootstrap';
-import BookingModal from '../../components/Modals/BookingModal';
+import { useNavigate } from 'react-router';
 
 const HomeClient = () => {
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const navigate = useNavigate();
 
   return (
     <Container className="d-flex flex-column justify-content-center align-content-center pt-2">
@@ -14,11 +11,10 @@ const HomeClient = () => {
           <Button
             style={{ width: '250px', height: '70px', borderRadius: '25px' }}
             className="d-flex flex-wrap justify-content-center align-content-center bg-primary"
-            onClick={handleShow}
+            onClick={() => navigate('/booking')}
           >
             <span className="text-white fw-bold fs-5">Sacar un turno</span>
           </Button>
-          <BookingModal show={show} handleClose={handleClose} />
         </Card.Body>
       </Card>
       <Card>
