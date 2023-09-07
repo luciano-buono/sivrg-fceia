@@ -25,29 +25,48 @@ const BookingFormPage = () => {
   });
 
   return (
-    <Container className="d-flex flex-column justify-content-center align-content-center pt-2">
+    <Container className="d-flex flex-column flex-wrap align-content-center pt-2">
       <form onSubmit={form.onSubmit((values) => console.log(values))}>
-        <Row>
-          <Col className='pe-4'>
+        <Row className="d-flex jusitfy-content-center">
+          <Col className="pe-4">
             <Row>
               <Card className="mb-3">
                 <Card.Body>
-                  <TextInput required withAsterisk label="Nombres" placeholder="" {...form.getInputProps('name')} />
-                  <TextInput
-                    required
-                    withAsterisk
-                    label="Apellido"
-                    placeholder=""
-                    {...form.getInputProps('lastname')}
-                  />
-                  <NumberInput
-                    required
-                    withAsterisk
-                    label="DNI"
-                    placeholder=""
-                    {...form.getInputProps('documentNumber')}
-                  />
-                  <DateInput required withAsterisk label="Fecha de nacimiento" {...form.getInputProps('birthdate')} />
+                  <Row>
+                    <TextInput
+                      className="w-50"
+                      required
+                      withAsterisk
+                      label="Nombres"
+                      placeholder=""
+                      {...form.getInputProps('name')}
+                    />
+                    <TextInput
+                      className="w-50"
+                      required
+                      withAsterisk
+                      label="Apellido"
+                      placeholder=""
+                      {...form.getInputProps('lastname')}
+                    />
+                  </Row>
+                  <Row>
+                    <NumberInput
+                      className="w-50"
+                      required
+                      withAsterisk
+                      label="DNI"
+                      placeholder=""
+                      {...form.getInputProps('documentNumber')}
+                    />
+                    <DateInput
+                      className="w-50"
+                      required
+                      withAsterisk
+                      label="Fecha de nacimiento"
+                      {...form.getInputProps('birthdate')}
+                    />
+                  </Row>
                   <TextInput
                     required
                     withAsterisk
@@ -75,7 +94,7 @@ const BookingFormPage = () => {
                       <Input.Wrapper withAsterisk label="Tipo de grano">
                         <Input
                           component="select"
-                          rightSection={<i className="fa-solid fa-arrow-down" />}
+                          rightSection={<i className="fa-solid fa-angle-down" />}
                           {...form.getInputProps('grainType')}
                         >
                           <option value="Trigo">Trigo</option>
@@ -98,7 +117,7 @@ const BookingFormPage = () => {
                       <NumberInput
                         required
                         withAsterisk
-                        label="Toneladas aproximadas"
+                        label="Toneladas aprox."
                         precision={2}
                         min={-1}
                         step={0.05}
@@ -107,7 +126,6 @@ const BookingFormPage = () => {
                     </Col>
                   </Row>
                   <Col className="w-50">
-                    {' '}
                     <NumberInput
                       required
                       withAsterisk
@@ -121,7 +139,7 @@ const BookingFormPage = () => {
             </Row>
           </Col>
           <Col>
-            <Row>
+            <Row className="h-100">
               <Card className="mb-3 w-auto">
                 <Card.Body>
                   <div className="pt-3 mb-3 fw-bold"> Seleccione una fecha:</div>
@@ -130,13 +148,13 @@ const BookingFormPage = () => {
                       <DatePicker {...form.getInputProps('bookingDate')} />
                     </Card.Body>
                   </Card>
+                  <div className="d-flex mt-4 w-auto justify-content-center">
+                    <Button variant="primary" type="submit">
+                      Pedir turno!
+                    </Button>
+                  </div>
                 </Card.Body>
               </Card>
-            </Row>
-            <Row className='justify-content-center w-75'>
-              <Button variant="primary" type="submit">
-                Pedir turno!
-              </Button>
             </Row>
           </Col>
         </Row>
