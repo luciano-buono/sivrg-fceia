@@ -9,6 +9,8 @@ import ClientPage from './pages/ClientPage/ClientPage';
 import AdminPage from './pages/AdminPage';
 import { FC } from 'react';
 import Navbar from './components/Navbar/Navbar';
+import { DatesProvider } from '@mantine/dates';
+import 'dayjs/locale/es';
 
 const queryClient = new QueryClient();
 
@@ -30,9 +32,11 @@ function AppWrapper() {
       >
         <QueryClientProvider client={queryClient}>
           <MantineProvider withGlobalStyles withNormalizeCSS>
-            <SessionProvider>
-              <App />
-            </SessionProvider>
+            <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 0, weekendDays: [0] }}>
+              <SessionProvider>
+                <App />
+              </SessionProvider>
+            </DatesProvider>
           </MantineProvider>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
