@@ -1,6 +1,6 @@
 import { Loader } from '@mantine/core';
 import { FC } from 'react';
-import { Container, Card, Row } from 'react-bootstrap';
+import { Container, Card } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 
 const About: FC = () => {
@@ -14,7 +14,7 @@ const About: FC = () => {
           <h1> About us </h1>
           {isLoading ? (
             <div className="d-flex justify-content-center">
-              <Loader />{' '}
+              <Loader />
             </div>
           ) : (
             <>

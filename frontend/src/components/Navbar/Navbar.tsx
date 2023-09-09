@@ -1,15 +1,15 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import BaseNavbar from 'react-bootstrap/Navbar';
 import { Card, Container, Nav, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import './Navbar.css';
 import { LinkContainer } from 'react-router-bootstrap';
-import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router';
+import useSession from '../../hooks/useSession';
 
 const UserButton: FC = () => {
-  const { user, logout } = useAuth0();
+  const { user, logout } = useSession();
 
   return (
     <div className="d-flex flex-row flex-wrap align-content-center">
@@ -46,13 +46,12 @@ const UserButton: FC = () => {
 };
 
 const Navbar: FC = () => {
-  const { loginWithPopup, isAuthenticated, user } = useAuth0();
+  const { loginWithPopup, isAuthenticated, user } = useSession();
   const [shouldRedirect, setShouldRedirect] = useState(true);
 
   const navigate = useNavigate();
 
-  const roles = user ? user['https://sivrg.methizul.com/roles'] : [];
-  const isEmployee = roles.includes('employee');
+  const isEmployee = user?.roles.includes('employee');
 
   useEffect(() => {
     if (isAuthenticated && shouldRedirect) {
@@ -66,7 +65,7 @@ const Navbar: FC = () => {
       <Container>
         <Nav>
           <LinkContainer to={isEmployee ? '/admin' : '/'}>
-            <Nav.Link>Home {roles} </Nav.Link>
+            <Nav.Link>Home {user?.roles} </Nav.Link>
           </LinkContainer>
           <LinkContainer to="/about">
             <Nav.Link>Sobre nosotros</Nav.Link>
