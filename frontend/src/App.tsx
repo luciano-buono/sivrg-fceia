@@ -1,22 +1,22 @@
 import { BrowserRouter, Navigate } from 'react-router-dom';
 import { Outlet, Route, Routes } from 'react-router';
-import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
+import { Auth0Provider } from '@auth0/auth0-react';
 import { MantineProvider } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { SessionProvider } from './contexts/SessionContext';
 import ClientPage from './pages/ClientPage/ClientPage';
 import AdminPage from './pages/AdminPage';
 import { FC } from 'react';
 import Navbar from './components/Navbar/Navbar';
 import { DatesProvider } from '@mantine/dates';
 import 'dayjs/locale/es';
+import LoginPage from './pages/LoginPage';
+import useSession from './hooks/useSession';
 
 const queryClient = new QueryClient();
 
 export const PrivateRoutes: FC<{ redirect_to: string }> = ({ redirect_to }) => {
-  // const { role } = useSession();
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated } = useSession();
   return !isAuthenticated ? <Navigate to={redirect_to} /> : <Outlet />;
 };
 
@@ -33,9 +33,7 @@ function AppWrapper() {
         <QueryClientProvider client={queryClient}>
           <MantineProvider withGlobalStyles withNormalizeCSS>
             <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 0, weekendDays: [0] }}>
-              <SessionProvider>
-                <App />
-              </SessionProvider>
+              <App />
             </DatesProvider>
           </MantineProvider>
           <ReactQueryDevtools initialIsOpen={false} />
@@ -51,6 +49,7 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route path="/admin/*" element={<AdminApp />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/*" element={<ClientApp />} />
         <Route path="*" element={<ClientApp />} />
       </Routes>

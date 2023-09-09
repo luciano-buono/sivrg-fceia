@@ -24,6 +24,12 @@ const BookingFormPage = () => {
     },
   });
 
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const excludedDates = [today, tomorrow];
+
   return (
     <Container className="d-flex flex-column flex-wrap align-content-center pt-2">
       <form onSubmit={form.onSubmit((values) => console.log(values))}>
@@ -145,7 +151,31 @@ const BookingFormPage = () => {
                   <div className="pt-3 mb-3 fw-bold"> Seleccione una fecha:</div>
                   <Card className="d-flex justify-content-center">
                     <Card.Body>
-                      <DatePicker {...form.getInputProps('bookingDate')} />
+                      <DatePicker
+                        excludeDate={(date) =>
+                          excludedDates.some(
+                            (excludedDate) => excludedDate.toLocaleDateString() === date.toLocaleDateString(),
+                          )
+                        }
+                        getDayProps={(date) => {
+                          if (
+                            excludedDates.some(
+                              (excludedDate) => excludedDate.toLocaleDateString() === date.toLocaleDateString(),
+                            )
+                          ) {
+                            return {
+                              sx: () => ({
+                                backgroundColor: 'red',
+                                color: 'white',
+                                pointerEvents: 'none',
+                              }),
+                            };
+                          }
+
+                          return {};
+                        }}
+                        {...form.getInputProps('bookingDate')}
+                      />
                     </Card.Body>
                   </Card>
                   <div className="d-flex mt-4 w-auto justify-content-center">
