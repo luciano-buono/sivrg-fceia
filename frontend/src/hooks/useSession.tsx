@@ -1,4 +1,6 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { User, useAuth0 } from '@auth0/auth0-react';
+
+export type UserWithRoles = User & { roles?: string[] };
 
 const useSession = () => {
   const data = useAuth0();
@@ -8,7 +10,7 @@ const useSession = () => {
 
   return {
     ...data,
-    user: userWithRoles,
+    user: userWithRoles as UserWithRoles,
   };
 };
 
