@@ -1,4 +1,3 @@
-# from .lpr.ConvALPR.alpr.alpr import ALPR
 from lpr.ConvALPR.alpr.alpr import ALPR
 import cv2
 import yaml
@@ -32,6 +31,7 @@ def get_LPR():
     for i, x in enumerate(cv2_images):
         print("Predicting..")
         predicciones = alpr.predict(cv2_images[i])
+        print(predicciones)
 
     #Get back to current directotry
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -61,9 +61,6 @@ def get_RFID():
         raise
 
 if __name__ == "__main__":
-    # prediccion = get_LPR()
-    # print({"LICENSE_PLATE":prediccion})
-
     get_RFID()
 
     # tag_id = "10ABA3"

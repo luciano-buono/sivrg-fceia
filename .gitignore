@@ -1,6 +1,7 @@
 .vscode/
 .DS_Store
 *.pyc
+__pycache__
 
 #api
 api/venv/
@@ -19,6 +20,9 @@ client/rfid/MFRC522_python/build
 client/rfid/MFRC522_python/dist
 client/rfid/MFRC522_python/mfrc522.egg-info
 
-#To Remove 
+#To Remove
 FOTOS/*.mp4
 OLD/
+
+# Frontend
+node_modules/
