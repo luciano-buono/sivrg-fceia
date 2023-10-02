@@ -4,7 +4,7 @@ import { DateInput, DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
-import { Card, Col, Collapse, Container, Row } from 'react-bootstrap';
+import { Card, Col, Collapse, Container, FormLabel, Row } from 'react-bootstrap';
 import { useQuery } from 'react-query';
 import { Product } from '../../types';
 import useSession from '../../hooks/useSession';
@@ -60,9 +60,9 @@ const BookingFormPage = () => {
               <Row>
                 <Card className="mb-3">
                   <Card.Body>
+                    <FormLabel className='fw-bold py-1'> Seleccione chofer </FormLabel>
                     <Select
                       disabled={showDriverForm}
-                      label="Seleccione chofer"
                       placeholder="Busque chofer por nombre"
                       data={['Juan', 'Julian', 'Raul', 'Mariano']}
                       searchable
@@ -128,63 +128,71 @@ const BookingFormPage = () => {
               <Row style={{ height: 'auto' }}>
                 <Card className="mb-3">
                   <Card.Body>
-                    <Row>
-                      <Col className="w-25">
-                        <TextInput
-                          required
-                          withAsterisk
-                          label="Patente"
-                          placeholder=""
-                          {...form.getInputProps('plate')}
-                        />
-                      </Col>
-                      <Col className="w-50">
-                        <NumberInput
-                          required
-                          withAsterisk
-                          label="Número de acoplados"
-                          placeholder=""
-                          {...form.getInputProps('trailersQuantity')}
-                        />
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col>
-                        <Input.Wrapper withAsterisk label="Tipo de grano">
-                          <Input
-                            component="select"
-                            rightSection={<i className="fa-solid fa-angle-down" />}
-                            {...form.getInputProps('grainType')}
-                          >
-                            {data?.map((product: Product) => (
-                              <option key={product.producto_nombre} value={product.producto_nombre}>
-                                {product.producto_nombre}
-                              </option>
-                            ))}
-                          </Input>
-                        </Input.Wrapper>
-                      </Col>
-                      <Col>
-                        <NumberInput
-                          required
-                          withAsterisk
-                          label="Toneladas aprox."
-                          decimalScale={2}
-                          min={-1}
-                          step={0.05}
-                          {...form.getInputProps('totalWeight')}
-                        />
-                      </Col>
-                    </Row>
-                    <Col>
-                      <TextInput
-                        required
-                        withAsterisk
-                        label="Modelo de camión"
-                        placeholder=""
-                        {...form.getInputProps('truckType')}
-                      />
-                    </Col>
+                    <div>
+                      <FormLabel className="fw-bold py-1"> Datos de camión </FormLabel>
+                      <Row>
+                        <Col>
+                          <TextInput
+                            required
+                            withAsterisk
+                            label="Modelo de camión"
+                            placeholder=""
+                            {...form.getInputProps('truckType')}
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className="w-25">
+                          <TextInput
+                            required
+                            withAsterisk
+                            label="Patente"
+                            placeholder=""
+                            {...form.getInputProps('plate')}
+                          />
+                        </Col>
+                        <Col className="w-50">
+                          <NumberInput
+                            required
+                            withAsterisk
+                            label="Número de acoplados"
+                            placeholder=""
+                            {...form.getInputProps('trailersQuantity')}
+                          />
+                        </Col>
+                      </Row>
+                    </div>
+                    <div>
+                      <FormLabel className="fw-bold py-1"> Datos de producto </FormLabel>
+                      <Row>
+                        <Col>
+                          <Input.Wrapper withAsterisk label="Tipo de grano">
+                            <Input
+                              component="select"
+                              rightSection={<i className="fa-solid fa-angle-down" />}
+                              {...form.getInputProps('grainType')}
+                            >
+                              {data?.map((product: Product) => (
+                                <option key={product.producto_nombre} value={product.producto_nombre}>
+                                  {product.producto_nombre}
+                                </option>
+                              ))}
+                            </Input>
+                          </Input.Wrapper>
+                        </Col>
+                        <Col>
+                          <NumberInput
+                            required
+                            withAsterisk
+                            label="Toneladas aprox."
+                            decimalScale={2}
+                            min={-1}
+                            step={0.05}
+                            {...form.getInputProps('totalWeight')}
+                          />
+                        </Col>
+                      </Row>
+                    </div>
                   </Card.Body>
                 </Card>
               </Row>
