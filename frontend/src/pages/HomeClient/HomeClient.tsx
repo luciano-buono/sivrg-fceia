@@ -1,4 +1,5 @@
-import { Button, Card, Col, Container, Row } from 'react-bootstrap';
+import { Button } from '@mantine/core';
+import { Card, Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 
 const HomeClient = () => {
@@ -27,8 +28,8 @@ const HomeClient = () => {
           <Card style={{ width: '300px' }} className="d-flex flex-wrap justify-content-center mb-2">
             <Card.Body className="d-flex flex-wrap justify-content-center">
               <Button
-                style={{ width: '250px', height: '70px', borderRadius: '25px' }}
-                className="d-flex flex-wrap justify-content-center align-content-center bg-primary"
+                style={{ width: '250px', height: '70px' }}
+                className="d-flex flex-wrap justify-content-center align-content-center"
                 onClick={() => navigate('/booking')}
               >
                 <span className="text-white fw-bold fs-5">Sacar un turno</span>
