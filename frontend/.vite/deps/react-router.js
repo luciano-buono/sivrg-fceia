@@ -52,10 +52,10 @@ import {
   useRouteId,
   useRouteLoaderData,
   useRoutes,
-  useRoutesImpl
-} from "./chunk-ZWL5HDF3.js";
-import "./chunk-2PA4WPI3.js";
-import "./chunk-ROME4SDB.js";
+  useRoutesImpl,
+} from './chunk-ZWL5HDF3.js';
+import './chunk-2PA4WPI3.js';
+import './chunk-ROME4SDB.js';
 init_dist();
 export {
   AbortedDeferredError,
@@ -111,6 +111,6 @@ export {
   useRevalidator,
   useRouteError,
   useRouteLoaderData,
-  useRoutes
+  useRoutes,
 };
 //# sourceMappingURL=react-router.js.map

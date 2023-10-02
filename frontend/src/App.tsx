@@ -18,13 +18,12 @@ import '@mantine/dates/styles.css';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 
-
-
 const queryClient = new QueryClient();
 
 export const PrivateRoutes: FC<{ redirect_to: string }> = ({ redirect_to }) => {
-  const { isAuthenticated } = useSession();
-  return !isAuthenticated ? <Navigate to={redirect_to} /> : <Outlet />;
+  const { isAuthenticated, isLoading } = useSession();
+
+  return !isAuthenticated && !isLoading ? <Navigate to={redirect_to} /> : <Outlet />;
 };
 
 const theme = createTheme({
@@ -60,7 +59,6 @@ const App = () => {
   return (
     <>
       <Navbar />
-
       <Routes>
         <Route path="/admin/*" element={<AdminApp />} />
         <Route path="/login" element={<LoginPage />} />

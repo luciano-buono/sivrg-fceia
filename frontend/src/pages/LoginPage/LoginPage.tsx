@@ -12,7 +12,7 @@ const LoginPage = () => {
         <Card.Body className="d-flex flex-wrap justify-content-center">
           {isLoading ? (
             <div className="d-flex justify-content-center">
-              <Loader />{' '}
+              <Loader />
             </div>
           ) : (
             <Button

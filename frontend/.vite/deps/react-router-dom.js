@@ -18,8 +18,8 @@ import {
   usePrompt,
   useScrollRestoration,
   useSearchParams,
-  useSubmit
-} from "./chunk-NC5RQAMV.js";
+  useSubmit,
+} from './chunk-NC5RQAMV.js';
 import {
   AbortedDeferredError,
   Action,
@@ -71,10 +71,10 @@ import {
   useRouteError,
   useRouteId,
   useRouteLoaderData,
-  useRoutes
-} from "./chunk-ZWL5HDF3.js";
-import "./chunk-2PA4WPI3.js";
-import "./chunk-ROME4SDB.js";
+  useRoutes,
+} from './chunk-ZWL5HDF3.js';
+import './chunk-2PA4WPI3.js';
+import './chunk-ROME4SDB.js';
 init_dist();
 export {
   AbortedDeferredError,
@@ -147,6 +147,6 @@ export {
   useRouteLoaderData,
   useRoutes,
   useSearchParams,
-  useSubmit
+  useSubmit,
 };
 //# sourceMappingURL=react-router-dom.js.map
