@@ -1,4 +1,5 @@
-import { Button, Input, InputError, NumberInput, Select, Switch, TextInput } from '@mantine/core';
+import React from 'react';
+import { Button, Input, NumberInput, Select, Switch, TextInput } from '@mantine/core';
 import { DateInput, DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
