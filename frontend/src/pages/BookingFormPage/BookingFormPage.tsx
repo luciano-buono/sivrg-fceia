@@ -6,6 +6,7 @@ import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
 import { Card, Col, Collapse, Container, Row } from 'react-bootstrap';
 import { useQuery } from 'react-query';
+import { Product } from '../../types';
 
 const BookingFormPage = () => {
   const form = useForm({
@@ -56,7 +57,7 @@ return (
                     disabled={showDriverForm}
                     label="Seleccione chofer"
                     placeholder="Busque chofer por nombre"
-                    data={data ? data?.map((grano: any) => grano.producto_nombre) : []}
+                    data={['Juan', 'Julian' , 'Raul', 'Mariano']}
                     searchable
                   />
                   <div className="d-flex justify-content-center py-3 ">
@@ -146,9 +147,9 @@ return (
                           rightSection={<i className="fa-solid fa-angle-down" />}
                           {...form.getInputProps('grainType')}
                         >
-                          {data?.map((grano: any) => (
-                            <option key={grano.producto_nombre} value={grano.producto_nombre}>
-                              {grano.producto_nombre}
+                          {data?.map((product: Product) => (
+                            <option key={product.producto_nombre} value={product.producto_nombre}>
+                              {product.producto_nombre}
                             </option>
                           ))}
                         </Input>

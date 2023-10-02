@@ -11,3 +11,7 @@ export interface Reservation {
   grainType: string;
   totalWeight: number;
 }
+
+export interface Product {
+  producto_nombre: string
+}
