@@ -1,6 +1,6 @@
 import React from 'react';
 import { FC } from 'react';
-import { OverlayTrigger, Popover, Button, Nav, Card } from 'react-bootstrap';
+import { OverlayTrigger, Popover, Button, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { UserWithRoles } from '../../hooks/useSession';
 
@@ -14,13 +14,15 @@ const UserButton: FC<{ user: UserWithRoles; handleLogout: () => Promise<void> }>
         overlay={
           <Popover id="popover-basic">
             <Popover.Body className="d-flex flex-column ">
-              <Button className="mb-2">
-                <LinkContainer to="/reservations">
-                  <Nav.Link>
-                    <i className="fa-solid fa-calendar-days pe-2" /> Mis turnos
-                  </Nav.Link>
-                </LinkContainer>
-              </Button>
+              {user.roles?.includes('client') ? (
+                <Button className="mb-2">
+                  <LinkContainer to="/reservations">
+                    <Nav.Link>
+                      <i className="fa-solid fa-calendar-days pe-2" /> Mis turnos
+                    </Nav.Link>
+                  </LinkContainer>
+                </Button>
+              ) : null}
               <Button variant="secondary" onClick={() => handleLogout()}>
                 <i className="fa-solid fa-right-from-bracket" /> Cerrar sesión
               </Button>

@@ -45,7 +45,7 @@ const Navbar: FC = () => {
                 {isAuthenticated ? (
                   <UserButton user={user} handleLogout={logout} />
                 ) : isLoading ? (
-                  <Loader type="dots" />
+                  <Loader color="gray" type="dots" />
                 ) : (
                   <Button
                     style={{ width: '160px' }}

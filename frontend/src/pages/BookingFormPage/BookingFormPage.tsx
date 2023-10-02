@@ -191,9 +191,9 @@ const BookingFormPage = () => {
             </Skeleton>
           </Col>
           <Col>
-            <Row className="h-100 w-auto">
-                <Skeleton visible={isLoading} >
-              <Card className="h-100">
+            <Row className="w-auto">
+              <Skeleton visible={isLoading}>
+                <Card className="h-100">
                   <Card.Body>
                     <div className="pt-2 pb-2 fw-bold"> Seleccione una fecha:</div>
                     <Card className="d-flex justify-content-center">
@@ -233,8 +233,8 @@ const BookingFormPage = () => {
                       <Button type="submit">Pedir turno!</Button>
                     </div>
                   </Card.Body>
-              </Card>
-                </Skeleton>
+                </Card>
+              </Skeleton>
             </Row>
           </Col>
         </Row>
