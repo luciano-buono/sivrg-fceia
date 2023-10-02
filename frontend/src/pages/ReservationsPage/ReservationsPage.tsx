@@ -1,3 +1,4 @@
+import React from 'react';
 import { Reservation } from '../../types';
 import { Card, Container } from 'react-bootstrap';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
