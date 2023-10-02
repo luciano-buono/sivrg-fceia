@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   Accordion,
   AccordionChevron,
@@ -305,13 +305,13 @@ import {
   useSafeMantineTheme,
   useStyles,
   useVirtualizedCombobox,
-  validateMantineTheme
-} from "./chunk-E75QS4Y4.js";
-import "./chunk-PSGUSLG5.js";
-import "./chunk-BJM7UO3E.js";
-import "./chunk-OTY6O57J.js";
-import "./chunk-2PA4WPI3.js";
-import "./chunk-ROME4SDB.js";
+  validateMantineTheme,
+} from './chunk-E75QS4Y4.js';
+import './chunk-PSGUSLG5.js';
+import './chunk-BJM7UO3E.js';
+import './chunk-OTY6O57J.js';
+import './chunk-2PA4WPI3.js';
+import './chunk-ROME4SDB.js';
 export {
   Accordion,
   AccordionChevron,
@@ -618,6 +618,6 @@ export {
   useSafeMantineTheme,
   useStyles,
   useVirtualizedCombobox,
-  validateMantineTheme
+  validateMantineTheme,
 };
 //# sourceMappingURL=@mantine_core.js.map

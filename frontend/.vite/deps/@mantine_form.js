@@ -1,55 +1,38 @@
-"use client";
-import {
-  require_react
-} from "./chunk-2PA4WPI3.js";
-import {
-  __commonJS,
-  __toESM
-} from "./chunk-ROME4SDB.js";
+'use client';
+import { require_react } from './chunk-2PA4WPI3.js';
+import { __commonJS, __toESM } from './chunk-ROME4SDB.js';
 
 // node_modules/fast-deep-equal/index.js
 var require_fast_deep_equal = __commonJS({
-  "node_modules/fast-deep-equal/index.js"(exports, module) {
-    "use strict";
+  'node_modules/fast-deep-equal/index.js'(exports, module) {
+    'use strict';
     module.exports = function equal(a, b) {
-      if (a === b)
-        return true;
-      if (a && b && typeof a == "object" && typeof b == "object") {
-        if (a.constructor !== b.constructor)
-          return false;
+      if (a === b) return true;
+      if (a && b && typeof a == 'object' && typeof b == 'object') {
+        if (a.constructor !== b.constructor) return false;
         var length, i, keys;
         if (Array.isArray(a)) {
           length = a.length;
-          if (length != b.length)
-            return false;
-          for (i = length; i-- !== 0; )
-            if (!equal(a[i], b[i]))
-              return false;
+          if (length != b.length) return false;
+          for (i = length; i-- !== 0; ) if (!equal(a[i], b[i])) return false;
           return true;
         }
-        if (a.constructor === RegExp)
-          return a.source === b.source && a.flags === b.flags;
-        if (a.valueOf !== Object.prototype.valueOf)
-          return a.valueOf() === b.valueOf();
-        if (a.toString !== Object.prototype.toString)
-          return a.toString() === b.toString();
+        if (a.constructor === RegExp) return a.source === b.source && a.flags === b.flags;
+        if (a.valueOf !== Object.prototype.valueOf) return a.valueOf() === b.valueOf();
+        if (a.toString !== Object.prototype.toString) return a.toString() === b.toString();
         keys = Object.keys(a);
         length = keys.length;
-        if (length !== Object.keys(b).length)
-          return false;
-        for (i = length; i-- !== 0; )
-          if (!Object.prototype.hasOwnProperty.call(b, keys[i]))
-            return false;
+        if (length !== Object.keys(b).length) return false;
+        for (i = length; i-- !== 0; ) if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
         for (i = length; i-- !== 0; ) {
           var key = keys[i];
-          if (!equal(a[key], b[key]))
-            return false;
+          if (!equal(a[key], b[key])) return false;
         }
         return true;
       }
       return a !== a && b !== b;
     };
-  }
+  },
 });
 
 // node_modules/@mantine/form/esm/use-form.mjs
@@ -58,7 +41,7 @@ var import_fast_deep_equal = __toESM(require_fast_deep_equal(), 1);
 
 // node_modules/@mantine/form/esm/filter-errors/filter-errors.mjs
 function filterErrors(errors) {
-  if (errors === null || typeof errors !== "object") {
+  if (errors === null || typeof errors !== 'object') {
     return {};
   }
   return Object.keys(errors).reduce((acc, key) => {
@@ -75,20 +58,20 @@ var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __defNormalProp = (obj, key, value) =>
+  key in obj
+    ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value })
+    : (obj[key] = value);
 var __spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp.call(b, prop))
-      __defNormalProp(a, prop, b[prop]);
+  for (var prop in b || (b = {})) if (__hasOwnProp.call(b, prop)) __defNormalProp(a, prop, b[prop]);
   if (__getOwnPropSymbols)
     for (var prop of __getOwnPropSymbols(b)) {
-      if (__propIsEnum.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
+      if (__propIsEnum.call(b, prop)) __defNormalProp(a, prop, b[prop]);
     }
   return a;
 };
 function clearListState(field, state) {
-  if (state === null || typeof state !== "object") {
+  if (state === null || typeof state !== 'object') {
     return {};
   }
   const clone = __spreadValues({}, state);
@@ -101,14 +84,14 @@ function clearListState(field, state) {
 }
 
 // node_modules/@mantine/form/esm/form-index.mjs
-var FORM_INDEX = "__MANTINE_FORM_INDEX__";
+var FORM_INDEX = '__MANTINE_FORM_INDEX__';
 
 // node_modules/@mantine/form/esm/validate/should-validate-on-change.mjs
 function shouldValidateOnChange(path, validateInputOnChange) {
   if (!validateInputOnChange) {
     return false;
   }
-  if (typeof validateInputOnChange === "boolean") {
+  if (typeof validateInputOnChange === 'boolean') {
     return validateInputOnChange;
   }
   if (Array.isArray(validateInputOnChange)) {
@@ -119,40 +102,41 @@ function shouldValidateOnChange(path, validateInputOnChange) {
 
 // node_modules/klona/full/index.mjs
 function set(obj, key, val) {
-  if (typeof val.value === "object")
-    val.value = klona(val.value);
-  if (!val.enumerable || val.get || val.set || !val.configurable || !val.writable || key === "__proto__") {
+  if (typeof val.value === 'object') val.value = klona(val.value);
+  if (!val.enumerable || val.get || val.set || !val.configurable || !val.writable || key === '__proto__') {
     Object.defineProperty(obj, key, val);
-  } else
-    obj[key] = val.value;
+  } else obj[key] = val.value;
 }
 function klona(x) {
-  if (typeof x !== "object")
-    return x;
-  var i = 0, k, list, tmp, str = Object.prototype.toString.call(x);
-  if (str === "[object Object]") {
+  if (typeof x !== 'object') return x;
+  var i = 0,
+    k,
+    list,
+    tmp,
+    str = Object.prototype.toString.call(x);
+  if (str === '[object Object]') {
     tmp = Object.create(x.__proto__ || null);
-  } else if (str === "[object Array]") {
+  } else if (str === '[object Array]') {
     tmp = Array(x.length);
-  } else if (str === "[object Set]") {
+  } else if (str === '[object Set]') {
     tmp = /* @__PURE__ */ new Set();
-    x.forEach(function(val) {
+    x.forEach(function (val) {
       tmp.add(klona(val));
     });
-  } else if (str === "[object Map]") {
+  } else if (str === '[object Map]') {
     tmp = /* @__PURE__ */ new Map();
-    x.forEach(function(val, key) {
+    x.forEach(function (val, key) {
       tmp.set(klona(key), klona(val));
     });
-  } else if (str === "[object Date]") {
+  } else if (str === '[object Date]') {
     tmp = /* @__PURE__ */ new Date(+x);
-  } else if (str === "[object RegExp]") {
+  } else if (str === '[object RegExp]') {
     tmp = new RegExp(x.source, x.flags);
-  } else if (str === "[object DataView]") {
+  } else if (str === '[object DataView]') {
     tmp = new x.constructor(klona(x.buffer));
-  } else if (str === "[object ArrayBuffer]") {
+  } else if (str === '[object ArrayBuffer]') {
     tmp = x.slice(0);
-  } else if (str.slice(-6) === "Array]") {
+  } else if (str.slice(-6) === 'Array]') {
     tmp = new x.constructor(x);
   }
   if (tmp) {
@@ -160,8 +144,7 @@ function klona(x) {
       set(tmp, list[i], Object.getOwnPropertyDescriptor(x, list[i]));
     }
     for (i = 0, list = Object.getOwnPropertyNames(x); i < list.length; i++) {
-      if (Object.hasOwnProperty.call(tmp, k = list[i]) && tmp[k] === x[k])
-        continue;
+      if (Object.hasOwnProperty.call(tmp, (k = list[i])) && tmp[k] === x[k]) continue;
       set(tmp, k, Object.getOwnPropertyDescriptor(x, k));
     }
   }
@@ -170,10 +153,10 @@ function klona(x) {
 
 // node_modules/@mantine/form/esm/paths/get-splitted-path.mjs
 function getSplittedPath(path) {
-  if (typeof path !== "string") {
+  if (typeof path !== 'string') {
     return [];
   }
-  return path.split(".");
+  return path.split('.');
 }
 
 // node_modules/@mantine/form/esm/paths/set-path.mjs
@@ -201,7 +184,7 @@ function setPath(path, value, values) {
 // node_modules/@mantine/form/esm/paths/get-path.mjs
 function getPath(path, values) {
   const splittedPath = getSplittedPath(path);
-  if (splittedPath.length === 0 || typeof values !== "object" || values === null) {
+  if (splittedPath.length === 0 || typeof values !== 'object' || values === null) {
     return void 0;
   }
   let value = values[splittedPath[0]];
@@ -219,25 +202,23 @@ function getValidationResults(errors) {
   const filteredErrors = filterErrors(errors);
   return { hasErrors: Object.keys(filteredErrors).length > 0, errors: filteredErrors };
 }
-function validateRulesRecord(rules, values, path = "", errors = {}) {
-  if (typeof rules !== "object" || rules === null) {
+function validateRulesRecord(rules, values, path = '', errors = {}) {
+  if (typeof rules !== 'object' || rules === null) {
     return errors;
   }
   return Object.keys(rules).reduce((acc, ruleKey) => {
     const rule = rules[ruleKey];
-    const rulePath = `${path === "" ? "" : `${path}.`}${ruleKey}`;
+    const rulePath = `${path === '' ? '' : `${path}.`}${ruleKey}`;
     const value = getPath(rulePath, values);
     let arrayValidation = false;
-    if (typeof rule === "function") {
+    if (typeof rule === 'function') {
       acc[rulePath] = rule(value, values, rulePath);
     }
-    if (typeof rule === "object" && Array.isArray(value)) {
+    if (typeof rule === 'object' && Array.isArray(value)) {
       arrayValidation = true;
-      value.forEach(
-        (_item, index) => validateRulesRecord(rule, values, `${rulePath}.${index}`, acc)
-      );
+      value.forEach((_item, index) => validateRulesRecord(rule, values, `${rulePath}.${index}`, acc));
     }
-    if (typeof rule === "object" && typeof value === "object" && value !== null) {
+    if (typeof rule === 'object' && typeof value === 'object' && value !== null) {
       if (!arrayValidation) {
         validateRulesRecord(rule, values, rulePath, acc);
       }
@@ -246,7 +227,7 @@ function validateRulesRecord(rules, values, path = "", errors = {}) {
   }, errors);
 }
 function validateValues(validate, values) {
-  if (typeof validate === "function") {
+  if (typeof validate === 'function') {
     return getValidationResults(validate(values));
   }
   return getValidationResults(validateRulesRecord(validate, values));
@@ -254,12 +235,12 @@ function validateValues(validate, values) {
 
 // node_modules/@mantine/form/esm/validate/validate-field-value.mjs
 function validateFieldValue(path, rules, values) {
-  if (typeof path !== "string") {
+  if (typeof path !== 'string') {
     return { hasError: false, error: null };
   }
   const results = validateValues(rules, values);
-  const pathInError = Object.keys(results.errors).find(
-    (errorKey) => path.split(".").every((pathPart, i) => pathPart === errorKey.split(".")[i])
+  const pathInError = Object.keys(results.errors).find((errorKey) =>
+    path.split('.').every((pathPart, i) => pathPart === errorKey.split('.')[i]),
   );
   return { hasError: !!pathInError, error: pathInError ? results.errors[pathInError] : null };
 }
@@ -282,15 +263,15 @@ var __defProp2 = Object.defineProperty;
 var __getOwnPropSymbols2 = Object.getOwnPropertySymbols;
 var __hasOwnProp2 = Object.prototype.hasOwnProperty;
 var __propIsEnum2 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp2 = (obj, key, value) => key in obj ? __defProp2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __defNormalProp2 = (obj, key, value) =>
+  key in obj
+    ? __defProp2(obj, key, { enumerable: true, configurable: true, writable: true, value })
+    : (obj[key] = value);
 var __spreadValues2 = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp2.call(b, prop))
-      __defNormalProp2(a, prop, b[prop]);
+  for (var prop in b || (b = {})) if (__hasOwnProp2.call(b, prop)) __defNormalProp2(a, prop, b[prop]);
   if (__getOwnPropSymbols2)
     for (var prop of __getOwnPropSymbols2(b)) {
-      if (__propIsEnum2.call(b, prop))
-        __defNormalProp2(a, prop, b[prop]);
+      if (__propIsEnum2.call(b, prop)) __defNormalProp2(a, prop, b[prop]);
     }
   return a;
 };
@@ -312,8 +293,8 @@ function reorderErrors(path, { from, to }, errors) {
     if (oldKey && newKey) {
       const value1 = clone[oldKey];
       const value2 = clone[newKey];
-      value2 === void 0 ? delete clone[oldKey] : clone[oldKey] = value2;
-      value1 === void 0 ? delete clone[newKey] : clone[newKey] = value1;
+      value2 === void 0 ? delete clone[oldKey] : (clone[oldKey] = value2);
+      value1 === void 0 ? delete clone[newKey] : (clone[newKey] = value1);
       return false;
     }
     return true;
@@ -330,7 +311,7 @@ function removePath(path, index, values) {
   return setPath(
     path,
     currentValue.filter((_, itemIndex) => itemIndex !== index),
-    values
+    values,
   );
 }
 
@@ -339,20 +320,20 @@ var __defProp3 = Object.defineProperty;
 var __getOwnPropSymbols3 = Object.getOwnPropertySymbols;
 var __hasOwnProp3 = Object.prototype.hasOwnProperty;
 var __propIsEnum3 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp3 = (obj, key, value) => key in obj ? __defProp3(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __defNormalProp3 = (obj, key, value) =>
+  key in obj
+    ? __defProp3(obj, key, { enumerable: true, configurable: true, writable: true, value })
+    : (obj[key] = value);
 var __spreadValues3 = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp3.call(b, prop))
-      __defNormalProp3(a, prop, b[prop]);
+  for (var prop in b || (b = {})) if (__hasOwnProp3.call(b, prop)) __defNormalProp3(a, prop, b[prop]);
   if (__getOwnPropSymbols3)
     for (var prop of __getOwnPropSymbols3(b)) {
-      if (__propIsEnum3.call(b, prop))
-        __defNormalProp3(a, prop, b[prop]);
+      if (__propIsEnum3.call(b, prop)) __defNormalProp3(a, prop, b[prop]);
     }
   return a;
 };
 function getIndexFromKeyAfterPath(key, path) {
-  const split = key.substring(path.length + 1).split(".")[0];
+  const split = key.substring(path.length + 1).split('.')[0];
   return parseInt(split, 10);
 }
 function changeErrorIndices(path, index, errors, change) {
@@ -366,27 +347,26 @@ function changeErrorIndices(path, index, errors, change) {
   }
   const cloned = __spreadValues3({}, clearedErrors);
   const changedKeys = /* @__PURE__ */ new Set();
-  Object.entries(clearedErrors).filter(([key]) => {
-    if (!key.startsWith(`${pathString}.`)) {
-      return false;
-    }
-    const currIndex = getIndexFromKeyAfterPath(key, pathString);
-    if (Number.isNaN(currIndex)) {
-      return false;
-    }
-    return currIndex >= index;
-  }).forEach(([key, value]) => {
-    const currIndex = getIndexFromKeyAfterPath(key, pathString);
-    const newKey = key.replace(
-      `${pathString}.${currIndex}`,
-      `${pathString}.${currIndex + change}`
-    );
-    cloned[newKey] = value;
-    changedKeys.add(newKey);
-    if (!changedKeys.has(key)) {
-      delete cloned[key];
-    }
-  });
+  Object.entries(clearedErrors)
+    .filter(([key]) => {
+      if (!key.startsWith(`${pathString}.`)) {
+        return false;
+      }
+      const currIndex = getIndexFromKeyAfterPath(key, pathString);
+      if (Number.isNaN(currIndex)) {
+        return false;
+      }
+      return currIndex >= index;
+    })
+    .forEach(([key, value]) => {
+      const currIndex = getIndexFromKeyAfterPath(key, pathString);
+      const newKey = key.replace(`${pathString}.${currIndex}`, `${pathString}.${currIndex + change}`);
+      cloned[newKey] = value;
+      changedKeys.add(newKey);
+      if (!changedKeys.has(key)) {
+        delete cloned[key];
+      }
+    });
   return cloned;
 }
 
@@ -397,14 +377,14 @@ function insertPath(path, value, index, values) {
     return values;
   }
   const cloned = [...currentValue];
-  cloned.splice(typeof index === "number" ? index : cloned.length, 0, value);
+  cloned.splice(typeof index === 'number' ? index : cloned.length, 0, value);
   return setPath(path, cloned, values);
 }
 
 // node_modules/@mantine/form/esm/get-status/get-status.mjs
 function getStatus(status, path) {
   const paths = Object.keys(status);
-  if (typeof path === "string") {
+  if (typeof path === 'string') {
     const nestedPaths = paths.filter((statusPath) => statusPath.startsWith(`${path}.`));
     return status[path] || nestedPaths.some((statusPath) => status[statusPath]) || false;
   }
@@ -416,12 +396,12 @@ function getInputOnChange(setValue) {
   return (val) => {
     if (!val) {
       setValue(val);
-    } else if (typeof val === "function") {
+    } else if (typeof val === 'function') {
       setValue(val);
-    } else if (typeof val === "object" && "nativeEvent" in val) {
+    } else if (typeof val === 'object' && 'nativeEvent' in val) {
       const { currentTarget } = val;
       if (currentTarget instanceof HTMLInputElement) {
-        if (currentTarget.type === "checkbox") {
+        if (currentTarget.type === 'checkbox') {
           setValue(currentTarget.checked);
         } else {
           setValue(currentTarget.value);
@@ -442,15 +422,15 @@ var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
 var __getOwnPropSymbols4 = Object.getOwnPropertySymbols;
 var __hasOwnProp4 = Object.prototype.hasOwnProperty;
 var __propIsEnum4 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp4 = (obj, key, value) => key in obj ? __defProp4(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __defNormalProp4 = (obj, key, value) =>
+  key in obj
+    ? __defProp4(obj, key, { enumerable: true, configurable: true, writable: true, value })
+    : (obj[key] = value);
 var __spreadValues4 = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp4.call(b, prop))
-      __defNormalProp4(a, prop, b[prop]);
+  for (var prop in b || (b = {})) if (__hasOwnProp4.call(b, prop)) __defNormalProp4(a, prop, b[prop]);
   if (__getOwnPropSymbols4)
     for (var prop of __getOwnPropSymbols4(b)) {
-      if (__propIsEnum4.call(b, prop))
-        __defNormalProp4(a, prop, b[prop]);
+      if (__propIsEnum4.call(b, prop)) __defNormalProp4(a, prop, b[prop]);
     }
   return a;
 };
@@ -464,7 +444,7 @@ function useForm({
   validateInputOnChange = false,
   validateInputOnBlur = false,
   transformValues = (values) => values,
-  validate: rules
+  validate: rules,
 } = {}) {
   const [touched, setTouched] = (0, import_react.useState)(initialTouched);
   const [dirty, setDirty] = (0, import_react.useState)(initialDirty);
@@ -481,8 +461,8 @@ function useForm({
     setDirty({});
   };
   const setErrors = (0, import_react.useCallback)(
-    (errs) => _setErrors((current) => filterErrors(typeof errs === "function" ? errs(current) : errs)),
-    []
+    (errs) => _setErrors((current) => filterErrors(typeof errs === 'function' ? errs(current) : errs)),
+    [],
   );
   const clearErrors = (0, import_react.useCallback)(() => _setErrors({}), []);
   const reset = (0, import_react.useCallback)(() => {
@@ -494,29 +474,31 @@ function useForm({
   }, []);
   const setFieldError = (0, import_react.useCallback)(
     (path, error) => setErrors((current) => __spreadProps(__spreadValues4({}, current), { [path]: error })),
-    []
+    [],
   );
   const clearFieldError = (0, import_react.useCallback)(
-    (path) => setErrors((current) => {
-      if (typeof path !== "string") {
-        return current;
-      }
-      const clone = __spreadValues4({}, current);
-      delete clone[path];
-      return clone;
-    }),
-    []
+    (path) =>
+      setErrors((current) => {
+        if (typeof path !== 'string') {
+          return current;
+        }
+        const clone = __spreadValues4({}, current);
+        delete clone[path];
+        return clone;
+      }),
+    [],
   );
   const clearFieldDirty = (0, import_react.useCallback)(
-    (path) => setDirty((current) => {
-      if (typeof path !== "string") {
-        return current;
-      }
-      const result = clearListState(path, current);
-      delete result[path];
-      return result;
-    }),
-    []
+    (path) =>
+      setDirty((current) => {
+        if (typeof path !== 'string') {
+          return current;
+        }
+        const result = clearListState(path, current);
+        delete result[path];
+        return result;
+      }),
+    [],
   );
   const setFieldValue = (0, import_react.useCallback)((path, value) => {
     const shouldValidate = shouldValidateOnChange(path, validateInputOnChange);
@@ -534,7 +516,7 @@ function useForm({
   }, []);
   const setValues = (0, import_react.useCallback)((payload) => {
     _setValues((currentValues) => {
-      const valuesPartial = typeof payload === "function" ? payload(currentValues) : payload;
+      const valuesPartial = typeof payload === 'function' ? payload(currentValues) : payload;
       return __spreadValues4(__spreadValues4({}, currentValues), valuesPartial);
     });
     clearInputErrorOnChange && clearErrors();
@@ -565,15 +547,15 @@ function useForm({
       results.hasError ? setFieldError(path, results.error) : clearFieldError(path);
       return results;
     },
-    [values, rules]
+    [values, rules],
   );
-  const getInputProps = (path, { type = "input", withError = true, withFocus = true } = {}) => {
+  const getInputProps = (path, { type = 'input', withError = true, withFocus = true } = {}) => {
     const onChange = getInputOnChange((value) => setFieldValue(path, value));
     const payload = { onChange };
     if (withError) {
       payload.error = errors[path];
     }
-    if (type === "checkbox") {
+    if (type === 'checkbox') {
       payload.checked = getPath(path, values);
     } else {
       payload.value = getPath(path, values);
@@ -606,7 +588,7 @@ function useForm({
   const isDirty = (path) => {
     if (path) {
       const overriddenValue = getPath(path, dirty);
-      if (typeof overriddenValue === "boolean") {
+      if (typeof overriddenValue === 'boolean') {
         return overriddenValue;
       }
       const sliceOfValues = getPath(path, values);
@@ -619,13 +601,10 @@ function useForm({
     }
     return !(0, import_fast_deep_equal.default)(values, valuesSnapshot.current);
   };
-  const isTouched = (0, import_react.useCallback)(
-    (path) => getStatus(touched, path),
-    [touched]
-  );
+  const isTouched = (0, import_react.useCallback)((path) => getStatus(touched, path), [touched]);
   const isValid = (0, import_react.useCallback)(
-    (path) => path ? !validateFieldValue(path, rules, values).hasError : !validateValues(rules, values).hasErrors,
-    [values, rules]
+    (path) => (path ? !validateFieldValue(path, rules, values).hasError : !validateValues(rules, values).hasErrors),
+    [values, rules],
   );
   return {
     values,
@@ -653,7 +632,7 @@ function useForm({
     resetTouched,
     resetDirty,
     isValid,
-    getTransformedValues
+    getTransformedValues,
   };
 }
 
@@ -667,7 +646,7 @@ function createFormContext() {
   function useFormContext() {
     const ctx = (0, import_react2.useContext)(FormContext);
     if (!ctx) {
-      throw new Error("useFormContext was called outside of FormProvider context");
+      throw new Error('useFormContext was called outside of FormProvider context');
     }
     return ctx;
   }
@@ -682,15 +661,15 @@ var __getOwnPropDescs2 = Object.getOwnPropertyDescriptors;
 var __getOwnPropSymbols5 = Object.getOwnPropertySymbols;
 var __hasOwnProp5 = Object.prototype.hasOwnProperty;
 var __propIsEnum5 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp5 = (obj, key, value) => key in obj ? __defProp5(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __defNormalProp5 = (obj, key, value) =>
+  key in obj
+    ? __defProp5(obj, key, { enumerable: true, configurable: true, writable: true, value })
+    : (obj[key] = value);
 var __spreadValues5 = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp5.call(b, prop))
-      __defNormalProp5(a, prop, b[prop]);
+  for (var prop in b || (b = {})) if (__hasOwnProp5.call(b, prop)) __defNormalProp5(a, prop, b[prop]);
   if (__getOwnPropSymbols5)
     for (var prop of __getOwnPropSymbols5(b)) {
-      if (__propIsEnum5.call(b, prop))
-        __defNormalProp5(a, prop, b[prop]);
+      if (__propIsEnum5.call(b, prop)) __defNormalProp5(a, prop, b[prop]);
     }
   return a;
 };
@@ -698,32 +677,29 @@ var __spreadProps2 = (a, b) => __defProps2(a, __getOwnPropDescs2(b));
 var __objRest = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp5.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
+    if (__hasOwnProp5.call(source, prop) && exclude.indexOf(prop) < 0) target[prop] = source[prop];
   if (source != null && __getOwnPropSymbols5)
     for (var prop of __getOwnPropSymbols5(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum5.call(source, prop))
-        target[prop] = source[prop];
+      if (exclude.indexOf(prop) < 0 && __propIsEnum5.call(source, prop)) target[prop] = source[prop];
     }
   return target;
 };
-var Form = (0, import_react3.forwardRef)(
-  (_a, ref) => {
-    var _b = _a, { form, onSubmit, onReset } = _b, others = __objRest(_b, ["form", "onSubmit", "onReset"]);
-    return import_react3.default.createElement(
-      "form",
-      __spreadProps2(__spreadValues5({}, others), {
-        onSubmit: form.onSubmit(typeof onSubmit === "function" ? onSubmit : () => {
-        }),
-        onReset: (event) => {
-          onReset == null ? void 0 : onReset(event);
-          form.onReset(event);
-        },
-        ref
-      })
-    );
-  }
-);
+var Form = (0, import_react3.forwardRef)((_a, ref) => {
+  var _b = _a,
+    { form, onSubmit, onReset } = _b,
+    others = __objRest(_b, ['form', 'onSubmit', 'onReset']);
+  return import_react3.default.createElement(
+    'form',
+    __spreadProps2(__spreadValues5({}, others), {
+      onSubmit: form.onSubmit(typeof onSubmit === 'function' ? onSubmit : () => {}),
+      onReset: (event) => {
+        onReset == null ? void 0 : onReset(event);
+        form.onReset(event);
+      },
+      ref,
+    }),
+  );
+});
 
 // node_modules/@mantine/form/esm/resolvers/zod-resolver/zod-resolver.mjs
 function zodResolver(schema) {
@@ -734,7 +710,7 @@ function zodResolver(schema) {
     }
     const results = {};
     parsed.error.errors.forEach((error) => {
-      results[error.path.join(".")] = error.message;
+      results[error.path.join('.')] = error.message;
     });
     return results;
   };
@@ -749,8 +725,8 @@ function superstructResolver(schema) {
       return formErrors;
     }
     err.failures().forEach((fieldFailure) => {
-      const fieldName = fieldFailure.path.join(" ");
-      formErrors[fieldFailure.path.join(".")] = `${fieldName}: ${fieldFailure.message}`;
+      const fieldName = fieldFailure.path.join(' ');
+      formErrors[fieldFailure.path.join('.')] = `${fieldName}: ${fieldFailure.message}`;
     });
     return formErrors;
   }
@@ -768,7 +744,7 @@ function yupResolver(schema) {
       const yupError = _yupError;
       const results = {};
       yupError.inner.forEach((error) => {
-        results[error.path.replaceAll("[", ".").replaceAll("]", "")] = error.message;
+        results[error.path.replaceAll('[', '.').replaceAll(']', '')] = error.message;
       });
       return results;
     }
@@ -780,15 +756,15 @@ var __defProp6 = Object.defineProperty;
 var __getOwnPropSymbols6 = Object.getOwnPropertySymbols;
 var __hasOwnProp6 = Object.prototype.hasOwnProperty;
 var __propIsEnum6 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp6 = (obj, key, value) => key in obj ? __defProp6(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __defNormalProp6 = (obj, key, value) =>
+  key in obj
+    ? __defProp6(obj, key, { enumerable: true, configurable: true, writable: true, value })
+    : (obj[key] = value);
 var __spreadValues6 = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp6.call(b, prop))
-      __defNormalProp6(a, prop, b[prop]);
+  for (var prop in b || (b = {})) if (__hasOwnProp6.call(b, prop)) __defNormalProp6(a, prop, b[prop]);
   if (__getOwnPropSymbols6)
     for (var prop of __getOwnPropSymbols6(b)) {
-      if (__propIsEnum6.call(b, prop))
-        __defNormalProp6(a, prop, b[prop]);
+      if (__propIsEnum6.call(b, prop)) __defNormalProp6(a, prop, b[prop]);
     }
   return a;
 };
@@ -801,7 +777,7 @@ function joiResolver(schema, options) {
     }
     const results = {};
     parsed.error.details.forEach((error) => {
-      results[error.path.join(".")] = error.message;
+      results[error.path.join('.')] = error.message;
     });
     return results;
   };
@@ -811,7 +787,7 @@ function joiResolver(schema, options) {
 function isNotEmpty(error) {
   const _error = error || true;
   return (value) => {
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       return value.trim().length > 0 ? null : _error;
     }
     if (Array.isArray(value)) {
@@ -831,7 +807,7 @@ function isNotEmpty(error) {
 function matches(regexp, error) {
   const _error = error || true;
   return (value) => {
-    if (typeof value !== "string") {
+    if (typeof value !== 'string') {
       return _error;
     }
     return regexp.test(value) ? null : _error;
@@ -845,15 +821,15 @@ function isEmail(error) {
 
 // node_modules/@mantine/form/esm/validators/has-length/has-length.mjs
 function isLengthValid(payload, value) {
-  if (typeof payload === "number") {
+  if (typeof payload === 'number') {
     return value.length === payload;
   }
   const { max, min } = payload;
   let valid = true;
-  if (typeof max === "number" && value.length > max) {
+  if (typeof max === 'number' && value.length > max) {
     valid = false;
   }
-  if (typeof min === "number" && value.length < min) {
+  if (typeof min === 'number' && value.length < min) {
     valid = false;
   }
   return valid;
@@ -861,10 +837,10 @@ function isLengthValid(payload, value) {
 function hasLength(payload, error) {
   const _error = error || true;
   return (value) => {
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       return isLengthValid(payload, value.trim()) ? null : _error;
     }
-    if (typeof value === "object" && value !== null && "length" in value) {
+    if (typeof value === 'object' && value !== null && 'length' in value) {
       return isLengthValid(payload, value) ? null : _error;
     }
     return _error;
@@ -875,14 +851,14 @@ function hasLength(payload, error) {
 function isInRange({ min, max }, error) {
   const _error = error || true;
   return (value) => {
-    if (typeof value !== "number") {
+    if (typeof value !== 'number') {
       return _error;
     }
     let valid = true;
-    if (typeof min === "number" && value < min) {
+    if (typeof min === 'number' && value < min) {
       valid = false;
     }
-    if (typeof max === "number" && value > max) {
+    if (typeof max === 'number' && value > max) {
       valid = false;
     }
     return valid ? null : _error;
@@ -913,6 +889,6 @@ export {
   superstructResolver,
   useForm,
   yupResolver,
-  zodResolver
+  zodResolver,
 };
 //# sourceMappingURL=@mantine_form.js.map

@@ -13,5 +13,5 @@ export interface Reservation {
 }
 
 export interface Product {
-  producto_nombre: string
+  producto_nombre: string;
 }
