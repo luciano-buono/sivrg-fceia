@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 
 import BaseNavbar from 'react-bootstrap/Navbar';
-import { Container, Nav, OverlayTrigger, Popover, Row } from 'react-bootstrap';
+import { Container, Nav, Row } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import './Navbar.css';
 import { LinkContainer } from 'react-router-bootstrap';

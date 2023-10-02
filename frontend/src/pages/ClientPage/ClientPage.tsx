@@ -6,6 +6,7 @@ import NotFound from '../NotFound';
 import { PrivateRoutes } from '../../App';
 import HomeClient from '../HomeClient/HomeClient';
 import BookingFormPage from '../BookingFormPage';
+import ReservationsPage from '../ReservationsPage';
 
 const ClientPage = () => (
   <>
@@ -14,6 +15,7 @@ const ClientPage = () => (
         <Route element={<PrivateRoutes redirect_to="/login" />}>
           <Route path="/" element={<HomeClient />} />
           <Route path="/booking" element={<BookingFormPage />} />
+          <Route path="/reservations" element={<ReservationsPage />} />
           <Route element={<NotFound />} />
         </Route>
         <Route path="/contact" element={<Contact />} />

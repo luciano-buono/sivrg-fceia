@@ -16,7 +16,7 @@ const UserButton: FC<{ user: UserWithRoles; handleLogout: () => Promise<void> }>
               <Popover id="popover-basic">
                 <Popover.Body className="d-flex flex-column ">
                   <Button className="mb-2">
-                    <LinkContainer to="/">
+                    <LinkContainer to="/reservations">
                       <Nav.Link>
                         <i className="fa-solid fa-calendar-days pe-2" /> Mis turnos
                       </Nav.Link>
@@ -31,7 +31,7 @@ const UserButton: FC<{ user: UserWithRoles; handleLogout: () => Promise<void> }>
           >
             <div className="d-flex flex-wrap align-content-center">
               <div style={{ cursor: 'pointer' }} className="no-select d-flex flex-wrap align-items-center">
-                <div className="pe-2">Bienvenido {`${user?.name} Cliente`}!</div>
+                <div className="pe-2">Bienvenido {`${user?.nickname}`}</div>
                 <img style={{ borderRadius: '50%', height: '40px' }} src={user?.picture} alt={user?.name} />
               </div>
             </div>

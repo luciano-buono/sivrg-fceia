@@ -25,7 +25,7 @@ const BookingModal: FC<{ show: boolean; handleClose: () => void }> = ({ show, ha
       </Modal.Header>
       <form onSubmit={form.onSubmit((values) => console.log(values))}>
         <Modal.Body>
-          <TextInput withAsterisk label="Nombres" placeholder="" {...form.getInputProps('name')} />
+          <TextInput withAsterisk label="Nombres" placeholder="" {...form.getInputProps('firstname')} />
           <TextInput withAsterisk label="Apellido" placeholder="" {...form.getInputProps('lastname')} />
           <TextInput withAsterisk label="Email" placeholder="your@email.com" {...form.getInputProps('email')} />
           <div className="pt-3"> Seleccione una fecha:</div>
