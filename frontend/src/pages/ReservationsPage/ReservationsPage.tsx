@@ -3,13 +3,15 @@ import { Reservation } from '../../types';
 import { Card, Container } from 'react-bootstrap';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useState } from 'react';
+import useSession from '../../hooks/useSession';
+import { Skeleton } from '@mantine/core';
 
 const now = new Date(Date.now());
 
 const RESERVATIONS_MOCK: Reservation[] = [
   {
-    firstname: 'Julio',
-    lastname: 'Guella',
+    firstname: 'Nombre1',
+    lastname: 'Apellido1',
     documentNumber: '1234567',
     birthdate: now.toLocaleString('es-AR'),
     email: 'test@hola.com',
@@ -21,8 +23,8 @@ const RESERVATIONS_MOCK: Reservation[] = [
     totalWeight: 123,
   },
   {
-    firstname: 'Lucho',
-    lastname: 'Buono',
+    firstname: 'Nombre2',
+    lastname: 'Apellido2',
     documentNumber: '1234567',
     birthdate: now.toLocaleString('es-AR'),
     email: 'test@hola.com',
@@ -68,35 +70,39 @@ const ReservationsPage = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const { isLoading } = useSession();
+
   return (
     <Container className="d-flex flex-column flex-wrap align-content-center pt-2">
       <div className="h1"> Mis turnos </div>
-      <Card className="d-flex w-100">
-        <Card.Body>
-          <table className="table table-bordered">
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Card.Body>
-      </Card>
+      <Skeleton visible={isLoading}>
+        <Card className="d-flex w-100">
+          <Card.Body>
+            <table className="table table-bordered">
+              <thead>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th key={header.id}>
+                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {table.getRowModel().rows.map((row) => (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Card.Body>
+        </Card>
+      </Skeleton>
     </Container>
   );
 };
