@@ -48,7 +48,7 @@ class Rfid(RfidBase):
 
 
 class ChoferBase(BaseModel):
-    rfid_uid: int
+    rfid_uid: int | None = None
     nombre: str
     apellido: str
     dni: int
@@ -59,7 +59,7 @@ class ChoferCreate(ChoferBase):
     pass
 
 class Chofer(ChoferBase):
-    chofer_id: int
+    chofer_id: int | None = None
 
     class Config:
         orm_mode = True
@@ -113,10 +113,7 @@ class Silo(SiloBase):
 
 class TurnoBase(BaseModel):
     turno_fecha: date
-    # chofer_id: int
-    # chofer_dni: int
-    # chofer_nombre: str
-    chofer: ChoferBase
+    chofer: Chofer
     patente: str
     empresa_id: int
     producto_id: int

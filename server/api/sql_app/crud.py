@@ -166,10 +166,10 @@ def get_silos(db: Session, skip: int = 0, limit: int = 100):
 
 ## ------------Turnos operations---------------------
 # Create a Turno
-def create_turno(db: Session, turno: schemas.TurnoCreate, chofer_id: int):
+def create_turno(db: Session, turno: schemas.TurnoCreate):
     db_turno = models.Turno(
         turno_fecha=turno.turno_fecha,
-        chofer_id=chofer_id,
+        chofer=turno.chofer,
         patente=turno.patente,
         empresa_id=turno.empresa_id,
         producto_id=turno.producto_id

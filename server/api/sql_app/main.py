@@ -214,11 +214,8 @@ def create_turno(turno: schemas.TurnoCreate, db: Session = Depends(get_db)):
     if not chofer:
         chofer = crud.create_chofer(db=db, chofer=turno.chofer)
         print("Chofer created!")
-    else:
-        print("using existing chofer")
-        print(f"DNI: {chofer.dni}")
-
-    return crud.create_turno(db=db, turno=turno, chofer_id=chofer.chofer_id)
+    turno.chofer = chofer
+    return crud.create_turno(db=db, turno=turno)
 
 # Get all Turnos
 @app.get("/turnos/", response_model=list[schemas.Turno])
