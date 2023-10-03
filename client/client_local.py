@@ -4,6 +4,7 @@ import yaml
 import glob
 
 import requests, json
+import cv2, time
 
 
 from time import sleep
@@ -18,6 +19,7 @@ def get_LPR():
     with open(CONFIGFILE, 'r') as stream:
         cfg = yaml.safe_load(stream)
     SOURCE_DIR =glob.glob('../../../FOTOS/img8.jpg')
+    SOURCE_DIR =glob.glob('../../../FOTOS/opencv_frame_0.png')
 
     # Get all images in directory
     print(f"Source dir:{SOURCE_DIR}")
@@ -42,7 +44,25 @@ def get_LPR():
         print("Hay mas de una patente reconozida\nRevisar cuantas imagenes de entrada hay\Exitting..")
         exit(1)
 
+
+
+
 if __name__ == "__main__":
+    cam = cv2.VideoCapture(0)
+    cv2.namedWindow("test")
+    ret, frame = cam.read()
+    if not ret:
+        print("failed to grab frame")
+
+    img_path = "../FOTOS/"
+    img_name = "../FOTOS/opencv_frame_{}.png".format(0)
+    cv2.imwrite(img_name, frame)
+    print("{} written!".format(img_name))
+
+    cam.release
+    cv2.destroyAllWindows()
+    print("Saving photo...")
+    time.sleep(5)
     prediccion = get_LPR()
     print({"LICENSE_PLATE":prediccion})
 

@@ -3,15 +3,26 @@ from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlalchemy.orm import Session
 from datetime import datetime
 
-from . import crud, models, schemas
-from .database import SessionLocal, engine
+import crud, models, schemas
+from database import SessionLocal, engine
 
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
+from functools import lru_cache
+import config
+
+settings = config.Settings()
+
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+@lru_cache()
+def get_settings():
+    return config.Settings()
+
+app = FastAPI(title=settings.project_name)
+
+
 
 ### Cors configuration
 origins = [
@@ -267,5 +278,8 @@ def read_vehiculo(vehiculo_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Vehiculo not found")
     return vehiculo
 
-# def main():
-#     uvicorn.run("main:app", port=5000, log_level="info", reload= True)
+def main():
+    uvicorn.run("main:app", port=5000, log_level="info", reload= True)
+
+if __name__ == "__main__":
+    main()

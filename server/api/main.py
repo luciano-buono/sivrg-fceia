@@ -3,7 +3,7 @@ import uvicorn
 # from pydantic import BaseModel
 
 
-uvicorn.run("sql_app.main:app", port=5001, log_level="info", reload= True, host="0.0.0.0")
+uvicorn.run("sql_app.main:app", port=5001, log_level="info", host="0.0.0.0")
 
 
 # class LicensePlate(BaseModel):

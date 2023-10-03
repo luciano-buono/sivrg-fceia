@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 
-from . import models, schemas
+import models, schemas
 
 ## ------------Empresa operations---------------------
 

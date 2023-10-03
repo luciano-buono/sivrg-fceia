@@ -1,13 +1,10 @@
-
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-   # Base
-   api_v1_prefix: str
-   debug: bool
-   project_name: str
-   version: str
-   description: str
+    api_v1_prefix: str
+    debug: bool
+    project_name: str = "Awesome API"
+    version: str
+    description: str
 
-#    # Database
-#    db_async_connection_str: str
+    model_config = SettingsConfigDict(env_file=".env")
