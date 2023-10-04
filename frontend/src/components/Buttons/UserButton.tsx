@@ -49,7 +49,7 @@ const UserButton: FC<{ user: UserWithRoles; handleLogout: () => Promise<void> }>
       >
         <div className="d-flex flex-wrap align-content-center">
           <div style={{ cursor: 'pointer' }} className="no-select d-flex flex-wrap align-items-center">
-            <div className="pe-2">Bienvenido {`${user?.nickname}`}</div>
+            <div className="pe-2">Bienvenido {`${user.nickname ? user?.nickname.charAt(0).toUpperCase() + user.nickname.slice(1) : ''}!`}</div>
             <img style={{ borderRadius: '50%', height: '40px' }} src={user?.picture} alt={user?.name} />
           </div>
         </div>
