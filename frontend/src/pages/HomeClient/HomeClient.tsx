@@ -38,7 +38,7 @@ const HomeClient = () => {
                   className="d-flex flex-wrap justify-content-center align-content-center"
                   onClick={() => navigate('/booking')}
                 >
-                  <span className="text-white fw-bold fs-5">Sacar un turno</span>
+                  <span className="text-white fw-bold fs-5">Agendar turno</span>
                 </Button>
               </Card.Body>
             </Card>
