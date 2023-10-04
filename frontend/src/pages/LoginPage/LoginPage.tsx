@@ -1,6 +1,6 @@
 import React from 'react';
-import { Loader } from '@mantine/core';
-import { Button, Card, Container } from 'react-bootstrap';
+import { Button, Loader } from '@mantine/core';
+import { Card, Container } from 'react-bootstrap';
 import useSession from '../../hooks/useSession';
 
 const LoginPage = () => {
@@ -12,15 +12,14 @@ const LoginPage = () => {
         <Card.Body className="d-flex flex-wrap justify-content-center">
           {isLoading ? (
             <div className="d-flex justify-content-center">
-              <Loader />
+              <Loader type='dots'/>
             </div>
           ) : (
             <Button
-              style={{ width: '250px', height: '70px', borderRadius: '25px' }}
-              className="d-flex flex-wrap justify-content-center align-content-center bg-primary"
+              className="d-flex flex-wrap justify-content-center align-content-center"
               onClick={() => loginWithPopup()}
             >
-              <span className="text-white fw-bold fs-5">Inicia sesión</span>
+              <span className="text-white fw-bold fs-5 p-4">Iniciar sesión</span>
             </Button>
           )}
         </Card.Body>

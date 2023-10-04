@@ -155,7 +155,7 @@ const BookingFormPage = () => {
                           <NumberInput
                             required
                             withAsterisk
-                            label="Número de acoplados"
+                            label="Nro. de acoplados"
                             placeholder=""
                             {...form.getInputProps('trailersQuantity')}
                           />
@@ -238,7 +238,7 @@ const BookingFormPage = () => {
                       <span className="pb-2 w-auto d-flex justify-content-center text-danger  ">
                         {form.errors.bookingDate}
                       </span>
-                      <Button type="submit">Pedir turno!</Button>
+                      <Button type="submit">Agendar turno!</Button>
                     </div>
                   </Card.Body>
                 </Card>
