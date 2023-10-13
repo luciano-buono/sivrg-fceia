@@ -1,13 +1,9 @@
 from fastapi import Depends, FastAPI, HTTPException, Query, Response, status, Security
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer
-
-
 from fastapi_auth0 import Auth0, Auth0User
 
 
 import uvicorn
-from utils import VerifyToken
 
 from sqlalchemy.orm import Session
 from datetime import datetime
@@ -26,9 +22,6 @@ models.Base.metadata.create_all(bind=engine)
 @lru_cache()
 def get_settings():
     return config.Settings()
-
-# Scheme for the Authorization header
-token_auth_scheme = HTTPBearer()
 
 #Fastapi-Auth0
 auth = Auth0(domain=settings.domain, api_audience=settings.api_audience,scopes={})
@@ -283,21 +276,18 @@ def read_vehiculo(vehiculo_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Vehiculo not found")
     return vehiculo
 
+# Get a Vehiculo by ID SECURE
+@app.get("/vehiculos/secure/{vehiculo_id}", response_model=schemas.Vehiculo, dependencies=[Depends(auth.implicit_scheme)])
+def read_vehiculo(vehiculo_id: int, db: Session = Depends(get_db), user: Auth0User = Security(auth.get_user)):
+    vehiculo = crud.get_vehiculo(db, vehiculo_id)
+    if vehiculo is None:
+        raise HTTPException(status_code=404, detail="Vehiculo not found")
+    return vehiculo
+
 # FastAPI auth AUTH0
-@app.get("/api/private")
-def private(response: Response, token: str = Depends(token_auth_scheme)):
-    """A valid access token is required to access this route"""
-
-    result = VerifyToken(token.credentials).verify()
-    if result.get("status"):
-        raise HTTPException(status_code=401, detail="result")
-
-    return result
-
 @app.get("/api/private2", dependencies=[Depends(auth.implicit_scheme)])
 def get_secure(user: Auth0User = Security(auth.get_user)):
     return {"message": f"{user}"}
-
 
 def main():
     uvicorn.run("main:app", port=5000, log_level="info", reload= True)
