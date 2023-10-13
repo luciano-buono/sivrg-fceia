@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Button, Loader } from '@mantine/core';
 import { Card, Container } from 'react-bootstrap';
 import useSession from '../../hooks/useSession';
@@ -12,7 +12,7 @@ const LoginPage = () => {
         <Card.Body className="d-flex flex-wrap justify-content-center">
           {isLoading ? (
             <div className="d-flex justify-content-center">
-              <Loader type='dots'/>
+              <Loader type="dots" />
             </div>
           ) : (
             <Button

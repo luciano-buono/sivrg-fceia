@@ -60,7 +60,7 @@ const BookingFormPage = () => {
               <Row>
                 <Card className="mb-3">
                   <Card.Body>
-                    <FormLabel className='fw-bold py-1'> Seleccione chofer </FormLabel>
+                    <FormLabel className="fw-bold py-1"> Seleccione chofer </FormLabel>
                     <Select
                       disabled={showDriverForm}
                       placeholder="Busque chofer por nombre"

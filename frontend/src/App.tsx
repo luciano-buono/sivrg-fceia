@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Navigate } from 'react-router-dom';
 import { Outlet, Route, Routes } from 'react-router';
 import { Auth0Provider } from '@auth0/auth0-react';
@@ -32,6 +32,7 @@ const theme = createTheme({
 });
 
 function AppWrapper() {
+
   return (
     <BrowserRouter>
       <Auth0Provider
@@ -39,6 +40,7 @@ function AppWrapper() {
         clientId="vum6xRm32RbmlDjMEaQb84dAxGD0AbgV"
         authorizationParams={{
           redirect_uri: window.location.origin,
+          audience: "https://api.sivrg.methizul.com",
         }}
       >
         <QueryClientProvider client={queryClient}>
@@ -56,6 +58,23 @@ function AppWrapper() {
 }
 
 const App = () => {
+
+  const {getAccessTokenSilently, isAuthenticated} = useSession()
+  useEffect(() => {
+    const getNewToken = async () => {
+      let newAccessToken = '';
+      try {
+        newAccessToken = await getAccessTokenSilently();
+      } catch(e) {
+        console.log('Login required!')
+      }
+      window.localStorage.setItem('token', newAccessToken);
+    }
+
+    getNewToken()
+  }, [getAccessTokenSilently, isAuthenticated])
+
+
   return (
     <>
       <Navbar />

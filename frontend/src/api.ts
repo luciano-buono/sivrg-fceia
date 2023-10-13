@@ -1,0 +1,29 @@
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: 'https://api-sivrg.methizul.com.ar:8443/api/',
+});
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// export const getUser = () => {
+//   return api.get('/user');
+// };
+
+// export const deleteUser = (userId) => {
+//   return api.delete(`/user/${userId}`);
+// };
+
+
+export default api;

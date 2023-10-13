@@ -4,7 +4,7 @@ import { OverlayTrigger, Popover, Button, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { UserWithRoles } from '../../hooks/useSession';
 
-const ClientActions = () => 
+const ClientActions = () => (
   <>
     <Button className="mb-2">
       <LinkContainer to="/booking">
@@ -21,13 +21,9 @@ const ClientActions = () =>
       </LinkContainer>
     </Button>
   </>
+);
 
-
-const EmployeeActions = () => 
-  <>
-    {null}
-  </>
-
+const EmployeeActions = () => <>{null}</>;
 
 const UserButton: FC<{ user: UserWithRoles; handleLogout: () => Promise<void> }> = ({ user, handleLogout }) => {
   return (
@@ -49,7 +45,9 @@ const UserButton: FC<{ user: UserWithRoles; handleLogout: () => Promise<void> }>
       >
         <div className="d-flex flex-wrap align-content-center">
           <div style={{ cursor: 'pointer' }} className="no-select d-flex flex-wrap align-items-center">
-            <div className="pe-2">Bienvenido {`${user.nickname ? user?.nickname.charAt(0).toUpperCase() + user.nickname.slice(1) : ''}!`}</div>
+            <div className="pe-2">
+              Bienvenido {`${user.nickname ? user?.nickname.charAt(0).toUpperCase() + user.nickname.slice(1) : ''}!`}
+            </div>
             <img style={{ borderRadius: '50%', height: '40px' }} src={user?.picture} alt={user?.name} />
           </div>
         </div>
