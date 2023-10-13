@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://api-sivrg.methizul.com.ar:8443/api/',
+  baseURL: 'https://api-sivrg.methizul.com.ar:8443/',
 });
 
 api.interceptors.request.use(

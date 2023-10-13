@@ -14,7 +14,7 @@ const HomeClient = () => {
   const { refetch } = useQuery(
     'data',
     () =>
-      api.get('/private2').then((res: any) => {
+      api.get('/vehiculos/secure/1').then((res: any) => {
         console.log(res);
       }),
     {
