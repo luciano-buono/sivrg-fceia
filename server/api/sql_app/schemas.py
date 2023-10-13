@@ -18,8 +18,7 @@ class Empresa(EmpresaBase):
     empresa_id: int
 
     class Config:
-        orm_mode = True
-
+        from_attributes = True
 
 class ProductoBase(BaseModel):
     producto_nombre: str
@@ -32,7 +31,7 @@ class Producto(ProductoBase):
     producto_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class RfidBase(BaseModel):
     chofer_id: int
@@ -44,7 +43,7 @@ class Rfid(RfidBase):
     rfid_uid: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ChoferBase(BaseModel):
@@ -62,7 +61,7 @@ class Chofer(ChoferBase):
     chofer_id: int | None = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PesadaInBase(BaseModel):
     chofer_id: int
@@ -78,7 +77,7 @@ class PesadaIn(PesadaInBase):
     pesadaIn_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PesadaOutBase(BaseModel):
     chofer_id: int
@@ -94,7 +93,7 @@ class PesadaOut(PesadaOutBase):
     pesadaOut_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SiloBase(BaseModel):
     producto_id: int
@@ -109,7 +108,7 @@ class Silo(SiloBase):
     silo_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TurnoBase(BaseModel):
     turno_fecha: date
@@ -126,7 +125,7 @@ class Turno(TurnoBase):
     created_on: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class VehiculoBase(BaseModel):
@@ -145,4 +144,4 @@ class Vehiculo(VehiculoBase):
     vehiculo_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

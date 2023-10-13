@@ -5,6 +5,7 @@ __pycache__
 
 #api
 api/venv/
+.config
 
 
 venv/
