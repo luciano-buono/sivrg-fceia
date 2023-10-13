@@ -3,6 +3,8 @@
 *.pyc
 __pycache__
 
+node_modules/
+
 #api
 api/venv/
 .config
