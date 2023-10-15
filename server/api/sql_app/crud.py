@@ -80,7 +80,7 @@ def get_productos(db: Session, skip: int = 0, limit: int = 100):
 
 def create_producto(db: Session, producto: schemas.ProductoCreate):
     db_producto = models.Producto(
-        producto_nombre=producto.producto_nombre, unidad=producto.unidad
+        producto_nombre=producto.producto_nombre
     )
     db.add(db_producto)
     db.commit()
