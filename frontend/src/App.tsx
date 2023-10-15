@@ -32,18 +32,17 @@ const theme = createTheme({
 });
 
 function AppWrapper() {
-
   return (
     <BrowserRouter>
-      <Auth0Provider
-        domain="methizul.us.auth0.com"
-        clientId="vum6xRm32RbmlDjMEaQb84dAxGD0AbgV"
-        authorizationParams={{
-          redirect_uri: window.location.origin,
-          audience: "https://api.sivrg.methizul.com",
-        }}
-      >
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <Auth0Provider
+          domain="methizul.us.auth0.com"
+          clientId="vum6xRm32RbmlDjMEaQb84dAxGD0AbgV"
+          authorizationParams={{
+            redirect_uri: window.location.origin,
+            audience: 'https://api.sivrg.methizul.com',
+          }}
+        >
           <MantineProvider theme={theme}>
             <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 0, weekendDays: [0] }}>
               <Notifications />
@@ -51,29 +50,27 @@ function AppWrapper() {
             </DatesProvider>
           </MantineProvider>
           <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-      </Auth0Provider>
+        </Auth0Provider>
+      </QueryClientProvider>
     </BrowserRouter>
   );
 }
 
 const App = () => {
-
-  const {getAccessTokenSilently, isAuthenticated} = useSession()
+  const { getAccessTokenSilently, isAuthenticated } = useSession();
   useEffect(() => {
     const getNewToken = async () => {
       let newAccessToken = '';
       try {
         newAccessToken = await getAccessTokenSilently();
-      } catch(e) {
-        console.log('Login required!')
+      } catch (e) {
+        console.log('Login required!');
       }
       window.localStorage.setItem('token', newAccessToken);
-    }
+    };
 
-    getNewToken()
-  }, [getAccessTokenSilently, isAuthenticated])
-
+    getNewToken();
+  }, [getAccessTokenSilently, isAuthenticated]);
 
   return (
     <>

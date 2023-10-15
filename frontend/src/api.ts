@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://api-sivrg.methizul.com.ar:8443/',
+  baseURL: 'https://api-sivrg.methizul.com.ar:8443',
 });
 
 api.interceptors.request.use(
@@ -14,16 +14,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
-
-// export const getUser = () => {
-//   return api.get('/user');
-// };
-
-// export const deleteUser = (userId) => {
-//   return api.delete(`/user/${userId}`);
-// };
-
 
 export default api;

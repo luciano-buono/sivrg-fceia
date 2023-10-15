@@ -7,7 +7,7 @@ const useSession = () => {
 
   const rolesKey = 'https://sivrg.methizul.com/roles';
   const userWithRoles = data.user ? { ...data.user, roles: data.user[rolesKey] } : null;
-  
+
   return {
     ...data,
     user: userWithRoles as UserWithRoles,

@@ -12,6 +12,18 @@ export interface Reservation {
   totalWeight: number;
 }
 
-export interface Product {
+export interface Producto {
   producto_nombre: string;
 }
+
+interface Chofer {
+  rfid_uid: number;
+  nombre: string;
+  apellido: string;
+  dni: number;
+  empresa_id: number;
+  habilitado: boolean;
+  chofer_id: number;
+}
+
+type ChoferData = Omit<Chofer, 'chofer_id'>;
