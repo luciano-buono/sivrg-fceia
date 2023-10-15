@@ -1,0 +1,16 @@
+services:
+  api:
+    container_name: api
+    # image: python:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.orange
+    # volumes:
+    #   - ./api:/usr/src/app
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    ports: 
+      - 8443:8443
+    environment:
+      APP: api
+    # command: /bin/sh
