@@ -6,8 +6,8 @@ import Contact from '../Contact';
 import NotFound from '../NotFound';
 import { PrivateRoutes } from '../../App';
 import HomeClient from '../HomeClient/HomeClient';
-import BookingFormPage from '../BookingFormPage';
 import ReservationsPage from '../ReservationsPage';
+import BookingStepper from '../BookingFormPage/BookingStepper';
 
 const ClientPage = () => (
   <>
@@ -15,7 +15,7 @@ const ClientPage = () => (
       <Routes>
         <Route element={<PrivateRoutes redirect_to="/login" />}>
           <Route path="/" element={<HomeClient />} />
-          <Route path="/booking" element={<BookingFormPage />} />
+          <Route path="/booking" element={<BookingStepper />} />
           <Route path="/reservations" element={<ReservationsPage />} />
           <Route element={<NotFound />} />
         </Route>

@@ -21,7 +21,7 @@ const HomeClient = () => {
       enabled: false,
       refetchOnWindowFocus: false,
       retry: false,
-      onSuccess : () => {
+      onSuccess: () => {
         notifications.show({
           title: 'Access granted!',
           color: 'green',
