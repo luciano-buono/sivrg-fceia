@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import date, datetime
 
+
 class EmpresaBase(BaseModel):
     empresa_nombre: str
     empresa_RS: str
@@ -11,8 +12,10 @@ class EmpresaBase(BaseModel):
     empresa_pais: str
     empresa_telefono: str
 
+
 class EmpresaCreate(EmpresaBase):
     pass
+
 
 class Empresa(EmpresaBase):
     empresa_id: int
@@ -20,27 +23,17 @@ class Empresa(EmpresaBase):
     class Config:
         from_attributes = True
 
+
 class ProductoBase(BaseModel):
     producto_nombre: str
-    unidad: str
+
 
 class ProductoCreate(ProductoBase):
     pass
 
+
 class Producto(ProductoBase):
     producto_id: int
-
-    class Config:
-        from_attributes = True
-
-class RfidBase(BaseModel):
-    chofer_id: int
-
-class RfidCreate(RfidBase):
-    pass
-
-class Rfid(RfidBase):
-    rfid_uid: int
 
     class Config:
         from_attributes = True
@@ -54,46 +47,37 @@ class ChoferBase(BaseModel):
     empresa_id: int
     habilitado: bool
 
+
 class ChoferCreate(ChoferBase):
     pass
 
+
 class Chofer(ChoferBase):
-    chofer_id: int | None = None
+    chofer_id: int
+    empresa: Empresa
 
     class Config:
         from_attributes = True
 
-class PesadaInBase(BaseModel):
+
+class PesadaBase(BaseModel):
     chofer_id: int
     peso_bruto: float
     patente: str
     empresa_id: int
     producto_id: int
 
-class PesadaInCreate(PesadaInBase):
+
+class PesadaCreate(PesadaBase):
     pass
 
-class PesadaIn(PesadaInBase):
+
+class Pesada(PesadaBase):
     pesadaIn_id: int
 
     class Config:
         from_attributes = True
 
-class PesadaOutBase(BaseModel):
-    chofer_id: int
-    peso_bruto: float
-    patente: str
-    empresa_id: int
-    producto_id: int
-
-class PesadaOutCreate(PesadaOutBase):
-    pass
-
-class PesadaOut(PesadaOutBase):
-    pesadaOut_id: int
-
-    class Config:
-        from_attributes = True
 
 class SiloBase(BaseModel):
     producto_id: int
@@ -101,24 +85,31 @@ class SiloBase(BaseModel):
     utilizado: int
     estado: int
 
+
 class SiloCreate(SiloBase):
     pass
 
+
 class Silo(SiloBase):
     silo_id: int
+    producto: Producto
 
     class Config:
         from_attributes = True
 
+
 class TurnoBase(BaseModel):
     turno_fecha: date
-    chofer: Chofer
-    patente: str
+    cantidad_estimada: int
+    chofer_id: int
     empresa_id: int
     producto_id: int
+    vehiculo_id: int
+
 
 class TurnoCreate(TurnoBase):
     pass
+
 
 class Turno(TurnoBase):
     turno_id: int
@@ -130,18 +121,21 @@ class Turno(TurnoBase):
 
 class VehiculoBase(BaseModel):
     patente: str
-    capacidad: int
     seguro: str
     modelo: str
     año: int
     marca: str
     habilitado: bool
+    empresa_id: int
+
 
 class VehiculoCreate(VehiculoBase):
     pass
 
+
 class Vehiculo(VehiculoBase):
     vehiculo_id: int
+    empresa: Empresa
 
     class Config:
         from_attributes = True
