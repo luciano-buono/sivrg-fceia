@@ -1,76 +1,54 @@
-import { Input, NumberInput, TextInput } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import { FC } from 'react';
-import { Card, Col, FormLabel, Row } from 'react-bootstrap';
+import { Collapse, Switch } from '@mantine/core';
+import { FC, useState } from 'react';
+import { Card } from 'react-bootstrap';
 import { useQueries } from 'react-query';
 import api from '../../api';
-import { Chofer } from '../../types';
+import { Vehiculo } from '../../types';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
+import VehiculoForm from '../../components/Forms/VehiculoForm';
+import SearchInput from '../../components/Forms/Inputs/SearchInput';
 
 const StepVehiculo: FC = () => {
-  const [productos] = useQueries([
-    {
-      queryKey: ['productos'],
-      queryFn: () => api.get<Chofer[]>('/productos/').then((res) => res.data),
-    },
-  ]);
+  const [showForm, setShowForm] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+
+  const closeForm = () => setShowForm(false);
+
+  const updateSearch = (value: string) => {
+    setSearchValue(value);
+  };
 
   const form = useBookingFormContext();
 
+  const [vehiculos] = useQueries([
+    {
+      queryKey: ['vehiculos'],
+      queryFn: () => api.get<Vehiculo[]>('/vehiculos/').then((res) => res.data),
+    },
+  ]);
+
+  const selectData = vehiculos.data?.map((vehiculo) => ({
+    value: vehiculo.patente,
+    label: `Patente: ${vehiculo.patente},  ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`,
+  }));
+
   return (
-    <Card className="mb-3">
+    <Card>
       <Card.Body>
-        <div>
-          <FormLabel className="fw-bold py-1"> Datos de camión </FormLabel>
-          <Row>
-            <Col>
-              <TextInput required label="Modelo de camión" {...form.getInputProps('truckType')} />
-            </Col>
-          </Row>
-          <Row>
-            <Col className="w-25">
-              <TextInput required label="Patente" placeholder="" {...form.getInputProps('plate')} />
-            </Col>
-            <Col className="w-50">
-              <NumberInput
-                required
-                label="Nro. de acoplados"
-                placeholder=""
-                {...form.getInputProps('trailersQuantity')}
-              />
-            </Col>
-          </Row>
+        <SearchInput
+          field={'vehiculo_id'}
+          data={selectData}
+          searchValue={searchValue}
+          setSearchValue={setSearchValue}
+          form={form}
+          searchPlaceholder="Busque un vehículo por patente, modelo o marca..."
+        />
+        <div className="d-flex justify-content-center py-3 ">
+          <Switch onChange={() => setShowForm((prev) => !prev)} checked={showForm} label="Nuevo vehículo?" />
         </div>
-        <div>
-          <FormLabel className="fw-bold py-1"> Datos de producto </FormLabel>
-          <Row>
-            <Col>
-              <Input.Wrapper label="Tipo de grano">
-                <Input
-                  component="select"
-                  rightSection={<i className="fa-solid fa-angle-down" />}
-                  {...form.getInputProps('grainType')}
-                >
-                  {productos.data?.map((product: any) => (
-                    <option key={product.producto_nombre} value={product.producto_nombre}>
-                      {product.producto_nombre}
-                    </option>
-                  ))}
-                </Input>
-              </Input.Wrapper>
-            </Col>
-            <Col>
-              <NumberInput
-                required
-                label="Toneladas aprox."
-                decimalScale={2}
-                min={-1}
-                step={0.05}
-                {...form.getInputProps('totalWeight')}
-              />
-            </Col>
-          </Row>
-        </div>
+        <Collapse in={showForm}>
+          <VehiculoForm updateSearch={updateSearch} closeFn={closeForm} />
+        </Collapse>
       </Card.Body>
     </Card>
   );
