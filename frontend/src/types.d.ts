@@ -26,4 +26,14 @@ interface Chofer {
   chofer_id: number;
 }
 
+interface Vehiculo {
+  patente: string;
+  seguro: string;
+  modelo: string;
+  año: number;
+  marca: string;
+  habilitado: boolean;
+  empresa_id: string;
+}
+
 type ChoferData = Omit<Chofer, 'chofer_id'>;

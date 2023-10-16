@@ -7,31 +7,29 @@ import StepChofer from './StepChofer';
 import StepVehiculo from './StepVehiculo';
 import StepFecha from './StepFecha';
 import { BookingFormProvider, useBookingForm } from '../../contexts/BookingFormContext';
+import StepProducto from './StepProducto';
 
 const BookingStepper = () => {
   const [active, setActive] = useState(0);
 
   const form = useBookingForm({
     initialValues: {
-      chofer: '',
+      chofer_id: '',
+      empresa_id: '',
+      producto_id: '',
       bookingDate: null,
-      plate: '',
-      truckType: '',
-      trailersQuantity: 0,
-      grainType: '',
-      totalWeight: 0,
+      cantidad_estimada: 0,
     },
 
     validate: (values) => {
       if (active === 0) {
         return {
-          chofer: values.chofer === '' ? 'Busca o crea un chófer' : null,
+          chofer_id: values.chofer_id === '' ? 'Busque o cree un chofer' : null,
         };
       }
       return {};
     },
   });
-
   const handleSubmit = (values: any) => {
     notifications.show({
       title: 'Turno agendado!',
@@ -45,10 +43,10 @@ const BookingStepper = () => {
       if (form.validate().hasErrors) {
         return current;
       }
-      if (current === 2) {
+      if (current === 3) {
         handleSubmit(form.values);
       }
-      return current < 3 ? current + 1 : current;
+      return current < 4 ? current + 1 : current;
     });
 
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
@@ -59,13 +57,16 @@ const BookingStepper = () => {
         <Card>
           <Card.Body>
             <Stepper active={active}>
-              <Stepper.Step label="Primer paso" description="Seleccione chófer">
+              <Stepper.Step label="Primer paso" description="Chofer">
                 <StepChofer />
               </Stepper.Step>
-              <Stepper.Step label="Segundo paso" description="Detalles del vehículo">
+              <Stepper.Step label="Segundo paso" description="Vehículo">
                 <StepVehiculo />
               </Stepper.Step>
-              <Stepper.Step label="Último paso" description="Seleccione fecha">
+              <Stepper.Step label="Tercer paso" description="Producto">
+                <StepProducto />
+              </Stepper.Step>
+              <Stepper.Step label="Último paso" description="Fecha">
                 <StepFecha />
               </Stepper.Step>
               <Stepper.Completed>
@@ -76,14 +77,14 @@ const BookingStepper = () => {
               </Stepper.Completed>
             </Stepper>
             <Group justify="flex-end" mt="md">
-              {active !== 0 && active !== 3 && (
+              {active !== 0 && active !== 4 && (
                 <Button variant="default" onClick={prevStep}>
                   Atrás
                 </Button>
               )}
-              {active !== 3 && active !== 2 && <Button onClick={nextStep}>Siguiente</Button>}
-              {active === 2 && <Button onClick={nextStep}>Agendar turno</Button>}
-              {active === 3 && <Button onClick={() => setActive(0)}>Agendar otro turno</Button>}
+              {active !== 4 && active !== 3 && <Button onClick={nextStep}>Siguiente</Button>}
+              {active === 3 && <Button onClick={nextStep}>Agendar turno</Button>}
+              {active === 4 && <Button onClick={() => setActive(0)}>Agendar otro turno</Button>}
             </Group>
           </Card.Body>
         </Card>

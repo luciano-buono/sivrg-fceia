@@ -1,13 +1,11 @@
 import { createFormContext } from '@mantine/form';
 
 interface BookingFormValues {
-  chofer: number | string | null;
+  chofer_id: number | string | null;
+  empresa_id: number | string | null;
+  producto_id: number | string | null;
   bookingDate: Date | null;
-  plate: string;
-  truckType: string;
-  trailersQuantity: number;
-  grainType: string;
-  totalWeight: number;
+  cantidad_estimada: number;
 }
 
 // You can give context variables any name
