@@ -3,8 +3,8 @@ services:
     container_name: api
     # image: python:latest
     build:
-      context: .
-      dockerfile: Dockerfile.orange
+      context: ./api
+      dockerfile: ./api/Dockerfile.orange
     # volumes:
     #   - ./api:/usr/src/app
     stdin_open: true # docker run -i
@@ -19,7 +19,7 @@ services:
     container_name: db
     image: postgres:latest
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data
+      - ./database/postgres_data:/var/lib/postgresql/data
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     ports:
