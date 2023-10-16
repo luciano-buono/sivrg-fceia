@@ -1,7 +1,7 @@
 import { Collapse, Switch } from '@mantine/core';
 import { FC, useState } from 'react';
 import { Card } from 'react-bootstrap';
-import { useQueries } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import api from '../../api';
 import { Vehiculo } from '../../types';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
@@ -20,14 +20,12 @@ const StepVehiculo: FC = () => {
 
   const form = useBookingFormContext();
 
-  const [vehiculos] = useQueries([
-    {
-      queryKey: ['vehiculos'],
-      queryFn: () => api.get<Vehiculo[]>('/vehiculos/').then((res) => res.data),
-    },
-  ]);
+  const { data: vehiculos } = useQuery({
+    queryKey: ['vehiculos'],
+    queryFn: () => api.get<Vehiculo[]>('/vehiculos/').then((res) => res.data),
+  });
 
-  const selectData = vehiculos.data?.map((vehiculo) => ({
+  const selectData = vehiculos?.map((vehiculo) => ({
     value: vehiculo.patente,
     label: `Patente: ${vehiculo.patente},  ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`,
   }));
@@ -42,6 +40,9 @@ const StepVehiculo: FC = () => {
           setSearchValue={setSearchValue}
           form={form}
           searchPlaceholder="Busque un vehículo por patente, modelo o marca..."
+          valuePlaceholder="Sin selección"
+          searchLabel="Seleccione un vehículo"
+          valueLabel="Vehículo"
         />
         <div className="d-flex justify-content-center py-3 ">
           <Switch onChange={() => setShowForm((prev) => !prev)} checked={showForm} label="Nuevo vehículo?" />

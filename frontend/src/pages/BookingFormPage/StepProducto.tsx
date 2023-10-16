@@ -1,11 +1,10 @@
-import { Collapse, Select, Switch, TextInput, Tooltip } from '@mantine/core';
+import { Collapse, Switch } from '@mantine/core';
 import { FC, useState } from 'react';
-import { Card, Col, Row } from 'react-bootstrap';
-import { useQueries } from 'react-query';
+import { Card } from 'react-bootstrap';
+import { useQuery } from '@tanstack/react-query';
 import api from '../../api';
-import { Producto, Vehiculo } from '../../types';
+import { Producto } from '../../types';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
-import VehiculoForm from '../../components/Forms/VehiculoForm';
 import SearchInput from '../../components/Forms/Inputs/SearchInput';
 import ProductoForm from '../../components/Forms/ProductoForm';
 
@@ -21,14 +20,12 @@ const StepProducto: FC = () => {
 
   const form = useBookingFormContext();
 
-  const [productos] = useQueries([
-    {
-      queryKey: ['productos'],
-      queryFn: () => api.get<Producto[]>('/productos/').then((res) => res.data),
-    },
-  ]);
+  const { data: productos } = useQuery({
+    queryKey: ['productos'],
+    queryFn: () => api.get<Producto[]>('/productos/').then((res) => res.data),
+  });
 
-  const selectData = productos.data?.map((producto, index) => ({
+  const selectData = productos?.map((producto, index) => ({
     value: `${producto.producto_nombre} ${index}`, //TODO: REMOVER, BORRAR LABES REPETIDOS EN LA DB
     label: `${producto.producto_nombre}`,
   }));
@@ -37,12 +34,15 @@ const StepProducto: FC = () => {
     <Card>
       <Card.Body>
         <SearchInput
-          field={'vehiculo_id'}
+          field={'producto_id'}
           data={selectData}
           searchValue={searchValue}
           setSearchValue={setSearchValue}
           form={form}
           searchPlaceholder="Busque un producto por nombre..."
+          valuePlaceholder="Sin selección"
+          searchLabel="Seleccione un producto"
+          valueLabel="Producto"
         />
         <div className="d-flex justify-content-center py-3 ">
           <Switch onChange={() => setShowForm((prev) => !prev)} checked={showForm} label="Nuevo producto?" />
