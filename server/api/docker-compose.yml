@@ -1,7 +1,8 @@
 services:
   api:
     container_name: api
-    image: api_sivrg
+    # image: api_sivrg
+    build: .
     volumes:
       - ./sql_app.db:/code/sql_app.db
     stdin_open: true # docker run -i
@@ -10,4 +11,4 @@ services:
       - 8000:8000
     environment:
       APP: api
-    command: /bin/sh
+    # command: /bin/sh
