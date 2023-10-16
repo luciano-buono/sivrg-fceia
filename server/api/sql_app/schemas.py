@@ -73,7 +73,7 @@ class PesadaCreate(PesadaBase):
 
 
 class Pesada(PesadaBase):
-    pesadaIn_id: int
+    pesada_id: int
 
     class Config:
         from_attributes = True
@@ -111,14 +111,6 @@ class TurnoCreate(TurnoBase):
     pass
 
 
-class Turno(TurnoBase):
-    turno_id: int
-    created_on: datetime
-
-    class Config:
-        from_attributes = True
-
-
 class VehiculoBase(BaseModel):
     patente: str
     seguro: str
@@ -136,6 +128,18 @@ class VehiculoCreate(VehiculoBase):
 class Vehiculo(VehiculoBase):
     vehiculo_id: int
     empresa: Empresa
+
+    class Config:
+        from_attributes = True
+
+
+class Turno(TurnoBase):
+    turno_id: int
+    created_on: datetime
+    empresa: Empresa
+    chofer: Chofer
+    producto: Producto
+    vehiculo: Vehiculo
 
     class Config:
         from_attributes = True

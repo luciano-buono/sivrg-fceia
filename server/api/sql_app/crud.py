@@ -79,9 +79,7 @@ def get_productos(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_producto(db: Session, producto: schemas.ProductoCreate):
-    db_producto = models.Producto(
-        producto_nombre=producto.producto_nombre
-    )
+    db_producto = models.Producto(producto_nombre=producto.producto_nombre)
     db.add(db_producto)
     db.commit()
     db.refresh(db_producto)
@@ -134,11 +132,7 @@ def create_chofer(db: Session, chofer: schemas.ChoferCreate):
 
 
 def get_pesada(db: Session, pesada_id: int):
-    return (
-        db.query(models.Pesada)
-        .filter(models.Pesada.pesadaIn_id == pesada_id)
-        .first()
-    )
+    return db.query(models.Pesada).filter(models.Pesada.pesada_id == pesada_id).first()
 
 
 def get_pesadas_in(db: Session, skip: int = 0, limit: int = 100):
@@ -245,7 +239,7 @@ def get_silos(db: Session, skip: int = 0, limit: int = 100):
 def create_turno(db: Session, turno: schemas.TurnoCreate):
     db_turno = models.Turno(
         turno_fecha=turno.turno_fecha,
-        patente=turno.patente,
+        cantidad_estimada=turno.cantidad_estimada,
         chofer_id=turno.chofer_id,
         empresa_id=turno.empresa_id,
         producto_id=turno.producto_id,
@@ -291,12 +285,20 @@ def get_turnos_by_date_range(
     )
 
 
+# Get Turnos by patente and RFID_UID
+def get_turnos_by_patente_rfid(db: Session, patente: str, rfid_uid: int):
+    return (
+        db.query(models.Turno)
+        .filter(models.Turno.vehiculo.patente == patente)
+        .one_or_none()
+    )
+
+
 ## ------------Vehiculos operations---------------------
 # Create a Vehiculo
 def create_vehiculo(db: Session, vehiculo: schemas.VehiculoCreate):
     db_vehiculo = models.Vehiculo(
         patente=vehiculo.patente,
-        capacidad=vehiculo.capacidad,
         seguro=vehiculo.seguro,
         modelo=vehiculo.modelo,
         año=vehiculo.año,

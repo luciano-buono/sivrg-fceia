@@ -195,7 +195,7 @@ def read_chofer_by_dni(
 
 ## ------------Pesada operations---------------------
 # Create a Pesada
-@app.post("/pesadasIn/", response_model=schemas.Pesada)
+@app.post("/pesadas/", response_model=schemas.Pesada)
 def create_pesada(
     pesada: schemas.PesadaCreate,
     db: Session = Depends(get_db),
@@ -205,7 +205,7 @@ def create_pesada(
 
 
 # Get all Pesada records
-@app.get("/pesadasIn/", response_model=list[schemas.Pesada])
+@app.get("/pesadas/", response_model=list[schemas.Pesada])
 def read_pesadas(
     skip: int = 0,
     limit: int = 100,
@@ -217,7 +217,7 @@ def read_pesadas(
 
 
 # Get Pesada by ID
-@app.get("/pesadasIn/{pesada_id}", response_model=schemas.Pesada)
+@app.get("/pesadas/{pesada_id}", response_model=schemas.Pesada)
 def read_pesada(
     pesada_id: int,
     db: Session = Depends(get_db),
@@ -230,7 +230,7 @@ def read_pesada(
 
 
 # Get Pesada records by date range
-@app.get("/pesadasIn/by-date-range/", response_model=list[schemas.Pesada])
+@app.get("/pesadas/by-date-range/", response_model=list[schemas.Pesada])
 def read_pesadas_by_date_range(
     start_date: datetime = Query(..., description="Start date of the date range"),
     end_date: datetime = Query(..., description="End date of the date range"),
@@ -348,6 +348,16 @@ def read_turnos_by_date_range(
 ):
     return crud.get_turnos_by_date_range(db, start_date, end_date, skip, limit)
 
+# Validate turnos for OrangePI client
+@app.get("/turnos/validate", response_model=schemas.Turno)
+def read_turno_by_patente_rfid(
+    # patente: str = Query('a', description="Patente"),
+    # rfid_uid: int = Query(0, description="RFID"),
+    patente: str,
+    rfid_uid: int,
+    db: Session = Depends(get_db),
+):
+    return crud.get_turnos_by_patente_rfid(db=db, patente=patente, rfid_uid=rfid_uid)
 
 ## ------------Vehiculos operations---------------------
 # Create a Vehiculo

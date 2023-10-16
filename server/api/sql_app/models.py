@@ -108,7 +108,6 @@ class Vehiculo(Base):
 
     vehiculo_id = Column(Integer, primary_key=True, autoincrement=True)
     patente = Column(String, unique=True, nullable=False)
-    capacidad = Column(Integer, nullable=False)
     seguro = Column(String(255), nullable=False)
     modelo = Column(String(255), nullable=False)
     año = Column(Integer, nullable=False)
