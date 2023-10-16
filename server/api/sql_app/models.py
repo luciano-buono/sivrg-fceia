@@ -89,7 +89,7 @@ class Turno(Base):
     created_on = Column(
         TIMESTAMP, nullable=False, server_default=func.current_timestamp()
     )
-    turno_fecha = Column(Date, nullable=False)
+    turno_fecha = Column(TIMESTAMP, nullable=False)
     cantidad_estimada = Column(Integer, nullable=False)
     chofer_id = Column(Integer, ForeignKey("choferes.chofer_id"))
     empresa_id = Column(Integer, ForeignKey("empresas.empresa_id"))

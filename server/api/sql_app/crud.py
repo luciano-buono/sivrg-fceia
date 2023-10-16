@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from sqlalchemy import extract, func
 from sqlalchemy.orm import Session
 
 import models, schemas
@@ -286,11 +287,15 @@ def get_turnos_by_date_range(
 
 
 # Get Turnos by patente and RFID_UID
-def get_turnos_by_patente_rfid(db: Session, patente: str, rfid_uid: int):
+def get_turnos_by_patente_rfid(
+    db: Session, patente: str, rfid_uid: int, turno_fecha: datetime
+):
     return (
         db.query(models.Turno)
-        .filter(models.Turno.vehiculo.patente == patente)
-        .one_or_none()
+        .filter(models.Turno.vehiculo.has(patente=patente))
+        .filter(models.Turno.chofer.has(rfid_uid=rfid_uid))
+        .filter(func.date(models.Turno.turno_fecha) == turno_fecha.date())
+        .first()
     )
 
 

@@ -98,19 +98,6 @@ class Silo(SiloBase):
         from_attributes = True
 
 
-class TurnoBase(BaseModel):
-    turno_fecha: date
-    cantidad_estimada: int
-    chofer_id: int
-    empresa_id: int
-    producto_id: int
-    vehiculo_id: int
-
-
-class TurnoCreate(TurnoBase):
-    pass
-
-
 class VehiculoBase(BaseModel):
     patente: str
     seguro: str
@@ -131,6 +118,19 @@ class Vehiculo(VehiculoBase):
 
     class Config:
         from_attributes = True
+
+
+class TurnoBase(BaseModel):
+    turno_fecha: datetime
+    cantidad_estimada: int
+    chofer_id: int
+    empresa_id: int
+    producto_id: int
+    vehiculo_id: int
+
+
+class TurnoCreate(TurnoBase):
+    pass
 
 
 class Turno(TurnoBase):

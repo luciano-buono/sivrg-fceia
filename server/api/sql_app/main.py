@@ -349,15 +349,17 @@ def read_turnos_by_date_range(
     return crud.get_turnos_by_date_range(db, start_date, end_date, skip, limit)
 
 # Validate turnos for OrangePI client
-@app.get("/turnos/validate", response_model=schemas.Turno)
+@app.get("/public/turnos/validate", response_model=schemas.Turno)
 def read_turno_by_patente_rfid(
-    # patente: str = Query('a', description="Patente"),
-    # rfid_uid: int = Query(0, description="RFID"),
-    patente: str,
-    rfid_uid: int,
+    turno_fecha: datetime = Query(datetime.now(), description="Fecha"),
+    patente: str = Query('a', description="Patente"),
+    rfid_uid: int = Query(0, description="RFID"),
     db: Session = Depends(get_db),
 ):
-    return crud.get_turnos_by_patente_rfid(db=db, patente=patente, rfid_uid=rfid_uid)
+    data = crud.get_turnos_by_patente_rfid(db=db, patente=patente, rfid_uid=rfid_uid, turno_fecha=turno_fecha)
+    if not data:
+        raise HTTPException(status_code=404, detail= "Turno with that patente and RFID_UID not found!")
+    return data
 
 ## ------------Vehiculos operations---------------------
 # Create a Vehiculo
@@ -421,6 +423,10 @@ def read_vehiculo(
 @app.get("/api/private2")
 def get_secure(user: Auth0User = Security(auth.get_user)):
     return {"message": f"{user}"}
+
+@app.get("/public")
+def get_public():
+    return {"message": "Anonymous user"}
 
 
 def main():
