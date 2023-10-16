@@ -9,8 +9,23 @@ services:
     #   - ./api:/usr/src/app
     stdin_open: true # docker run -i
     tty: true        # docker run -t
-    ports: 
+    ports:
       - 8443:8443
     environment:
       APP: api
     # command: /bin/sh
+
+  db:
+    container_name: db
+    image: postgres:latest
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    ports:
+      - 5432:5432
+    environment:
+      APP: db
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: sivrg_db
