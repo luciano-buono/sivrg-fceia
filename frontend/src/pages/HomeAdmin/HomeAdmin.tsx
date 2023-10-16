@@ -19,8 +19,8 @@ const HomeAdmin = () => {
         <Card.Body>
           <Row className="justify-content-between px-3">
             {mockResources.map((r, index) => (
-              <Skeleton visible={isLoading} className="w-auto">
-                <ResourceCard key={index} {...r} />
+              <Skeleton visible={isLoading} className="w-auto" key={index}>
+                <ResourceCard {...r} />
               </Skeleton>
             ))}
           </Row>

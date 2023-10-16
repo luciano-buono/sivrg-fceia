@@ -7,11 +7,12 @@ import { useForm } from '@mantine/form';
 import useMutateChoferes from '../../hooks/useMutateChoferes';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
+import { useMutationState } from '@tanstack/react-query';
 
 const ChoferForm: FC<{ updateSearch: (value: string) => void; closeFn: () => void }> = ({ updateSearch, closeFn }) => {
-  const createChoferMutation = useMutateChoferes();
-
   const bookingForm = useBookingFormContext();
+
+  const createChoferMutation = useMutateChoferes();
 
   const form = useForm({
     initialValues: {
@@ -22,7 +23,11 @@ const ChoferForm: FC<{ updateSearch: (value: string) => void; closeFn: () => voi
       email: '',
     },
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      firstname: (value) => (value !== '' ? null : 'Ingrese un nombre'),
+      lastname: (value) => (value !== '' ? null : 'Ingrese un apellido'),
+      documentNumber: (value) => (value !== '' ? null : 'Ingrese un documento'),
+      birthdate: (value) => (value ? null : 'Ingrese una fecha'),
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Ingrese un email válido'),
     },
   });
 
@@ -46,10 +51,15 @@ const ChoferForm: FC<{ updateSearch: (value: string) => void; closeFn: () => voi
     }
   };
 
+  const isMutatingChofer = useMutationState({
+    filters: { status: 'pending', mutationKey: ['chofer'] },
+    select: (mutation) => mutation.state.variables,
+  });
+
   return (
     <form
       onSubmit={form.onSubmit(() => {
-        if (!createChoferMutation.isLoading) {
+        if (!(isMutatingChofer.length > 0)) {
           handleCreateChofer({
             nombre: form.values.firstname,
             apellido: form.values.lastname,
@@ -62,23 +72,51 @@ const ChoferForm: FC<{ updateSearch: (value: string) => void; closeFn: () => voi
       })}
     >
       <Row>
-        <TextInput className="w-50" required label="Nombre" placeholder="" {...form.getInputProps('firstname')} />
-        <TextInput className="w-50" required label="Apellido" placeholder="" {...form.getInputProps('lastname')} />
+        <TextInput
+          className="col-md-4"
+          withAsterisk
+          label="Nombre"
+          placeholder="Nombre..."
+          {...form.getInputProps('firstname')}
+        />
+        <TextInput
+          className="col-md-4"
+          withAsterisk
+          label="Apellido"
+          placeholder="Apellido..."
+          {...form.getInputProps('lastname')}
+        />
+        <NumberInput
+          className="col-md-4"
+          allowNegative={false}
+          allowDecimal={false}
+          hideControls
+          withAsterisk
+          maxLength={8}
+          label="DNI"
+          placeholder="12345678..."
+          {...form.getInputProps('documentNumber')}
+        />
       </Row>
       <Row>
-        <NumberInput className="w-50" required label="DNI" placeholder="" {...form.getInputProps('documentNumber')} />
-        <DateInput className="w-50" required label="Fecha de nacimiento" {...form.getInputProps('birthdate')} />
+        <DateInput
+          className="col-md-6"
+          withAsterisk
+          label="Fecha de nacimiento"
+          placeholder="Seleccione una fecha"
+          {...form.getInputProps('birthdate')}
+        />
+        <TextInput
+          className="justify-content-center col-md-6"
+          withAsterisk
+          label="Email"
+          placeholder="ejemplo@email.com"
+          {...form.getInputProps('email')}
+        />
       </Row>
-      <TextInput
-        className="w-50"
-        required
-        label="Email"
-        placeholder="your@email.com"
-        {...form.getInputProps('email')}
-      />
       <Row className="d-flex justify-content-end pt-3 pe-3">
         <Button type="submit" className="w-auto">
-          {createChoferMutation.isLoading ? <Loader type="dots" color="white" /> : 'Crear chofer'}
+          {isMutatingChofer.length > 0 ? <Loader type="dots" color="white" /> : 'Crear chofer'}
         </Button>
       </Row>
     </form>

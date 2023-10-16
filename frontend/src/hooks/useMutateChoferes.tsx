@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { Chofer, ChoferData } from '../types';
 
@@ -11,6 +11,7 @@ const useMutateChoferes = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ['chofer'],
     mutationFn: createChofer,
     onSuccess: (data: Chofer) => {
       queryClient.setQueryData<Chofer[]>(['choferes'], (oldData) => {

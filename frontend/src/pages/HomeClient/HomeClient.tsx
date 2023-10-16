@@ -3,44 +3,10 @@ import { Button, Skeleton } from '@mantine/core';
 import { Card, Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import useSession from '../../hooks/useSession';
-import { useQuery } from 'react-query';
-import { notifications } from '@mantine/notifications';
-import api from '../../api';
 
 const HomeClient = () => {
   const navigate = useNavigate();
   const { isLoading } = useSession();
-
-  const { refetch } = useQuery(
-    'data',
-    () =>
-      api.get('/vehiculos/secure/1').then((res: any) => {
-        console.log(res);
-      }),
-    {
-      enabled: false,
-      refetchOnWindowFocus: false,
-      retry: false,
-      onSuccess: () => {
-        notifications.show({
-          title: 'Access granted!',
-          color: 'green',
-          message: 'Access granted',
-        });
-      },
-      onError: () => {
-        notifications.show({
-          title: 'Access required',
-          color: 'red',
-          message: 'Access required',
-        });
-      },
-    },
-  );
-
-  const handleClickPrivate = () => {
-    refetch();
-  };
 
   return (
     <Container className="d-flex flex-column justify-content-center align-content-center pt-2">
@@ -74,7 +40,6 @@ const HomeClient = () => {
                 >
                   <span className="text-white fw-bold fs-5">Agendar turno</span>
                 </Button>
-                <Button onClick={handleClickPrivate}>Test private</Button>
               </Card.Body>
             </Card>
           </Skeleton>

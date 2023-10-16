@@ -30,7 +30,7 @@ interface Vehiculo {
   patente: string;
   seguro: string;
   modelo: string;
-  año: number;
+  año: number | undefined;
   marca: string;
   habilitado: boolean;
   empresa_id: string;

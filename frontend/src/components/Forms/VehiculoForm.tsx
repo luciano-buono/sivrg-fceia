@@ -6,6 +6,7 @@ import { useForm } from '@mantine/form';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
 import useMutateVehiculos from '../../hooks/useMutateVehiculos';
+import { useMutationState } from '@tanstack/react-query';
 
 const VehiculoForm: FC<{ updateSearch: (value: string) => void; closeFn: () => void }> = ({
   updateSearch,
@@ -20,8 +21,15 @@ const VehiculoForm: FC<{ updateSearch: (value: string) => void; closeFn: () => v
       patente: '',
       seguro: '',
       modelo: '',
-      año: 2020,
+      año: undefined,
       marca: '',
+    },
+    validate: {
+      patente: (value) => (value !== '' ? null : 'Ingrese una patente'),
+      seguro: (value) => (value !== '' ? null : 'Ingrese un número de seguro'),
+      modelo: (value) => (value !== '' ? null : 'Ingrese un modelo'),
+      año: (value) => (value ? null : 'Ingrese un año'),
+      marca: (value) => (value !== '' ? null : 'Ingrese una marca'),
     },
   });
 
@@ -45,10 +53,15 @@ const VehiculoForm: FC<{ updateSearch: (value: string) => void; closeFn: () => v
     }
   };
 
+  const isMutatingVehiculo = useMutationState({
+    filters: { status: 'pending', mutationKey: ['vehiculo'] },
+    select: (mutation) => mutation.state.variables,
+  });
+
   return (
     <form
       onSubmit={form.onSubmit(() => {
-        if (!createVehiculoMutation.isLoading) {
+        if (!(isMutatingVehiculo.length > 0)) {
           handleCreateVehiculo({
             patente: form.values.patente,
             seguro: form.values.seguro,
@@ -56,37 +69,56 @@ const VehiculoForm: FC<{ updateSearch: (value: string) => void; closeFn: () => v
             año: form.values.año,
             marca: form.values.marca,
             habilitado: true,
-            empresa_id: 1,
+            empresa_id: '1',
           });
         }
       })}
     >
       <Row>
-        <TextInput className="col-md-4" required label="Patente" placeholder="" {...form.getInputProps('patente')} />
-
+        <TextInput
+          className="col-md-4"
+          withAsterisk
+          label="Patente"
+          placeholder="ABC123"
+          {...form.getInputProps('patente')}
+        />
         <TextInput
           className="col-md-8"
-          required
+          withAsterisk
           label="Número de Seguro"
-          placeholder=""
+          placeholder="Ingrese el número de su seguro"
           {...form.getInputProps('seguro')}
         />
       </Row>
       <Row>
-        <TextInput className="col-md-4" required label="Marca" {...form.getInputProps('marca')} />
-        <TextInput className="col-md-4" required label="Modelo" {...form.getInputProps('modelo')} />
+        <TextInput
+          className="col-md-4"
+          withAsterisk
+          label="Marca"
+          placeholder="Marca de su vehículo"
+          {...form.getInputProps('marca')}
+        />
+        <TextInput
+          className="col-md-4"
+          withAsterisk
+          label="Modelo"
+          placeholder="Modelo de su vehículo"
+          {...form.getInputProps('modelo')}
+        />
         <NumberInput
           hideControls
           className="col-md-4"
-          required
+          withAsterisk
+          maxLength={4}
+          max={2023}
           label="Año"
-          placeholder=""
+          placeholder="Año de su vehículo"
           {...form.getInputProps('año')}
         />
       </Row>
       <Row className="d-flex justify-content-end pt-3 pe-3">
         <Button type="submit" className="w-auto">
-          {createVehiculoMutation.isLoading ? <Loader type="dots" color="white" /> : 'Crear vehículo'}
+          {isMutatingVehiculo.length > 0 ? <Loader type="dots" color="white" /> : 'Crear vehículo'}
         </Button>
       </Row>
     </form>
