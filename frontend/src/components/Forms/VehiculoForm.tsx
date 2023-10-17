@@ -1,17 +1,14 @@
 import { Button, Loader, NumberInput, TextInput } from '@mantine/core';
 import { Row } from 'react-bootstrap';
 import { notifications } from '@mantine/notifications';
-import { Vehiculo } from '../../types';
+import { ModelForm, VehiculoData } from '../../types';
 import { useForm } from '@mantine/form';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
 import useMutateVehiculos from '../../hooks/useMutateVehiculos';
 import { useMutationState } from '@tanstack/react-query';
 
-const VehiculoForm: FC<{ updateSearch: (value: string) => void; closeFn: () => void }> = ({
-  updateSearch,
-  closeFn,
-}) => {
+const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const createVehiculoMutation = useMutateVehiculos();
 
   const bookingForm = useBookingFormContext();
@@ -33,11 +30,12 @@ const VehiculoForm: FC<{ updateSearch: (value: string) => void; closeFn: () => v
     },
   });
 
-  const handleCreateVehiculo = async (newVehiculoData: Vehiculo) => {
+  const handleCreateVehiculo = async (newVehiculoData: VehiculoData) => {
     try {
       const vehiculo = await createVehiculoMutation.mutateAsync(newVehiculoData);
-      bookingForm.setFieldValue('vehiculo_id', vehiculo.patente);
+      bookingForm.setFieldValue('vehiculo_id', vehiculo.vehiculo_id.toString());
       updateSearch(`Patente: ${vehiculo.patente},  ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`);
+      // updateValue(vehiculo.vehiculo_id);
       closeFn();
       notifications.show({
         title: 'Vehículo creado!',

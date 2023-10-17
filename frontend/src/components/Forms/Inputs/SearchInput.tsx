@@ -1,6 +1,6 @@
-import { CloseButton, Select, TextInput } from '@mantine/core';
+import { Select, TextInput, Text } from '@mantine/core';
 import { FC } from 'react';
-import { Col, Row } from 'react-bootstrap';
+import { CloseButton, Col, Row } from 'react-bootstrap';
 
 interface SearchInputProps {
   field: string;
@@ -9,7 +9,6 @@ interface SearchInputProps {
   setSearchValue: any;
   form: any;
   searchPlaceholder: string;
-  valuePlaceholder: string;
   searchLabel: string;
   valueLabel: string;
 }
@@ -20,19 +19,20 @@ const SearchInput: FC<SearchInputProps> = ({
   setSearchValue,
   form,
   searchPlaceholder,
-  valueLabel,
-  valuePlaceholder,
   searchLabel,
   field,
+  valueLabel,
 }) => {
   return (
     <>
-      <Row className="justify-content-center">
+      <Row>
         <Select
           label={searchLabel}
           rightSection={<i className="fa-solid fa-search" />}
-          className="pb-3 col-md-8"
+          className="pb-3 col-md-6"
           placeholder={searchPlaceholder}
+          withAsterisk
+          clearable
           searchable
           nothingFoundMessage="No hay resultados"
           limit={4}
@@ -48,26 +48,28 @@ const SearchInput: FC<SearchInputProps> = ({
             }
           }}
         />
-        <Col className="col-md-4 col-sm-4">
-          <TextInput
-            required
-            readOnly
-            placeholder={valuePlaceholder}
-            label={valueLabel}
-            rightSection={
-              form.getInputProps(field).value ? (
-                <CloseButton
-                  aria-label="Clear input"
-                  onClick={() => {
-                    form.setFieldValue(field, '');
-                    setSearchValue('');
-                  }}
-                />
-              ) : null
-            }
-            style={{ cursor: 'cursor', boxShadow: 'none' }}
-            {...form.getInputProps(field)}
-          />
+        <TextInput
+          label={valueLabel}
+          readOnly
+          required
+          error={form.errors[field]}
+          className="col-md-6"
+          onChange={() => {}}
+          rightSection={
+            form.getInputProps(field).value ? (
+              <CloseButton
+                aria-label="Clear input"
+                onClick={() => {
+                  form.setFieldValue(field, '');
+                  setSearchValue('');
+                }}
+              />
+            ) : null
+          }
+          value={data?.filter((x: any) => x.value === form.values[field]).map((x: any) => x.label)[0] || ''}
+        />
+        <Col>
+          <TextInput type="hidden" withAsterisk={false} readOnly {...form.getInputProps(field)} error={false} />
         </Col>
       </Row>
     </>

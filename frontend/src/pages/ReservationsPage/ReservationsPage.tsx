@@ -1,65 +1,16 @@
 import React from 'react';
-import { Reservation } from '../../types';
+import { Turno } from '../../types';
 import { Card, Container } from 'react-bootstrap';
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useState } from 'react';
 import useSession from '../../hooks/useSession';
 import { Skeleton } from '@mantine/core';
 
-const now = new Date(Date.now());
+const RESERVATIONS_MOCK: Turno[] = [];
 
-const RESERVATIONS_MOCK: Reservation[] = [
-  {
-    firstname: 'Nombre1',
-    lastname: 'Apellido1',
-    documentNumber: '1234567',
-    birthdate: now.toLocaleString('es-AR'),
-    email: 'test@hola.com',
-    bookingDate: now.toLocaleString('es-AR'),
-    plate: '1234',
-    truckType: 'grande',
-    trailersQuantity: 123,
-    grainType: 'Trigo',
-    totalWeight: 123,
-  },
-  {
-    firstname: 'Nombre2',
-    lastname: 'Apellido2',
-    documentNumber: '1234567',
-    birthdate: now.toLocaleString('es-AR'),
-    email: 'test@hola.com',
-    bookingDate: now.toLocaleString('es-AR'),
-    plate: '1234',
-    truckType: 'grande',
-    trailersQuantity: 123,
-    grainType: 'Trigo',
-    totalWeight: 123,
-  },
-];
+// const columnHelper = createColumnHelper<Turno>();
 
-const columnHelper = createColumnHelper<Reservation>();
-
-const columns = [
-  columnHelper.accessor('firstname', {
-    id: 'name',
-    cell: (info) => (
-      <span className="number">
-        {info.row.original.firstname} {info.row.original.lastname}
-      </span>
-    ),
-    header: () => <span>Nombre</span>,
-  }),
-  columnHelper.accessor((row) => row.documentNumber, {
-    id: 'documentNumber',
-    cell: (info) => <i>{info.getValue()}</i>,
-    header: () => <span>Documento</span>,
-  }),
-  columnHelper.accessor('bookingDate', {
-    id: 'bookingDate',
-    header: () => 'Fecha',
-    cell: (info) => info.renderValue(),
-  }),
-];
+const columns = [] as any;
 
 const ReservationsPage = () => {
   const [data] = useState(() => [...RESERVATIONS_MOCK]);

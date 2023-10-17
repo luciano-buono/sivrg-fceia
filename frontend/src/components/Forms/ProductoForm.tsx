@@ -1,17 +1,14 @@
 import { Button, Loader, TextInput } from '@mantine/core';
 import { Row } from 'react-bootstrap';
 import { notifications } from '@mantine/notifications';
-import { Producto } from '../../types';
+import { ModelForm, ProductoData } from '../../types';
 import { useForm } from '@mantine/form';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
 import useMutateProductos from '../../hooks/useMutateProducto';
 import { useMutationState } from '@tanstack/react-query';
 
-const ProductoForm: FC<{ updateSearch: (value: string) => void; closeFn: () => void }> = ({
-  updateSearch,
-  closeFn,
-}) => {
+const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const createProductoMutation = useMutateProductos();
 
   const bookingForm = useBookingFormContext();
@@ -25,11 +22,12 @@ const ProductoForm: FC<{ updateSearch: (value: string) => void; closeFn: () => v
     },
   });
 
-  const handleCreateProducto = async (newProductoData: Producto) => {
+  const handleCreateProducto = async (newProductoData: ProductoData) => {
     try {
       const producto = await createProductoMutation.mutateAsync(newProductoData);
-      bookingForm.setFieldValue('producto_id', producto.producto_nombre);
+      bookingForm.setFieldValue('producto_id', producto.producto_id.toString());
       updateSearch(`${producto.producto_nombre}`);
+      // updateValue(producto.producto_id.toString());
       closeFn();
       notifications.show({
         title: 'Producto creado!',

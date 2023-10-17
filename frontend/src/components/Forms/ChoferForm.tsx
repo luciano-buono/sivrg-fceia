@@ -2,14 +2,14 @@ import { Button, Loader, NumberInput, TextInput } from '@mantine/core';
 import { Row } from 'react-bootstrap';
 import { DateInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
-import { ChoferData } from '../../types';
+import { ChoferData, ModelForm } from '../../types';
 import { useForm } from '@mantine/form';
 import useMutateChoferes from '../../hooks/useMutateChoferes';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
 import { useMutationState } from '@tanstack/react-query';
 
-const ChoferForm: FC<{ updateSearch: (value: string) => void; closeFn: () => void }> = ({ updateSearch, closeFn }) => {
+const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const bookingForm = useBookingFormContext();
 
   const createChoferMutation = useMutateChoferes();
@@ -34,8 +34,9 @@ const ChoferForm: FC<{ updateSearch: (value: string) => void; closeFn: () => voi
   const handleCreateChofer = async (newChoferData: ChoferData) => {
     try {
       const chofer = await createChoferMutation.mutateAsync(newChoferData);
-      bookingForm.setFieldValue('chofer_id', chofer.dni.toString());
+      bookingForm.setFieldValue('chofer_id', chofer.chofer_id.toString());
       updateSearch(`${chofer.nombre} ${chofer.apellido}, DNI: ${chofer.dni.toString()}`);
+      // updateValue(chofer.chofer_id);
       closeFn();
       notifications.show({
         title: 'Chofer creado!',

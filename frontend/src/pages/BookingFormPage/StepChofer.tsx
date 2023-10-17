@@ -18,6 +18,10 @@ const StepChofer: FC = () => {
     setSearchValue(value);
   };
 
+  const updateValue = (value: string) => {
+    form.setFieldValue('chofer_id', value);
+  };
+
   const form = useBookingFormContext();
 
   const { data: choferes } = useQuery({
@@ -26,7 +30,7 @@ const StepChofer: FC = () => {
   });
 
   const selectData = choferes?.map((chofer) => ({
-    value: chofer.dni.toString(),
+    value: chofer.chofer_id.toString(),
     label: `${chofer.nombre} ${chofer.apellido}, DNI: ${chofer.dni.toString()}`,
   }));
 
@@ -41,7 +45,6 @@ const StepChofer: FC = () => {
             setSearchValue={setSearchValue}
             form={form}
             searchPlaceholder="Busque un chofer por nombre o dni..."
-            valuePlaceholder="Sin selección"
             searchLabel="Seleccione un chofer"
             valueLabel="Chofer"
           />
@@ -49,7 +52,7 @@ const StepChofer: FC = () => {
             <Switch onChange={() => setShowForm((prev) => !prev)} checked={showForm} label="Nuevo chofer?" />
           </div>
           <Collapse in={showForm}>
-            <ChoferForm updateSearch={updateSearch} closeFn={closeForm} />
+            <ChoferForm updateSearch={updateSearch} updateValue={updateValue} closeFn={closeForm} />
           </Collapse>
         </Card.Body>
       </Card>

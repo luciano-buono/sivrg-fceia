@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
-import { Vehiculo } from '../types';
+import { Vehiculo, VehiculoData } from '../types';
 
-const createVehiculo = async (newVehiculoData: Vehiculo) => {
+const createVehiculo = async (newVehiculoData: VehiculoData) => {
   const response = await api.post('/vehiculos/', newVehiculoData);
   return response.data;
 };

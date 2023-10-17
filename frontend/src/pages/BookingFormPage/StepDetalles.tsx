@@ -20,6 +20,7 @@ const StepDetalles: FC = () => {
           <DateInput
             label="Seleccione una fecha"
             allowDeselect
+            valueFormat="DD/MM/YYYY"
             placeholder="Seleccione la fecha del turno"
             className="col-md-8"
             excludeDate={(date) =>
@@ -40,7 +41,7 @@ const StepDetalles: FC = () => {
 
               return {};
             }}
-            {...form.getInputProps('bookingDate')}
+            {...form.getInputProps('turno_fecha')}
           />
           <NumberInput
             className="col-md-4 pb-2"
