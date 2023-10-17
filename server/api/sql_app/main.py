@@ -17,7 +17,7 @@ import config
 
 settings = config.Settings()
 
-models.Base.metadata.create_all(bind=engine)
+# models.Base.metadata.create_all(bind=engine)
 
 
 @lru_cache()

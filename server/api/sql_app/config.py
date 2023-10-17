@@ -14,4 +14,11 @@ class Settings(BaseSettings):
     api_audience: str
     scopes: list[str]
 
+    #Postgres:
+    POSTGRES_USERNAME: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_DATABASE: str
+    POSTGRES_HOST: str
+    DATABASE_URL: str
+
     model_config = SettingsConfigDict(env_file=".env")
