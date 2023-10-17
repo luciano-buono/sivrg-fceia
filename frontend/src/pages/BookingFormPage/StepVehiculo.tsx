@@ -20,13 +20,17 @@ const StepVehiculo: FC = () => {
 
   const form = useBookingFormContext();
 
+  const updateValue = (value: string) => {
+    form.setFieldValue('vehiculo_id', value);
+  };
+
   const { data: vehiculos } = useQuery({
     queryKey: ['vehiculos'],
     queryFn: () => api.get<Vehiculo[]>('/vehiculos/').then((res) => res.data),
   });
 
   const selectData = vehiculos?.map((vehiculo) => ({
-    value: vehiculo.patente,
+    value: vehiculo.vehiculo_id.toString(),
     label: `Patente: ${vehiculo.patente},  ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`,
   }));
 
@@ -40,7 +44,6 @@ const StepVehiculo: FC = () => {
           setSearchValue={setSearchValue}
           form={form}
           searchPlaceholder="Busque un vehículo por patente, modelo o marca..."
-          valuePlaceholder="Sin selección"
           searchLabel="Seleccione un vehículo"
           valueLabel="Vehículo"
         />
@@ -48,7 +51,7 @@ const StepVehiculo: FC = () => {
           <Switch onChange={() => setShowForm((prev) => !prev)} checked={showForm} label="Nuevo vehículo?" />
         </div>
         <Collapse in={showForm}>
-          <VehiculoForm updateSearch={updateSearch} closeFn={closeForm} />
+          <VehiculoForm updateSearch={updateSearch} updateValue={updateValue} closeFn={closeForm} />
         </Collapse>
       </Card.Body>
     </Card>

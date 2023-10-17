@@ -18,6 +18,10 @@ const StepProducto: FC = () => {
     setSearchValue(value);
   };
 
+  const updateValue = (value: string) => {
+    form.setFieldValue('producto_id', value);
+  };
+
   const form = useBookingFormContext();
 
   const { data: productos } = useQuery({
@@ -25,8 +29,8 @@ const StepProducto: FC = () => {
     queryFn: () => api.get<Producto[]>('/productos/').then((res) => res.data),
   });
 
-  const selectData = productos?.map((producto, index) => ({
-    value: `${producto.producto_nombre} ${index}`, //TODO: REMOVER, BORRAR LABES REPETIDOS EN LA DB
+  const selectData = productos?.map((producto) => ({
+    value: `${producto.producto_id}`,
     label: `${producto.producto_nombre}`,
   }));
 
@@ -40,7 +44,6 @@ const StepProducto: FC = () => {
           setSearchValue={setSearchValue}
           form={form}
           searchPlaceholder="Busque un producto por nombre..."
-          valuePlaceholder="Sin selección"
           searchLabel="Seleccione un producto"
           valueLabel="Producto"
         />
@@ -48,7 +51,7 @@ const StepProducto: FC = () => {
           <Switch onChange={() => setShowForm((prev) => !prev)} checked={showForm} label="Nuevo producto?" />
         </div>
         <Collapse in={showForm}>
-          <ProductoForm updateSearch={updateSearch} closeFn={closeForm} />
+          <ProductoForm updateSearch={updateSearch} updateValue={updateValue} closeFn={closeForm} />
         </Collapse>
       </Card.Body>
     </Card>
