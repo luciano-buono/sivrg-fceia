@@ -32,27 +32,24 @@ const SearchInput: FC<SearchInputProps> = ({
           className="pb-3 col-md-6"
           placeholder={searchPlaceholder}
           withAsterisk
+          error={form.errors[field]}
           clearable
           searchable
           nothingFoundMessage="No hay resultados"
           limit={4}
           data={data}
           onChange={(value) => {
-            form.setFieldValue(field, value);
+            form.setFieldValue(field, value ?? '');
           }}
           searchValue={searchValue}
           onSearchChange={(value) => {
             setSearchValue(value);
-            if (value === '') {
-              form.setFieldValue(field, '');
-            }
           }}
         />
         <TextInput
           label={valueLabel}
           readOnly
           required
-          error={form.errors[field]}
           className="col-md-6"
           onChange={() => {}}
           rightSection={

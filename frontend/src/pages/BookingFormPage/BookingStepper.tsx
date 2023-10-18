@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Stepper, Button, Group, Text, Box, LoadingOverlay } from '@mantine/core';
+import { Stepper, Button, Group, Box, LoadingOverlay } from '@mantine/core';
 import { Card, Container } from 'react-bootstrap';
 import { useMutationState } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
@@ -62,6 +62,7 @@ const BookingStepper = () => {
         color: 'green',
         message: `Se ha agendado el turno para el ${turno.turno_fecha}`,
       });
+      form.reset();
     } catch (error: any) {
       notifications.show({
         title: 'Error al crear turno',
