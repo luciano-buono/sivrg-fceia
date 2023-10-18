@@ -22,7 +22,8 @@ const StepDetalles: FC = () => {
             allowDeselect
             valueFormat="DD/MM/YYYY"
             placeholder="Seleccione la fecha del turno"
-            className="col-md-8"
+            className="col-md-6"
+            minDate={today}
             excludeDate={(date) =>
               excludedDates.some((excludedDate) => excludedDate.toLocaleDateString() === date.toLocaleDateString())
             }
@@ -47,7 +48,7 @@ const StepDetalles: FC = () => {
             className="col-md-4 pb-2"
             hideControls
             suffix="kg"
-            placeholder="Kilos estimados..."
+            placeholder="kg..."
             label="Cantidad estimada"
             {...form.getInputProps('cantidad_estimada')}
           />

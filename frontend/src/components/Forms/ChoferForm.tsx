@@ -36,7 +36,6 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
       const chofer = await createChoferMutation.mutateAsync(newChoferData);
       bookingForm.setFieldValue('chofer_id', chofer.chofer_id.toString());
       updateSearch(`${chofer.nombre} ${chofer.apellido}, DNI: ${chofer.dni.toString()}`);
-      // updateValue(chofer.chofer_id);
       closeFn();
       notifications.show({
         title: 'Chofer creado!',

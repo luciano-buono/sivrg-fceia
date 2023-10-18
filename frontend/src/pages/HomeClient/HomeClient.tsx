@@ -43,6 +43,19 @@ const HomeClient = () => {
               </Card.Body>
             </Card>
           </Skeleton>
+          <Skeleton visible={isLoading}>
+            <Card style={{ width: '300px' }} className="d-flex flex-wrap justify-content-center mb-2">
+              <Card.Body className="d-flex flex-wrap justify-content-center">
+                <Button
+                  style={{ width: '250px', height: '70px' }}
+                  className="d-flex flex-wrap justify-content-center align-content-center"
+                  onClick={() => navigate('/reservations')}
+                >
+                  <span className="text-white fw-bold fs-5">Mis turnos</span>
+                </Button>
+              </Card.Body>
+            </Card>
+          </Skeleton>
         </Col>
       </Row>
     </Container>
