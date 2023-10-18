@@ -70,7 +70,7 @@ const ReservationsPage = () => {
     }),
   ];
 
-  const { data: turnos } = useQuery({
+  const { data: turnos, isLoading: isLoadingTurnos } = useQuery({
     queryKey: ['turnos'],
     queryFn: () => api.get<Turno[]>('/turnos/').then((res) => res.data),
   });
@@ -80,10 +80,9 @@ const ReservationsPage = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-
   return (
     <Container className="d-flex flex-column flex-wrap align-content-center pt-2 col-md-9">
-      <Skeleton visible={isLoading}>
+      <Skeleton visible={isLoading || isLoadingTurnos}>
         <Card className="d-flex w-100">
           <Card.Body>
             <div className="h1"> Mis turnos </div>
