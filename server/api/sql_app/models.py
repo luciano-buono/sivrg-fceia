@@ -13,7 +13,9 @@ from sqlalchemy import (
     text,
 )
 from sqlalchemy.orm import relationship
-from database import Base
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
 
 
 class Empresa(Base):

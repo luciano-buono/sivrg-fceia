@@ -4,7 +4,7 @@ services:
     # image: python:latest
     build:
       context: ./api
-      dockerfile: ./api/Dockerfile.orange
+      dockerfile: ./Dockerfile.orange
     # volumes:
     #   - ./api:/usr/src/app
     stdin_open: true # docker run -i
