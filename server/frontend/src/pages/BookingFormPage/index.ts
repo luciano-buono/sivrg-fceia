@@ -1,3 +1,3 @@
-import BookingFormPage from './_BookingFormPage';
+import BookingStepper from './BookingStepper';
 
-export default BookingFormPage;
+export default BookingStepper;
