@@ -1,4 +1,3 @@
-import React from 'react';
 import { Center, RingProgress } from '@mantine/core';
 import { FC, useState } from 'react';
 import { Button, Row } from 'react-bootstrap';

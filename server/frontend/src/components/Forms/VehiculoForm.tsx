@@ -34,8 +34,7 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
     try {
       const vehiculo = await createVehiculoMutation.mutateAsync(newVehiculoData);
       bookingForm.setFieldValue('vehiculo_id', vehiculo.vehiculo_id.toString());
-      updateSearch(`Patente: ${vehiculo.patente},  ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`);
-      // updateValue(vehiculo.vehiculo_id);
+      updateSearch(`${vehiculo.patente},  ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`);
       closeFn();
       notifications.show({
         title: 'Vehículo creado!',

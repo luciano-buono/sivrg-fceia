@@ -1,5 +1,4 @@
 import { FC, useEffect } from 'react';
-import React from 'react';
 import BaseNavbar from 'react-bootstrap/Navbar';
 import { Card, Container, Nav, Row } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Container } from 'react-bootstrap';
 import { Routes, Route } from 'react-router';
 import About from '../About';

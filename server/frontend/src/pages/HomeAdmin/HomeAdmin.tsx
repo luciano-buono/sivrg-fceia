@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, Container, Row } from 'react-bootstrap';
 import ResourceCard from '../../components/ResourceCard';
 import useSession from '../../hooks/useSession';

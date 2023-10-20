@@ -1,4 +1,3 @@
-import React from 'react';
 import { Skeleton } from '@mantine/core';
 import { FC } from 'react';
 import { Container, Card } from 'react-bootstrap';

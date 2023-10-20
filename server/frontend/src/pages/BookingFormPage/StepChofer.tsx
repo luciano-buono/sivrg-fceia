@@ -31,7 +31,7 @@ const StepChofer: FC = () => {
 
   const selectData = choferes?.map((chofer) => ({
     value: chofer.chofer_id.toString(),
-    label: `${chofer.nombre} ${chofer.apellido}, DNI: ${chofer.dni.toString()}`,
+    label: `${chofer.nombre} ${chofer.apellido}, ${chofer.dni.toString()}`,
   }));
 
   return (

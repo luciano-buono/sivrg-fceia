@@ -1,4 +1,3 @@
-import React from 'react';
 import { Turno } from '../../types';
 import { Card, Container } from 'react-bootstrap';
 import { ColumnDef, createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { FC } from 'react';
 import { Card, Container } from 'react-bootstrap';
 import useSession from '../../hooks/useSession';

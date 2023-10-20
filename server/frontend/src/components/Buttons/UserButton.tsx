@@ -1,4 +1,3 @@
-import React from 'react';
 import { FC } from 'react';
 import { OverlayTrigger, Popover, Button, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';

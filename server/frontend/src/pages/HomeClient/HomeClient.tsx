@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, Skeleton } from '@mantine/core';
 import { Card, Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
