@@ -1,4 +1,4 @@
-import { Select, TextInput, Text } from '@mantine/core';
+import { Select, TextInput } from '@mantine/core';
 import { FC } from 'react';
 import { CloseButton, Col, Row } from 'react-bootstrap';
 

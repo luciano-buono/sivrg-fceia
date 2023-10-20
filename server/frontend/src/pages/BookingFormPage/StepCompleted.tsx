@@ -1,4 +1,4 @@
-import { Container, Card, Row, Col } from 'react-bootstrap';
+import { Container, Card, Col } from 'react-bootstrap';
 import { ActionIcon, Center, RingProgress, Text, rem } from '@mantine/core';
 import { IconCheck } from '@tabler/icons-react';
 
