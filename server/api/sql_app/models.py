@@ -57,7 +57,7 @@ class Chofer(Base):
 
 
 class Pesada(Base):
-    __tablename__ = "pesadasIn"
+    __tablename__ = "pesadas"
 
     pesada_id = Column(Integer, primary_key=True, autoincrement=True)
     fecha_hora_in = Column(
