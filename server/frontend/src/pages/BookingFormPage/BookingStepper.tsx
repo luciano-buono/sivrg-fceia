@@ -18,7 +18,7 @@ const BookingStepper = () => {
   const form = useBookingForm({
     initialValues: {
       chofer_id: '',
-      empresa_id: '1',
+      empresa_id: 2,
       producto_id: '',
       vehiculo_id: '',
       turno_fecha: null,

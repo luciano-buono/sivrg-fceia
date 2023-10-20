@@ -66,7 +66,7 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
             rfid_uid: 0,
             dni: parseInt(form.values.documentNumber),
             habilitado: true,
-            empresa_id: 1,
+            empresa_id: 2,
           });
         }
       })}

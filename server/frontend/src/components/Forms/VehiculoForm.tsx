@@ -66,7 +66,7 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
             año: form.values.año,
             marca: form.values.marca,
             habilitado: true,
-            empresa_id: '1',
+            empresa_id: 2,
           });
         }
       })}

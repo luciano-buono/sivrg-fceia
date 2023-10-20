@@ -1,6 +1,6 @@
 export interface Turno {
   turno_id: string;
-  empresa_id: string;
+  empresa_id: number;
   chofer_id: string;
   vehiculo_id: string;
   producto_id: string;
@@ -12,7 +12,7 @@ export interface Turno {
 }
 
 export interface TurnoData {
-  empresa_id: string;
+  empresa_id: number;
   chofer_id: string;
   vehiculo_id: string;
   producto_id: string;
@@ -37,7 +37,7 @@ export interface Chofer {
 
 export interface Vehiculo {
   vehiculo_id: string;
-  empresa_id: string;
+  empresa_id: number;
   patente: string;
   seguro: string;
   modelo: string;
