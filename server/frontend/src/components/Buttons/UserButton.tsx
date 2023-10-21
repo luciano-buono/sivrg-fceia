@@ -1,57 +1,62 @@
 import { FC } from 'react';
-import { OverlayTrigger, Popover, Button, Nav } from 'react-bootstrap';
+import { Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { UserWithRoles } from '../../hooks/useSession';
+import { Button, Menu, em, rem } from '@mantine/core';
+import { IconCalendar, IconCalendarCheck, IconLogout } from '@tabler/icons-react';
+import { useMediaQuery } from '@mantine/hooks';
 
 const ClientActions = () => (
   <>
-    <Button className="mb-2">
+    <Menu.Item leftSection={<IconCalendarCheck style={{ width: rem(14), height: rem(14) }} />}>
       <LinkContainer to="/booking">
-        <Nav.Link>
-          <i className="fa-solid fa-square-check pe-2" /> Agendar turno
-        </Nav.Link>
+        <Nav.Link>Agendar turno</Nav.Link>
       </LinkContainer>
-    </Button>
-    <Button className="mb-2">
+    </Menu.Item>
+    <Menu.Item leftSection={<IconCalendar style={{ width: rem(14), height: rem(14) }} />}>
       <LinkContainer to="/reservations">
-        <Nav.Link>
-          <i className="fa-solid fa-calendar-days pe-2" /> Mis turnos
-        </Nav.Link>
+        <Nav.Link>Mis turnos</Nav.Link>
       </LinkContainer>
-    </Button>
+    </Menu.Item>
   </>
 );
 
 const EmployeeActions = () => <>{null}</>;
 
 const UserButton: FC<{ user: UserWithRoles; handleLogout: () => Promise<void> }> = ({ user, handleLogout }) => {
+  const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+
   return (
-    <div className="d-flex flex-row flex-wrap align-content-center">
-      <OverlayTrigger
-        placement="bottom"
-        trigger="click"
-        rootClose
-        overlay={
-          <Popover id="popover-basic">
-            <Popover.Body className="d-flex flex-column ">
-              {user.roles?.includes('client') ? <ClientActions /> : <EmployeeActions />}
-              <Button variant="secondary" onClick={() => handleLogout()}>
-                <i className="fa-solid fa-right-from-bracket" /> Cerrar sesión
-              </Button>
-            </Popover.Body>
-          </Popover>
-        }
-      >
-        <div className="d-flex flex-wrap align-content-center">
-          <div style={{ cursor: 'pointer' }} className="no-select d-flex flex-wrap align-items-center">
-            <div className="pe-2">
-              Bienvenido {`${user.nickname ? user?.nickname.charAt(0).toUpperCase() + user.nickname.slice(1) : ''}!`}
+    <Menu shadow="md" width={200} withArrow>
+      <div className="d-flex flex-row flex-wrap align-content-center">
+        <Menu.Target>
+          <Button className="d-flex flex-wrap align-content-center h-auto py-2">
+            <div style={{ cursor: 'pointer' }} className="no-select d-flex flex-wrap align-items-center">
+              {isMobile ? null : (
+                <div className="pe-2">
+                  Bienvenido,{' '}
+                  {`${user.nickname ? user?.nickname.charAt(0).toUpperCase() + user.nickname.slice(1) : ''}!`}
+                </div>
+              )}
+              <img
+                style={{ borderRadius: '50%', height: `${isMobile ? '50px' : '25px'}` }}
+                src={user?.picture}
+                alt={user?.name}
+              />
             </div>
-            <img style={{ borderRadius: '50%', height: '40px' }} src={user?.picture} alt={user?.name} />
-          </div>
-        </div>
-      </OverlayTrigger>
-    </div>
+          </Button>
+        </Menu.Target>
+        <Menu.Dropdown style={{ zIndex: 9999 }}>
+          <Menu.Label>Acciones</Menu.Label>
+          {user.roles?.includes('client') ? <ClientActions /> : <EmployeeActions />}
+          <Menu.Divider />
+          <Menu.Label>Cuenta</Menu.Label>
+          <Menu.Item onClick={handleLogout} leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}>
+            Cerrar sesión
+          </Menu.Item>
+        </Menu.Dropdown>
+      </div>
+    </Menu>
   );
 };
 

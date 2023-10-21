@@ -15,10 +15,11 @@ const LoginPage = () => {
             </div>
           ) : (
             <Button
+              variant="outline"
               className="d-flex flex-wrap justify-content-center align-content-center"
               onClick={() => loginWithPopup()}
             >
-              <span className="text-white fw-bold fs-5 p-4">Iniciar sesión</span>
+              <span className="fw-bold fs-6 p-4">Iniciar sesión</span>
             </Button>
           )}
         </Card.Body>

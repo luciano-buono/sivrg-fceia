@@ -2,13 +2,12 @@ import { useEffect } from 'react';
 import { BrowserRouter, Navigate } from 'react-router-dom';
 import { Outlet, Route, Routes } from 'react-router';
 import { Auth0Provider } from '@auth0/auth0-react';
-import { MantineProvider, createTheme } from '@mantine/core';
+import { AppShell, MantineProvider, createTheme, em } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ClientPage from './pages/ClientPage/ClientPage';
 import AdminPage from './pages/AdminPage';
 import { FC } from 'react';
-import Navbar from './components/Navbar/Navbar';
 import { DatesProvider } from '@mantine/dates';
 import 'dayjs/locale/es';
 import LoginPage from './pages/LoginPage';
@@ -17,6 +16,8 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
+import Header from './components/Header/';
+import { useMediaQuery } from '@mantine/hooks';
 
 const queryClient = new QueryClient();
 
@@ -72,15 +73,23 @@ const App = () => {
     getNewToken();
   }, [getAccessTokenSilently, isAuthenticated]);
 
+  const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+
   return (
     <>
-      <Navbar />
-      <Routes>
-        <Route path="/admin/*" element={<AdminApp />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/*" element={<ClientApp />} />
-        <Route path="*" element={<ClientApp />} />
-      </Routes>
+      <AppShell header={{ height: isMobile ? 90 : 60, offset: true }}>
+        <AppShell.Header>
+          <Header />
+        </AppShell.Header>
+        <AppShell.Main>
+          <Routes>
+            <Route path="/admin/*" element={<AdminApp />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/*" element={<ClientApp />} />
+            <Route path="*" element={<ClientApp />} />
+          </Routes>
+        </AppShell.Main>
+      </AppShell>
     </>
   );
 };
