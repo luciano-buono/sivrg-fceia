@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import { BrowserRouter, Navigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { BrowserRouter, Link, Navigate } from 'react-router-dom';
 import { Outlet, Route, Routes } from 'react-router';
 import { Auth0Provider } from '@auth0/auth0-react';
-import { AppShell, Burger, Container, Image, MantineProvider, Text, createTheme, em } from '@mantine/core';
+import { AppShell, Burger, Container, Image, MantineProvider, NavLink, Text, createTheme, em } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ClientPage from './pages/ClientPage/ClientPage';
@@ -20,6 +20,7 @@ import Header from './components/Header/';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { Col, Row, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { IconPhone, IconSocial } from '@tabler/icons-react';
 
 const queryClient = new QueryClient();
 
@@ -76,7 +77,17 @@ const App = () => {
   }, [getAccessTokenSilently, isAuthenticated]);
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
-  const [opened, { toggle }] = useDisclosure();
+  const [opened, { close, toggle }] = useDisclosure();
+  const [active, setActive] = useState(0);
+
+  const data = [
+    { icon: IconPhone, label: 'Contacto', to: '/contact' },
+    {
+      icon: IconSocial,
+      label: 'Sobre nosotros',
+      to: '/about',
+    },
+  ];
 
   return (
     <>
@@ -86,20 +97,25 @@ const App = () => {
         footer={{ height: 45, offset: true }}
       >
         <AppShell.Header>
-          <Header openNavbar={toggle} />
+          <Header openNavbar={toggle} openedNavbar={opened} />
         </AppShell.Header>
         <AppShell.Navbar p="md">
           <Col>
-            <LinkContainer to="/contact">
-              <Nav.Link>
-                <Text className={`${isMobile ? 'h6' : 'h5'}`}>Contacto</Text>
-              </Nav.Link>
-            </LinkContainer>
-            <LinkContainer to="/about">
-              <Nav.Link>
-                <Text className={`${isMobile ? 'h6' : 'h5'}`}>Sobre nosotros</Text>
-              </Nav.Link>
-            </LinkContainer>
+            {data.map((item, index) => (
+              <NavLink
+                key={index}
+                active={index === active}
+                variant="filled"
+                leftSection={<item.icon size="1rem" stroke={1.5} />}
+                label={item.label}
+                component={Link}
+                to={item.to}
+                onClick={() => {
+                  close();
+                  setActive(index);
+                }}
+              />
+            ))}
           </Col>
         </AppShell.Navbar>
         <AppShell.Main>

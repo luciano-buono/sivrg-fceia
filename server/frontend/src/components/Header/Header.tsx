@@ -8,7 +8,7 @@ import LoggedUserMenu from '../Menus/LoggedUserMenu';
 import { Loader, Button, Container, ActionIcon, Center, Burger } from '@mantine/core';
 import { IconHome } from '@tabler/icons-react';
 
-const Header: FC<{ openNavbar: any }> = ({ openNavbar }) => {
+const Header: FC<{ openNavbar: any; openedNavbar: boolean }> = ({ openNavbar, openedNavbar }) => {
   const { loginWithPopup, isAuthenticated, user, logout, isLoading } = useSession();
 
   const location = useLocation();
@@ -27,7 +27,7 @@ const Header: FC<{ openNavbar: any }> = ({ openNavbar }) => {
       <Row className="col-md-12" style={{ margin: '0px' }}>
         <Col className="col-md-4 col-xs-6 d-flex align-content-center">
           <Center>
-            <Burger size={'md'} opened={false} onClick={openNavbar} hiddenFrom="sm" />
+            <Burger opened={openedNavbar} size={'md'} onClick={openNavbar} hiddenFrom="sm" />
           </Center>
         </Col>
         <Col className="col-md-4" />
