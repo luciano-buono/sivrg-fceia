@@ -76,7 +76,6 @@ const App = () => {
     getNewToken();
   }, [getAccessTokenSilently, isAuthenticated]);
 
-  const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
   const [opened, { close, toggle }] = useDisclosure();
   const [active, setActive] = useState(0);
 
@@ -92,8 +91,8 @@ const App = () => {
   return (
     <>
       <AppShell
-        header={{ height: isMobile ? 90 : 60, offset: true }}
-        navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+        header={{ height: 60, offset: true }}
+        navbar={{ width: 200, breakpoint: 'sm', collapsed: { mobile: !opened } }}
         footer={{ height: 45, offset: true }}
       >
         <AppShell.Header>

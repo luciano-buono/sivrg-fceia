@@ -39,7 +39,7 @@ const LoggedUserMenu: FC<{ user: UserWithRoles; handleLogout: () => Promise<void
                 </div>
               )}
               <img
-                style={{ borderRadius: '50%', height: `${isMobile ? '50px' : '25px'}` }}
+                style={{ borderRadius: '50%', height: `${isMobile ? '30px' : '25px'}` }}
                 src={user?.picture}
                 alt={user?.name}
               />
