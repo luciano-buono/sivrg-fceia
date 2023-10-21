@@ -23,7 +23,7 @@ const ClientActions = () => (
 
 const EmployeeActions = () => <>{null}</>;
 
-const UserButton: FC<{ user: UserWithRoles; handleLogout: () => Promise<void> }> = ({ user, handleLogout }) => {
+const LoggedUserMenu: FC<{ user: UserWithRoles; handleLogout: () => Promise<void> }> = ({ user, handleLogout }) => {
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
   return (
@@ -51,7 +51,11 @@ const UserButton: FC<{ user: UserWithRoles; handleLogout: () => Promise<void> }>
           {user.roles?.includes('client') ? <ClientActions /> : <EmployeeActions />}
           <Menu.Divider />
           <Menu.Label>Cuenta</Menu.Label>
-          <Menu.Item onClick={handleLogout} leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}>
+          <Menu.Item
+            onClick={handleLogout}
+            color="red"
+            leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}
+          >
             Cerrar sesión
           </Menu.Item>
         </Menu.Dropdown>
@@ -60,4 +64,4 @@ const UserButton: FC<{ user: UserWithRoles; handleLogout: () => Promise<void> }>
   );
 };
 
-export default UserButton;
+export default LoggedUserMenu;

@@ -4,7 +4,7 @@ import './Header.css';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useLocation, useNavigate } from 'react-router';
 import useSession from '../../hooks/useSession';
-import UserButton from '../Buttons/UserButton';
+import LoggedUserMenu from '../Menus/LoggedUserMenu';
 import { Loader, Button, Container, Text, em } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 
@@ -50,7 +50,7 @@ const Header: FC = () => {
         <Col className="col-md-4">
           <div className="d-flex justify-content-end py-2">
             {isAuthenticated ? (
-              <UserButton user={user} handleLogout={logout} />
+              <LoggedUserMenu user={user} handleLogout={logout} />
             ) : isLoading ? (
               <Card>
                 <Card.Body className="py-1 px-4">
