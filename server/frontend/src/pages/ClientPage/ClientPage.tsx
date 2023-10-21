@@ -10,7 +10,7 @@ import BookingStepper from '../BookingFormPage/BookingStepper';
 
 const ClientPage = () => (
   <>
-    <Container className="d-flex flex-wrap">
+    <Container className="d-flex flex-wrap justify-content-center">
       <Routes>
         <Route element={<PrivateRoutes redirect_to="/login" />}>
           <Route path="/" element={<HomeClient />} />

@@ -2,7 +2,18 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Link, Navigate } from 'react-router-dom';
 import { Outlet, Route, Routes } from 'react-router';
 import { Auth0Provider } from '@auth0/auth0-react';
-import { AppShell, Burger, Container, Image, MantineProvider, NavLink, Text, createTheme, em } from '@mantine/core';
+import {
+  AppShell,
+  Burger,
+  Center,
+  Container,
+  Image,
+  MantineProvider,
+  NavLink,
+  Text,
+  createTheme,
+  em,
+} from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ClientPage from './pages/ClientPage/ClientPage';
@@ -20,7 +31,8 @@ import Header from './components/Header/';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { Col, Row, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { IconPhone, IconSocial } from '@tabler/icons-react';
+import { IconCalendar, IconPhone, IconSocial } from '@tabler/icons-react';
+import { IconCalendarCheck } from '@tabler/icons-react';
 
 const queryClient = new QueryClient();
 
@@ -61,7 +73,7 @@ function AppWrapper() {
 }
 
 const App = () => {
-  const { getAccessTokenSilently, isAuthenticated } = useSession();
+  const { getAccessTokenSilently, isAuthenticated, user } = useSession();
   useEffect(() => {
     const getNewToken = async () => {
       let newAccessToken = '';
@@ -79,7 +91,7 @@ const App = () => {
   const [opened, { close, toggle }] = useDisclosure();
   const [active, setActive] = useState(0);
 
-  const data = [
+  const commonHeader = [
     { icon: IconPhone, label: 'Contacto', to: '/contact' },
     {
       icon: IconSocial,
@@ -88,10 +100,20 @@ const App = () => {
     },
   ];
 
+  const employeeHeader = [...commonHeader];
+
+  const clientHeader = [
+    { icon: IconCalendarCheck, label: 'Agendar turno', to: '/booking' },
+    { icon: IconCalendar, label: 'Mis turnos', to: '/reservations' },
+    ...commonHeader,
+  ];
+
+  const headerOptions = user?.roles?.includes('client') ? clientHeader : employeeHeader;
+
   return (
     <>
       <AppShell
-        header={{ height: 60, offset: true }}
+        header={{ height: 62, offset: true }}
         navbar={{ width: 200, breakpoint: 'sm', collapsed: { mobile: !opened } }}
         footer={{ height: 45, offset: true }}
       >
@@ -100,7 +122,7 @@ const App = () => {
         </AppShell.Header>
         <AppShell.Navbar p="md">
           <Col>
-            {data.map((item, index) => (
+            {headerOptions.map((item, index) => (
               <NavLink
                 key={index}
                 active={index === active}

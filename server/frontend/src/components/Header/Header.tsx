@@ -5,8 +5,9 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { useLocation, useNavigate } from 'react-router';
 import useSession from '../../hooks/useSession';
 import LoggedUserMenu from '../Menus/LoggedUserMenu';
-import { Loader, Button, Container, ActionIcon, Center, Burger } from '@mantine/core';
+import { Loader, Button, Container, ActionIcon, Center, Burger, em } from '@mantine/core';
 import { IconHome } from '@tabler/icons-react';
+import { useMediaQuery } from '@mantine/hooks';
 
 const Header: FC<{ openNavbar: any; openedNavbar: boolean }> = ({ openNavbar, openedNavbar }) => {
   const { loginWithPopup, isAuthenticated, user, logout, isLoading } = useSession();
@@ -15,6 +16,7 @@ const Header: FC<{ openNavbar: any; openedNavbar: boolean }> = ({ openNavbar, op
   const navigate = useNavigate();
 
   const isEmployee = user?.roles?.includes('employee');
+  const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
   useEffect(() => {
     if (isAuthenticated && location.pathname === '/login') {
@@ -29,11 +31,8 @@ const Header: FC<{ openNavbar: any; openedNavbar: boolean }> = ({ openNavbar, op
           <Center>
             <Burger opened={openedNavbar} size={'md'} onClick={openNavbar} hiddenFrom="sm" />
           </Center>
-        </Col>
-        <Col className="col-md-4" />
-        <Col className="col-md-4">
-          <div className="d-flex justify-content-end py-2">
-            <Center>
+          <Center>
+            {!isMobile && (
               <LinkContainer className="pe-2" to={isEmployee ? '/admin' : '/'}>
                 <Nav.Link>
                   <ActionIcon variant="outline" aria-label="Home" size={'xl'}>
@@ -41,6 +40,25 @@ const Header: FC<{ openNavbar: any; openedNavbar: boolean }> = ({ openNavbar, op
                   </ActionIcon>
                 </Nav.Link>
               </LinkContainer>
+            )}
+          </Center>
+        </Col>
+        <Col className="col-md-4 d-flex align-content-center justify-content-center">
+          <Center>
+            {isMobile && (
+              <LinkContainer className="pe-2" to={isEmployee ? '/admin' : '/'}>
+                <Nav.Link>
+                  <ActionIcon variant="outline" aria-label="Home" size={'xl'}>
+                    <IconHome style={{ width: '70%', height: '70%' }} stroke={1.5} />
+                  </ActionIcon>
+                </Nav.Link>
+              </LinkContainer>
+            )}
+          </Center>
+        </Col>
+        <Col className="col-md-4">
+          <div className="d-flex justify-content-end py-2">
+            <Center>
               {isAuthenticated ? (
                 <LoggedUserMenu user={user} handleLogout={logout} />
               ) : isLoading ? (

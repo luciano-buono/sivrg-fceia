@@ -1,4 +1,4 @@
-import { Card, Container, Row } from 'react-bootstrap';
+import { Card, Row } from 'react-bootstrap';
 import ResourceCard from '../../components/ResourceCard';
 import useSession from '../../hooks/useSession';
 import { Skeleton } from '@mantine/core';
@@ -13,12 +13,12 @@ const HomeAdmin = () => {
   const { isLoading } = useSession();
 
   return (
-    <Container className="d-flex flex-column justify-content-center align-content-center pt-2">
-      <Card className="d-flex flex-wrap justify-content-center mb-2">
+    <>
+      <Card className="d-flex w-100 justify-content-between my-3">
         <Card.Body>
-          <Row className="justify-content-between px-3">
+          <Row className="justify-content-center px-3">
             {mockResources.map((r, index) => (
-              <Skeleton visible={isLoading} className="w-auto" key={index}>
+              <Skeleton visible={isLoading} className="w-auto py-1" key={index}>
                 <ResourceCard {...r} />
               </Skeleton>
             ))}
@@ -41,7 +41,7 @@ const HomeAdmin = () => {
           </Card.Body>
         </Card>
       </Skeleton>
-    </Container>
+    </>
   );
 };
 
