@@ -34,7 +34,7 @@ const LoggedUserMenu: FC<{ user: UserWithRoles; handleLogout: () => Promise<void
             <div style={{ cursor: 'pointer' }} className="no-select d-flex flex-wrap align-items-center">
               {isMobile ? null : (
                 <div className="pe-2">
-                  Bienvenido,{' '}
+                  Bienvenido,
                   {`${user.nickname ? user?.nickname.charAt(0).toUpperCase() + user.nickname.slice(1) : ''}!`}
                 </div>
               )}

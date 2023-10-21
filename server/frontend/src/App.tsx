@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Navigate } from 'react-router-dom';
 import { Outlet, Route, Routes } from 'react-router';
 import { Auth0Provider } from '@auth0/auth0-react';
-import { AppShell, MantineProvider, createTheme, em } from '@mantine/core';
+import { AppShell, Burger, Container, Image, MantineProvider, Text, createTheme, em } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ClientPage from './pages/ClientPage/ClientPage';
@@ -17,7 +17,9 @@ import '@mantine/dates/styles.css';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 import Header from './components/Header/';
-import { useMediaQuery } from '@mantine/hooks';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+import { Col, Row, Nav } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 
 const queryClient = new QueryClient();
 
@@ -74,13 +76,32 @@ const App = () => {
   }, [getAccessTokenSilently, isAuthenticated]);
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+  const [opened, { toggle }] = useDisclosure();
 
   return (
     <>
-      <AppShell header={{ height: isMobile ? 90 : 60, offset: true }}>
+      <AppShell
+        header={{ height: isMobile ? 90 : 60, offset: true }}
+        navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+        footer={{ height: 45, offset: true }}
+      >
         <AppShell.Header>
-          <Header />
+          <Header openNavbar={toggle} />
         </AppShell.Header>
+        <AppShell.Navbar p="md">
+          <Col>
+            <LinkContainer to="/contact">
+              <Nav.Link>
+                <Text className={`${isMobile ? 'h6' : 'h5'}`}>Contacto</Text>
+              </Nav.Link>
+            </LinkContainer>
+            <LinkContainer to="/about">
+              <Nav.Link>
+                <Text className={`${isMobile ? 'h6' : 'h5'}`}>Sobre nosotros</Text>
+              </Nav.Link>
+            </LinkContainer>
+          </Col>
+        </AppShell.Navbar>
         <AppShell.Main>
           <Routes>
             <Route path="/admin/*" element={<AdminApp />} />
@@ -89,6 +110,13 @@ const App = () => {
             <Route path="*" element={<ClientApp />} />
           </Routes>
         </AppShell.Main>
+        <AppShell.Footer>
+          <Container fluid>
+            <Row className="d-flex flex-wrap align-content-center ">
+              <Image className="px-0 pt-1" w={70} h={40} src={'https://i.imgur.com/gB7134o.png'} />
+            </Row>
+          </Container>
+        </AppShell.Footer>
       </AppShell>
     </>
   );
