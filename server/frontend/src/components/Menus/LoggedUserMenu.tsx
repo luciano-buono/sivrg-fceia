@@ -48,7 +48,7 @@ const LoggedUserMenu: FC<{ user: UserWithRoles; handleLogout: () => Promise<void
         </Menu.Target>
         <Menu.Dropdown style={{ zIndex: 9999 }}>
           <Menu.Label>Acciones</Menu.Label>
-          {user.roles?.includes('client') ? <ClientActions /> : <EmployeeActions />}
+          {user.isClient ? <ClientActions /> : <EmployeeActions />}
           <Menu.Divider />
           <Menu.Label>Cuenta</Menu.Label>
           <Menu.Item

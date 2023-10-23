@@ -10,12 +10,11 @@ import { IconHome } from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
 
 const Header: FC<{ openNavbar: any; openedNavbar: boolean }> = ({ openNavbar, openedNavbar }) => {
-  const { loginWithPopup, isAuthenticated, user, logout, isLoading } = useSession();
+  const { loginWithPopup, isAuthenticated, user, logout, isLoading, isEmployee } = useSession();
 
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isEmployee = user?.roles?.includes('employee');
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
   useEffect(() => {
@@ -33,7 +32,7 @@ const Header: FC<{ openNavbar: any; openedNavbar: boolean }> = ({ openNavbar, op
           </Center>
           <Center>
             {!isMobile && (
-              <LinkContainer className="pe-2" to={isEmployee ? '/admin' : '/'}>
+              <LinkContainer className="pe-2 pt-2" to={isEmployee ? '/admin' : '/'}>
                 <Nav.Link>
                   <ActionIcon variant="outline" aria-label="Home" size={'xl'}>
                     <IconHome style={{ width: '70%', height: '70%' }} stroke={1.5} />
