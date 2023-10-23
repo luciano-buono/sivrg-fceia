@@ -2,18 +2,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Link, Navigate } from 'react-router-dom';
 import { Outlet, Route, Routes } from 'react-router';
 import { Auth0Provider } from '@auth0/auth0-react';
-import {
-  AppShell,
-  Burger,
-  Center,
-  Container,
-  Image,
-  MantineProvider,
-  NavLink,
-  Text,
-  createTheme,
-  em,
-} from '@mantine/core';
+import { AppShell, Container, Image, MantineProvider, NavLink, createTheme } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ClientPage from './pages/ClientPage/ClientPage';
@@ -28,9 +17,8 @@ import '@mantine/dates/styles.css';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 import Header from './components/Header/';
-import { useDisclosure, useMediaQuery } from '@mantine/hooks';
-import { Col, Row, Nav } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { useDisclosure } from '@mantine/hooks';
+import { Col, Row } from 'react-bootstrap';
 import { IconCalendar, IconPhone, IconSocial } from '@tabler/icons-react';
 import { IconCalendarCheck } from '@tabler/icons-react';
 
@@ -73,7 +61,7 @@ function AppWrapper() {
 }
 
 const App = () => {
-  const { getAccessTokenSilently, isAuthenticated, user } = useSession();
+  const { getAccessTokenSilently, isAuthenticated, isClient } = useSession();
   useEffect(() => {
     const getNewToken = async () => {
       let newAccessToken = '';
@@ -108,7 +96,7 @@ const App = () => {
     ...commonHeader,
   ];
 
-  const headerOptions = user?.roles?.includes('client') ? clientHeader : employeeHeader;
+  const headerOptions = isClient ? clientHeader : employeeHeader;
 
   return (
     <>
