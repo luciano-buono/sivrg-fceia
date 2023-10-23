@@ -19,15 +19,13 @@ import '@mantine/notifications/styles.css';
 import Header from './components/Header/';
 import { useDisclosure } from '@mantine/hooks';
 import { Col, Row } from 'react-bootstrap';
-import { IconCalendar, IconPhone, IconSocial } from '@tabler/icons-react';
+import { IconCalendar, IconHome, IconPhone, IconSocial } from '@tabler/icons-react';
 import { IconCalendarCheck } from '@tabler/icons-react';
 
 const queryClient = new QueryClient();
 
-export const PrivateRoutes: FC<{ redirect_to: string }> = ({ redirect_to }) => {
-  const { isAuthenticated, isLoading } = useSession();
-
-  return !isAuthenticated && !isLoading ? <Navigate to={redirect_to} /> : <Outlet />;
+export const ProtectedRoutes: FC<{ isAllowed: boolean; redirectPath: string }> = ({ isAllowed, redirectPath }) => {
+  return !isAllowed ? <Navigate to={redirectPath} /> : <Outlet />;
 };
 
 const theme = createTheme({
@@ -79,7 +77,15 @@ const App = () => {
   const [opened, { close, toggle }] = useDisclosure();
   const [active, setActive] = useState(0);
 
-  const commonHeader = [
+  const topNavbar = [
+    {
+      icon: IconHome,
+      label: 'Home',
+      to: '/',
+    },
+  ];
+
+  const bottomNavbar = [
     { icon: IconPhone, label: 'Contacto', to: '/contact' },
     {
       icon: IconSocial,
@@ -88,12 +94,13 @@ const App = () => {
     },
   ];
 
-  const employeeHeader = [...commonHeader];
+  const employeeHeader = [...topNavbar, ...bottomNavbar];
 
   const clientHeader = [
+    ...topNavbar,
     { icon: IconCalendarCheck, label: 'Agendar turno', to: '/booking' },
     { icon: IconCalendar, label: 'Mis turnos', to: '/reservations' },
-    ...commonHeader,
+    ...bottomNavbar,
   ];
 
   const headerOptions = isClient ? clientHeader : employeeHeader;
