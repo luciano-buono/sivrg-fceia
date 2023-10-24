@@ -18,14 +18,26 @@ import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 import Header from './components/Header/';
 import { useDisclosure } from '@mantine/hooks';
-import { Col, Row } from 'react-bootstrap';
+import { Card, Col, Row } from 'react-bootstrap';
 import { IconCalendar, IconHome, IconPhone, IconSocial } from '@tabler/icons-react';
 import { IconCalendarCheck } from '@tabler/icons-react';
+import About from './pages/About';
+import Contact from './pages/Contact';
 
 const queryClient = new QueryClient();
 
-export const ProtectedRoutes: FC<{ isAllowed: boolean; redirectPath: string }> = ({ isAllowed, redirectPath }) => {
-  return !isAllowed ? <Navigate to={redirectPath} /> : <Outlet />;
+export const ProtectedRoutes: FC<{ allowedRoles?: string[]; redirectPath: string }> = ({
+  allowedRoles,
+  redirectPath,
+}) => {
+  const { isAuthenticated, user } = useSession();
+  return user?.roles?.some((role) => (allowedRoles ? allowedRoles.includes(role) : true)) ? (
+    <Outlet />
+  ) : !isAuthenticated ? (
+    <Navigate to={'/login'} replace />
+  ) : (
+    <Navigate to={redirectPath} replace />
+  );
 };
 
 const theme = createTheme({
@@ -59,7 +71,7 @@ function AppWrapper() {
 }
 
 const App = () => {
-  const { getAccessTokenSilently, isAuthenticated, isClient } = useSession();
+  const { getAccessTokenSilently, isAuthenticated, isClient, isLoading } = useSession();
   useEffect(() => {
     const getNewToken = async () => {
       let newAccessToken = '';
@@ -81,7 +93,7 @@ const App = () => {
     {
       icon: IconHome,
       label: 'Home',
-      to: '/',
+      to: isClient ? '/' : '/admin',
     },
   ];
 
@@ -94,7 +106,11 @@ const App = () => {
     },
   ];
 
-  const employeeHeader = [...topNavbar, ...bottomNavbar];
+  const employeeHeader = [
+    ...topNavbar,
+    { icon: IconCalendar, label: 'Turnos', to: 'admin/reservations/' },
+    ...bottomNavbar,
+  ];
 
   const clientHeader = [
     ...topNavbar,
@@ -104,6 +120,10 @@ const App = () => {
   ];
 
   const headerOptions = isClient ? clientHeader : employeeHeader;
+
+  if (isLoading) {
+    return <></>;
+  }
 
   return (
     <>
@@ -138,6 +158,24 @@ const App = () => {
           <Routes>
             <Route path="/admin/*" element={<AdminApp />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<About />} />
+            <Route
+              path="/no-admin"
+              element={
+                <Card className="m-3">
+                  <Card.Body>No se admiten admins</Card.Body>
+                </Card>
+              }
+            />
+            <Route
+              path="/no-client"
+              element={
+                <Card className="m-3">
+                  <Card.Body>No se admiten clientes</Card.Body>
+                </Card>
+              }
+            />
             <Route path="/*" element={<ClientApp />} />
             <Route path="*" element={<ClientApp />} />
           </Routes>

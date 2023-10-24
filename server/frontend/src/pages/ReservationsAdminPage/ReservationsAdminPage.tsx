@@ -59,6 +59,9 @@ const ReservationsAdminPage = () => {
       header: () => 'Acciones',
       cell: () => (
         <div className="d-flex justify-content-around">
+          <Button size="compact-sm" color="green" onClick={handleEditRow}>
+            <i className="fa-solid fa-check"></i>
+          </Button>
           <Button size="compact-sm" color="yellow" onClick={handleEditRow}>
             <i className="fa-solid fa-pencil"></i>
           </Button>
@@ -85,6 +88,9 @@ const ReservationsAdminPage = () => {
       header: () => 'Acciones',
       cell: () => (
         <div className="d-flex justify-content-around">
+          <Button size="compact-sm" color="green" onClick={handleEditRow}>
+            <i className="fa-solid fa-check"></i>
+          </Button>
           <Button size="compact-sm" color="yellow" onClick={handleEditRow}>
             <i className="fa-solid fa-pencil"></i>
           </Button>
@@ -112,7 +118,7 @@ const ReservationsAdminPage = () => {
     <>
       <Card className="d-flex w-100 my-3">
         <Card.Body>
-          <div className="h1"> Mis turnos </div>
+          <div className="h1"> Turnos </div>
           <Skeleton visible={isLoading || isLoadingTurnos}>
             <table className="table table-bordered">
               <thead>

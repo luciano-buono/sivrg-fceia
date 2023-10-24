@@ -2,16 +2,16 @@ import { Container } from 'react-bootstrap';
 import { Routes, Route } from 'react-router';
 import { ProtectedRoutes } from '../../App';
 import HomeAdmin from '../HomeAdmin';
-import useSession from '../../hooks/useSession';
+import ReservationsAdminPage from '../ReservationsAdminPage';
 
 const AdminPage = () => {
-  const { isAuthenticated } = useSession();
   return (
     <>
       <Container className="d-flex flex-wrap">
         <Routes>
-          <Route element={<ProtectedRoutes isAllowed={isAuthenticated} redirectPath="/login" />}>
+          <Route element={<ProtectedRoutes allowedRoles={['employee']} redirectPath="/no-client" />}>
             <Route path="/" element={<HomeAdmin />} />
+            <Route path="/reservations" element={<ReservationsAdminPage />} />
           </Route>
         </Routes>
       </Container>
