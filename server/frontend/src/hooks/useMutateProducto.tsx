@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { ProductoData, Producto } from '../types';
 
-const createProducto = async (newProductoData: ProductoData) => {
+const createProductoFn = async (newProductoData: ProductoData) => {
   const response = await api.post('/productos/', newProductoData);
   return response.data;
 };
@@ -10,9 +10,9 @@ const createProducto = async (newProductoData: ProductoData) => {
 const useMutateProductos = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const createProducto = useMutation({
     mutationKey: ['producto'],
-    mutationFn: createProducto,
+    mutationFn: createProductoFn,
     onSuccess: (data: Producto) => {
       queryClient.setQueryData<Producto[]>(['productos'], (oldData) => {
         oldData = oldData || [];
@@ -20,6 +20,8 @@ const useMutateProductos = () => {
       });
     },
   });
+
+  return { createProducto };
 };
 
 export default useMutateProductos;

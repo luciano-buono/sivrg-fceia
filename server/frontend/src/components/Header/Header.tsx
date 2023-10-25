@@ -10,7 +10,7 @@ import { IconHome } from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
 
 const Header: FC<{ openNavbar: any; openedNavbar: boolean }> = ({ openNavbar, openedNavbar }) => {
-  const { loginWithPopup, isAuthenticated, user, logout, isLoading, isEmployee } = useSession();
+  const { loginWithPopup, isAuthenticated, isLoading, isEmployee } = useSession();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -59,7 +59,7 @@ const Header: FC<{ openNavbar: any; openedNavbar: boolean }> = ({ openNavbar, op
           <div className="d-flex justify-content-end py-2">
             <Center>
               {isAuthenticated ? (
-                <LoggedUserMenu user={user} handleLogout={logout} />
+                <LoggedUserMenu />
               ) : isLoading ? (
                 <Card>
                   <Card.Body className="py-1 px-4">

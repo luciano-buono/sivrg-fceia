@@ -12,7 +12,7 @@ import { useMutationState } from '@tanstack/react-query';
 const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const bookingForm = useBookingFormContext();
 
-  const createChoferMutation = useMutateChoferes();
+  const { createChofer } = useMutateChoferes();
 
   const form = useForm({
     initialValues: {
@@ -33,7 +33,7 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
 
   const handleCreateChofer = async (newChoferData: ChoferData) => {
     try {
-      const chofer = await createChoferMutation.mutateAsync(newChoferData);
+      const chofer = await createChofer.mutateAsync(newChoferData);
       bookingForm.setFieldValue('chofer_id', chofer.chofer_id.toString());
       updateSearch(`${chofer.nombre} ${chofer.apellido}, ${chofer.dni.toString()}`);
       closeFn();

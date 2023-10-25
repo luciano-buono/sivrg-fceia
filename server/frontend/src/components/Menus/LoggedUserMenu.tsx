@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { UserWithRoles } from '../../hooks/useSession';
+import useSession, { UserWithRoles } from '../../hooks/useSession';
 import { Button, Menu, em, rem } from '@mantine/core';
 import { IconCalendar, IconCalendarCheck, IconLogout } from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
@@ -23,8 +23,9 @@ const ClientActions = () => (
 
 const EmployeeActions = () => <>{null}</>;
 
-const LoggedUserMenu: FC<{ user: UserWithRoles; handleLogout: () => Promise<void> }> = ({ user, handleLogout }) => {
+const LoggedUserMenu: FC = () => {
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+  const { user, isClient, logout } = useSession();
 
   return (
     <Menu shadow="md" width={200} withArrow>
@@ -48,11 +49,11 @@ const LoggedUserMenu: FC<{ user: UserWithRoles; handleLogout: () => Promise<void
         </Menu.Target>
         <Menu.Dropdown style={{ zIndex: 9999 }}>
           <Menu.Label>Acciones</Menu.Label>
-          {user.isClient ? <ClientActions /> : <EmployeeActions />}
+          {isClient ? <ClientActions /> : <EmployeeActions />}
           <Menu.Divider />
           <Menu.Label>Cuenta</Menu.Label>
           <Menu.Item
-            onClick={handleLogout}
+            onClick={() => logout()}
             color="red"
             leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}
           >

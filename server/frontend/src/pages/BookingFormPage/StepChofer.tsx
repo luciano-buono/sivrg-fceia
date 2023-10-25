@@ -24,9 +24,9 @@ const StepChofer: FC = () => {
 
   const form = useBookingFormContext();
 
-  const { data: choferes } = useQuery({
+  const { data: choferes } = useQuery<Chofer[]>({
     queryKey: ['choferes'],
-    queryFn: () => api.get<Chofer[]>('/choferes/').then((res) => res.data),
+    queryFn: () => api.get('/choferes/').then((res) => res.data),
   });
 
   const selectData = choferes?.map((chofer) => ({

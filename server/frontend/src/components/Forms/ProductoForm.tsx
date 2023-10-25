@@ -9,7 +9,7 @@ import useMutateProductos from '../../hooks/useMutateProducto';
 import { useMutationState } from '@tanstack/react-query';
 
 const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
-  const createProductoMutation = useMutateProductos();
+  const { createProducto } = useMutateProductos();
 
   const bookingForm = useBookingFormContext();
 
@@ -24,7 +24,7 @@ const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
 
   const handleCreateProducto = async (newProductoData: ProductoData) => {
     try {
-      const producto = await createProductoMutation.mutateAsync(newProductoData);
+      const producto = await createProducto.mutateAsync(newProductoData);
       bookingForm.setFieldValue('producto_id', producto.producto_id.toString());
       updateSearch(`${producto.producto_nombre}`);
       // updateValue(producto.producto_id.toString());

@@ -96,9 +96,9 @@ const ReservationsPage = () => {
     }),
   ];
 
-  const { data: turnos, isLoading: isLoadingTurnos } = useQuery({
+  const { data: turnos, isLoading: isLoadingTurnos } = useQuery<Turno[]>({
     queryKey: ['turnos'],
-    queryFn: () => api.get<Turno[]>('/turnos/').then((res) => res.data),
+    queryFn: () => api.get('/turnos/').then((res) => res.data),
   });
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);

@@ -24,9 +24,9 @@ const StepVehiculo: FC = () => {
     form.setFieldValue('vehiculo_id', value);
   };
 
-  const { data: vehiculos } = useQuery({
+  const { data: vehiculos } = useQuery<Vehiculo[]>({
     queryKey: ['vehiculos'],
-    queryFn: () => api.get<Vehiculo[]>('/vehiculos/').then((res) => res.data),
+    queryFn: () => api.get('/vehiculos/').then((res) => res.data),
   });
 
   const selectData = vehiculos?.map((vehiculo) => ({

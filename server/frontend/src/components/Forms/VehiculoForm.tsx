@@ -9,7 +9,7 @@ import useMutateVehiculos from '../../hooks/useMutateVehiculos';
 import { useMutationState } from '@tanstack/react-query';
 
 const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
-  const createVehiculoMutation = useMutateVehiculos();
+  const { createVehiculo } = useMutateVehiculos();
 
   const bookingForm = useBookingFormContext();
 
@@ -32,7 +32,7 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
 
   const handleCreateVehiculo = async (newVehiculoData: VehiculoData) => {
     try {
-      const vehiculo = await createVehiculoMutation.mutateAsync(newVehiculoData);
+      const vehiculo = await createVehiculo.mutateAsync(newVehiculoData);
       bookingForm.setFieldValue('vehiculo_id', vehiculo.vehiculo_id.toString());
       updateSearch(`${vehiculo.patente},  ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`);
       closeFn();

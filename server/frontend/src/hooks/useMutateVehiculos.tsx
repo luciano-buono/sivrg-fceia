@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { Vehiculo, VehiculoData } from '../types';
 
-const createVehiculo = async (newVehiculoData: VehiculoData) => {
+const createVehiculoFn = async (newVehiculoData: VehiculoData) => {
   const response = await api.post('/vehiculos/', newVehiculoData);
   return response.data;
 };
@@ -10,9 +10,9 @@ const createVehiculo = async (newVehiculoData: VehiculoData) => {
 const useMutateVehiculos = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const createVehiculo = useMutation({
     mutationKey: ['vehiculo'],
-    mutationFn: createVehiculo,
+    mutationFn: createVehiculoFn,
     onSuccess: (data: Vehiculo) => {
       queryClient.setQueryData<Vehiculo[]>(['vehiculos'], (oldData) => {
         oldData = oldData || [];
@@ -20,6 +20,8 @@ const useMutateVehiculos = () => {
       });
     },
   });
+
+  return { createVehiculo };
 };
 
 export default useMutateVehiculos;

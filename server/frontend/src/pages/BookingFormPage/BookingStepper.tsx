@@ -51,10 +51,10 @@ const BookingStepper = () => {
     },
   });
 
-  const createTurnoMutation = useMutateTurno();
+  const { createTurno } = useMutateTurno();
   const handleSubmit = async (newTurnoData: TurnoData) => {
     try {
-      const turno = await createTurnoMutation.mutateAsync({
+      const turno = await createTurno.mutateAsync({
         ...newTurnoData,
       });
       notifications.show({

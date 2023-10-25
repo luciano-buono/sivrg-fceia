@@ -11,9 +11,9 @@ const StepProducto: FC = () => {
 
   const form = useBookingFormContext();
 
-  const { data: productos } = useQuery({
+  const { data: productos } = useQuery<Producto[]>({
     queryKey: ['productos'],
-    queryFn: () => api.get<Producto[]>('/productos/').then((res) => res.data),
+    queryFn: () => api.get('/productos/').then((res) => res.data),
   });
 
   const selectData = productos?.map((producto) => ({
