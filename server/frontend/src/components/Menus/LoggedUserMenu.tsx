@@ -1,31 +1,50 @@
 import { FC } from 'react';
 import { Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import useSession, { UserWithRoles } from '../../hooks/useSession';
+import useSession from '../../hooks/useSession';
 import { Button, Menu, em, rem } from '@mantine/core';
 import { IconCalendar, IconCalendarCheck, IconLogout } from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
 
-const ClientActions = () => (
-  <>
-    <Menu.Item leftSection={<IconCalendarCheck style={{ width: rem(14), height: rem(14) }} />}>
-      <LinkContainer to="/booking">
-        <Nav.Link>Agendar turno</Nav.Link>
-      </LinkContainer>
-    </Menu.Item>
-    <Menu.Item leftSection={<IconCalendar style={{ width: rem(14), height: rem(14) }} />}>
-      <LinkContainer to="/reservations">
-        <Nav.Link>Mis turnos</Nav.Link>
-      </LinkContainer>
-    </Menu.Item>
-  </>
-);
+const clientActions = [
+  {
+    icon: <IconCalendarCheck style={{ width: rem(14), height: rem(14) }} />,
+    redirect: '/booking',
+    label: 'Agendar turno',
+  },
+  {
+    icon: <IconCalendar style={{ width: rem(14), height: rem(14) }} />,
+    redirect: '/reservations',
+    label: 'Mis turnos',
+  },
+];
 
-const EmployeeActions = () => <>{null}</>;
+const employeeActions = [
+  {
+    icon: <IconCalendar style={{ width: rem(14), height: rem(14) }} />,
+    redirect: 'admin/reservations',
+    label: 'Turnos',
+  },
+];
 
 const LoggedUserMenu: FC = () => {
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
   const { user, isClient, logout } = useSession();
+
+  const Actions = () => {
+    const actions = isClient ? clientActions : employeeActions;
+    return (
+      <>
+        {actions.map((action) => (
+          <Menu.Item leftSection={action.icon}>
+            <LinkContainer to={action.redirect}>
+              <Nav.Link>{action.label}</Nav.Link>
+            </LinkContainer>
+          </Menu.Item>
+        ))}
+      </>
+    );
+  };
 
   return (
     <Menu shadow="md" width={200} withArrow>
@@ -49,7 +68,7 @@ const LoggedUserMenu: FC = () => {
         </Menu.Target>
         <Menu.Dropdown style={{ zIndex: 9999 }}>
           <Menu.Label>Acciones</Menu.Label>
-          {isClient ? <ClientActions /> : <EmployeeActions />}
+          <Actions />
           <Menu.Divider />
           <Menu.Label>Cuenta</Menu.Label>
           <Menu.Item
