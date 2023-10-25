@@ -30,17 +30,6 @@ const Header: FC<{ openNavbar: any; openedNavbar: boolean }> = ({ openNavbar, op
           <Center>
             <Burger opened={openedNavbar} size={'md'} onClick={openNavbar} hiddenFrom="sm" />
           </Center>
-          <Center>
-            {!isMobile && (
-              <LinkContainer className="pe-2 pt-2" to={isEmployee ? '/admin' : '/'}>
-                <Nav.Link>
-                  <ActionIcon variant="outline" aria-label="Home" size={'xl'}>
-                    <IconHome style={{ width: '70%', height: '70%' }} stroke={1.5} />
-                  </ActionIcon>
-                </Nav.Link>
-              </LinkContainer>
-            )}
-          </Center>
         </Col>
         <Col className="col-md-4 d-flex align-content-center justify-content-center">
           <Center>

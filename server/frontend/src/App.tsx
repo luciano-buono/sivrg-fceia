@@ -87,7 +87,8 @@ const App = () => {
   }, [getAccessTokenSilently, isAuthenticated]);
 
   const [opened, { close, toggle }] = useDisclosure();
-  const [active, setActive] = useState(0);
+
+  const [active, setActive] = useState<number | undefined>();
 
   const topNavbar = [
     {
