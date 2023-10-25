@@ -23,6 +23,7 @@ import { IconCalendar, IconHome, IconPhone, IconSocial } from '@tabler/icons-rea
 import { IconCalendarCheck } from '@tabler/icons-react';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import NotAllowedPage from './pages/NotAllowedPage';
 
 const queryClient = new QueryClient();
 
@@ -161,22 +162,7 @@ const App = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
-            <Route
-              path="/no-admin"
-              element={
-                <Card className="m-3">
-                  <Card.Body>No se admiten admins</Card.Body>
-                </Card>
-              }
-            />
-            <Route
-              path="/no-client"
-              element={
-                <Card className="m-3">
-                  <Card.Body>No se admiten clientes</Card.Body>
-                </Card>
-              }
-            />
+            <Route path="/restricted" element={<NotAllowedPage />} />
             <Route path="/*" element={<ClientApp />} />
             <Route path="*" element={<ClientApp />} />
           </Routes>

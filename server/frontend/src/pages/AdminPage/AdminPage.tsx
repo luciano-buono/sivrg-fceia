@@ -9,9 +9,11 @@ const AdminPage = () => {
     <>
       <Container className="d-flex flex-wrap">
         <Routes>
-          <Route element={<ProtectedRoutes allowedRoles={['employee']} redirectPath="/no-client" />}>
-            <Route path="/" element={<HomeAdmin />} />
-            <Route path="/reservations" element={<ReservationsAdminPage />} />
+          <Route element={<ProtectedRoutes allowedRoles={['employee']} redirectPath="/restricted" />}>
+            <Route path="/">
+              <Route index element={<HomeAdmin />} />
+              <Route path="/reservations" element={<ReservationsAdminPage />} />
+            </Route>
           </Route>
         </Routes>
       </Container>
