@@ -5,7 +5,7 @@ import { ModelForm, ProductoData } from '../../types';
 import { useForm } from '@mantine/form';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
-import useMutateProductos from '../../hooks/useMutateProducto';
+import useMutateProductos from '../../hooks/useProducto';
 import { useMutationState } from '@tanstack/react-query';
 
 const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {

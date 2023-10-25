@@ -8,7 +8,7 @@ import StepVehiculo from './StepVehiculo';
 import StepDetalles from './StepDetalles';
 import { BookingFormProvider, useBookingForm } from '../../contexts/BookingFormContext';
 import StepProducto from './StepProducto';
-import useMutateTurno from '../../hooks/useMutateTurno';
+import useTurno from '../../hooks/useTurno';
 import { TurnoData } from '../../types';
 import StepCompleted from './StepCompleted';
 
@@ -51,7 +51,7 @@ const BookingStepper = () => {
     },
   });
 
-  const { createTurno } = useMutateTurno();
+  const { createTurno } = useTurno();
   const handleSubmit = async (newTurnoData: TurnoData) => {
     try {
       const turno = await createTurno.mutateAsync({
