@@ -26,7 +26,6 @@ const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
       const producto = await createProducto.mutateAsync(newProductoData);
       bookingForm.setFieldValue('producto_id', producto.producto_id.toString());
       updateSearch(`${producto.producto_nombre}`);
-      // updateValue(producto.producto_id.toString());
       closeFn();
       notifications.show({
         title: 'Producto creado!',
