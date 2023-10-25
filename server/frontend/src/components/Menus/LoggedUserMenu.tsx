@@ -35,8 +35,8 @@ const LoggedUserMenu: FC = () => {
     const actions = isClient ? clientActions : employeeActions;
     return (
       <>
-        {actions.map((action) => (
-          <Menu.Item leftSection={action.icon}>
+        {actions.map((action, index) => (
+          <Menu.Item leftSection={action.icon} key={index}>
             <LinkContainer to={action.redirect}>
               <Nav.Link>{action.label}</Nav.Link>
             </LinkContainer>

@@ -6,10 +6,9 @@ import { useForm } from '@mantine/form';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
 import useMutateProductos from '../../hooks/useProducto';
-import { useMutationState } from '@tanstack/react-query';
 
 const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
-  const { createProducto } = useMutateProductos();
+  const { createProducto, isMutatingProducto } = useMutateProductos();
 
   const bookingForm = useBookingFormContext();
 
@@ -43,15 +42,10 @@ const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
     }
   };
 
-  const isMutatingProducto = useMutationState({
-    filters: { status: 'pending', mutationKey: ['producto'] },
-    select: (mutation) => mutation.state.variables,
-  });
-
   return (
     <form
       onSubmit={form.onSubmit(() => {
-        if (!(isMutatingProducto.length > 0)) {
+        if (!isMutatingProducto) {
           handleCreateProducto({
             producto_nombre: form.values.producto_nombre,
           });
@@ -69,7 +63,7 @@ const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
       </Row>
       <Row className="d-flex justify-content-end pt-3 pe-3">
         <Button type="submit" className="w-auto">
-          {isMutatingProducto.length > 0 ? <Loader type="dots" color="white" /> : 'Crear producto'}
+          {isMutatingProducto ? <Loader type="dots" color="white" /> : 'Crear producto'}
         </Button>
       </Row>
     </form>

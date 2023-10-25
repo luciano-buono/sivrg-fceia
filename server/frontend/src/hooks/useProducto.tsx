@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useMutationState, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { ProductoData, Producto } from '../types';
 
@@ -26,7 +26,13 @@ const useProducto = () => {
     },
   });
 
-  return { queryProducto, createProducto };
+  const isMutatingProducto =
+    useMutationState({
+      filters: { status: 'pending', mutationKey: ['producto'] },
+      select: (mutation) => mutation.state.variables,
+    }).length > 0;
+
+  return { queryProducto, createProducto, isMutatingProducto };
 };
 
 export default useProducto;

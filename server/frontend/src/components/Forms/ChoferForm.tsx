@@ -7,12 +7,11 @@ import { useForm } from '@mantine/form';
 import useChoferes from '../../hooks/useChofer';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
-import { useMutationState } from '@tanstack/react-query';
 
 const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const bookingForm = useBookingFormContext();
 
-  const { createChofer } = useChoferes();
+  const { createChofer, isMutatingChofer } = useChoferes();
 
   const form = useForm({
     initialValues: {
@@ -51,15 +50,10 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
     }
   };
 
-  const isMutatingChofer = useMutationState({
-    filters: { status: 'pending', mutationKey: ['chofer'] },
-    select: (mutation) => mutation.state.variables,
-  });
-
   return (
     <form
       onSubmit={form.onSubmit(() => {
-        if (!(isMutatingChofer.length > 0)) {
+        if (!isMutatingChofer) {
           handleCreateChofer({
             nombre: form.values.firstname,
             apellido: form.values.lastname,
@@ -116,7 +110,7 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
       </Row>
       <Row className="d-flex justify-content-end pt-3 pe-3">
         <Button type="submit" className="w-auto">
-          {isMutatingChofer.length > 0 ? <Loader type="dots" color="white" /> : 'Crear chofer'}
+          {isMutatingChofer ? <Loader type="dots" color="white" /> : 'Crear chofer'}
         </Button>
       </Row>
     </form>

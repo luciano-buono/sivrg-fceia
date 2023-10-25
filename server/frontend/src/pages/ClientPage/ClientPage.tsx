@@ -12,12 +12,10 @@ const ClientPage = () => {
       <Container className="d-flex flex-wrap justify-content-center">
         <Routes>
           <Route element={<ProtectedRoutes allowedRoles={['client']} redirectPath="/restricted" />}>
-            <Route path="/" element={<HomeClient />}>
-              <Route index element={<HomeClient />} />
-              <Route path="/booking" element={<BookingStepper />} />
-              <Route path="/reservations" element={<ReservationsPage />} />
-              <Route element={<NotFound />} />
-            </Route>
+            <Route index element={<HomeClient />} />
+            <Route path="/booking" element={<BookingStepper />} />
+            <Route path="/reservations" element={<ReservationsPage />} />
+            <Route element={<NotFound />} />
           </Route>
         </Routes>
       </Container>

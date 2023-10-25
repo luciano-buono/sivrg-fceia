@@ -6,10 +6,9 @@ import { useForm } from '@mantine/form';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
 import useMutateVehiculos from '../../hooks/useVehiculo';
-import { useMutationState } from '@tanstack/react-query';
 
 const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
-  const { createVehiculo } = useMutateVehiculos();
+  const { createVehiculo, isMutatingVehiculo } = useMutateVehiculos();
 
   const bookingForm = useBookingFormContext();
 
@@ -50,15 +49,10 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
     }
   };
 
-  const isMutatingVehiculo = useMutationState({
-    filters: { status: 'pending', mutationKey: ['vehiculo'] },
-    select: (mutation) => mutation.state.variables,
-  });
-
   return (
     <form
       onSubmit={form.onSubmit(() => {
-        if (!(isMutatingVehiculo.length > 0)) {
+        if (!isMutatingVehiculo) {
           handleCreateVehiculo({
             patente: form.values.patente,
             seguro: form.values.seguro,
@@ -115,7 +109,7 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
       </Row>
       <Row className="d-flex justify-content-end pt-3 pe-3">
         <Button type="submit" className="w-auto">
-          {isMutatingVehiculo.length > 0 ? <Loader type="dots" color="white" /> : 'Crear vehículo'}
+          {isMutatingVehiculo ? <Loader type="dots" color="white" /> : 'Crear vehículo'}
         </Button>
       </Row>
     </form>

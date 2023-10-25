@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useMutationState, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { Chofer, ChoferData } from '../types';
 
@@ -26,7 +26,13 @@ const useChofer = () => {
     },
   });
 
-  return { queryChofer, createChofer };
+  const isMutatingChofer =
+    useMutationState({
+      filters: { status: 'pending', mutationKey: ['chofer'] },
+      select: (mutation) => mutation.state.variables,
+    }).length > 0;
+
+  return { queryChofer, createChofer, isMutatingChofer };
 };
 
 export default useChofer;

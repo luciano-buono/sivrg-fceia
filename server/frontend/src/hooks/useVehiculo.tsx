@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useMutationState, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { Vehiculo, VehiculoData } from '../types';
 
@@ -26,7 +26,13 @@ const useVehiculo = () => {
     },
   });
 
-  return { queryVehiculo, createVehiculo };
+  const isMutatingVehiculo =
+    useMutationState({
+      filters: { status: 'pending', mutationKey: ['vehiculo'] },
+      select: (mutation) => mutation.state.variables,
+    }).length > 0;
+
+  return { queryVehiculo, createVehiculo, isMutatingVehiculo };
 };
 
 export default useVehiculo;
