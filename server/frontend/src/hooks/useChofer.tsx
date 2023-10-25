@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { Chofer, ChoferData } from '../types';
 
@@ -7,8 +7,13 @@ const createChoferFn = async (newChoferData: ChoferData) => {
   return response.data;
 };
 
-const useMutateChoferes = () => {
+const useChofer = () => {
   const queryClient = useQueryClient();
+
+  const queryChofer = useQuery<Chofer[]>({
+    queryKey: ['choferes'],
+    queryFn: () => api.get('/choferes/').then((res) => res.data),
+  });
 
   const createChofer = useMutation({
     mutationKey: ['chofer'],
@@ -21,7 +26,7 @@ const useMutateChoferes = () => {
     },
   });
 
-  return { createChofer };
+  return { queryChofer, createChofer };
 };
 
-export default useMutateChoferes;
+export default useChofer;

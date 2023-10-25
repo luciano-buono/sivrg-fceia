@@ -5,7 +5,7 @@ import { ModelForm, VehiculoData } from '../../types';
 import { useForm } from '@mantine/form';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
-import useMutateVehiculos from '../../hooks/useMutateVehiculos';
+import useMutateVehiculos from '../../hooks/useVehiculo';
 import { useMutationState } from '@tanstack/react-query';
 
 const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {

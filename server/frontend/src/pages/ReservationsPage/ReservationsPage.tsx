@@ -1,12 +1,11 @@
 import { Turno } from '../../types';
-import { Card, Container } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { ColumnDef, createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import useSession from '../../hooks/useSession';
 import { Button, Skeleton, em } from '@mantine/core';
-import api from '../../api';
-import { useQuery } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { useMediaQuery } from '@mantine/hooks';
+import useTurno from '../../hooks/useTurno';
 
 const columnHelper = createColumnHelper<Turno>();
 
@@ -96,12 +95,10 @@ const ReservationsPage = () => {
     }),
   ];
 
-  const { data: turnos, isLoading: isLoadingTurnos } = useQuery<Turno[]>({
-    queryKey: ['turnos'],
-    queryFn: () => api.get('/turnos/').then((res) => res.data),
-  });
-
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+
+  const { queryTurno } = useTurno();
+  const { data: turnos, isLoading: isLoadingTurnos } = queryTurno;
 
   const table = useReactTable({
     data: turnos ? turnos : [],
