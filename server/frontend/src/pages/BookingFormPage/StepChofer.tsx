@@ -4,7 +4,6 @@ import { Card, Container } from 'react-bootstrap';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import ChoferForm from '../../components/Forms/ChoferForm';
 import SearchInput from '../../components/Forms/Inputs/SearchInput';
-import useChofer from '../../hooks/useChofer';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api';
 import { Chofer } from '../../types';

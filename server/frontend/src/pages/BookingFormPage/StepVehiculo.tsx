@@ -4,7 +4,6 @@ import { Card } from 'react-bootstrap';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import VehiculoForm from '../../components/Forms/VehiculoForm';
 import SearchInput from '../../components/Forms/Inputs/SearchInput';
-import useVehiculo from '../../hooks/useVehiculo';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api';
 import { Vehiculo } from '../../types';
