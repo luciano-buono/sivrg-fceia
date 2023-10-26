@@ -1,7 +1,7 @@
 import { Card, Row } from 'react-bootstrap';
 import ResourceCard from '../../components/ResourceCard';
 import useSession from '../../hooks/useSession';
-import { Skeleton } from '@mantine/core';
+import { Skeleton, Text } from '@mantine/core';
 
 const HomeAdmin = () => {
   const mockResources = [
@@ -28,7 +28,7 @@ const HomeAdmin = () => {
       <Skeleton visible={isLoading}>
         <Card>
           <Card.Body>
-            <h1>Noticias</h1>
+            <Text className="fs-2">Noticias</Text>
             <Card>
               <Card.Body>
                 <ul>

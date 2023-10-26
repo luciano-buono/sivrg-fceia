@@ -1,4 +1,4 @@
-import { Button, Skeleton } from '@mantine/core';
+import { Button, Skeleton, Text } from '@mantine/core';
 import { Card, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import useSession from '../../hooks/useSession';
@@ -12,7 +12,7 @@ const HomeClient = () => {
       <Col className="col-md-9 justify-content-center pt-3">
         <Card>
           <Card.Body>
-            <h1>Noticias</h1>
+            <Text className="fs-2">Noticias</Text>
             <Skeleton visible={isLoading}>
               <Card>
                 <Card.Body>

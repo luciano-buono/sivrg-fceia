@@ -5,10 +5,10 @@ import { ModelForm, ProductoData } from '../../types';
 import { useForm } from '@mantine/form';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
-import useMutateProductos from '../../hooks/useProducto';
+import useProducto from '../../hooks/useProducto';
 
 const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
-  const { createProducto, isMutatingProducto } = useMutateProductos();
+  const { createProducto, isMutatingProducto } = useProducto();
 
   const bookingForm = useBookingFormContext();
 

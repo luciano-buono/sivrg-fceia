@@ -109,7 +109,7 @@ const ReservationsPage = () => {
     <>
       <Card className="d-flex w-100 my-3">
         <Card.Body>
-          <div className="h1"> Mis turnos </div>
+          <div className="fs-1"> Mis turnos </div>
           <Skeleton visible={isLoading || isLoadingTurnos}>
             <table className="table table-bordered">
               <thead>

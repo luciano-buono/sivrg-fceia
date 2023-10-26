@@ -5,6 +5,7 @@ import { ProtectedRoutes } from '../../App';
 import HomeClient from '../HomeClient/HomeClient';
 import ReservationsPage from '../ReservationsPage';
 import BookingStepper from '../BookingFormPage/BookingStepper';
+import EmpresaPage from '../EmpresaPage';
 
 const ClientPage = () => {
   return (
@@ -15,6 +16,7 @@ const ClientPage = () => {
             <Route index element={<HomeClient />} />
             <Route path="/booking" element={<BookingStepper />} />
             <Route path="/reservations" element={<ReservationsPage />} />
+            <Route path="/empresa" element={<EmpresaPage />} />
             <Route element={<NotFound />} />
           </Route>
         </Routes>
