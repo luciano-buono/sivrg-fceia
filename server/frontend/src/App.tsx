@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Link, Navigate } from 'react-router-dom';
 import { Outlet, Route, Routes } from 'react-router';
 import { Auth0Provider } from '@auth0/auth0-react';
-import { AppShell, Container, Image, MantineProvider, NavLink, createTheme } from '@mantine/core';
+import { AppShell, Container, Image, MantineProvider, NavLink, Text, createTheme } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import ClientPage from './pages/ClientPage/ClientPage';
@@ -18,12 +18,14 @@ import { Notifications } from '@mantine/notifications';
 import '@mantine/notifications/styles.css';
 import Header from './components/Header/';
 import { useDisclosure } from '@mantine/hooks';
-import { Card, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import { IconCalendar, IconHome, IconPhone, IconSocial } from '@tabler/icons-react';
 import { IconCalendarCheck } from '@tabler/icons-react';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import NotAllowedPage from './pages/NotAllowedPage';
+import useSessionEmpresa from './hooks/useSessionEmpresa';
+import { Empresa } from './types';
 
 const queryClient = new QueryClient();
 
@@ -90,6 +92,9 @@ const App = () => {
   const [opened, { close, toggle }] = useDisclosure();
 
   const [active, setActive] = useState<number | undefined>();
+
+  const { getEmpresaByUser } = useSessionEmpresa();
+  const empresa: Empresa = getEmpresaByUser.data ? getEmpresaByUser.data[0] : null;
 
   const topNavbar = [
     {
@@ -169,7 +174,8 @@ const App = () => {
         </AppShell.Main>
         <AppShell.Footer>
           <Container fluid>
-            <Row className="d-flex flex-wrap align-content-center ">
+            <Row className="d-flex flex-wrap align-items-center">
+              {isClient ? <Text className="w-auto">{empresa?.empresa_nombre}, powered by:</Text> : null}
               <Image className="px-0 pt-1" w={70} h={40} src={'https://i.imgur.com/gB7134o.png'} />
             </Row>
           </Container>

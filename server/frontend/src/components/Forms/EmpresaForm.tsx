@@ -5,9 +5,11 @@ import { EmpresaData } from '../../types';
 import { useForm } from '@mantine/form';
 import { FC } from 'react';
 import useEmpresa from '../../hooks/useEmpresa';
+import useSession from '../../hooks/useSession';
 
 const EmpresaForm: FC = () => {
   const { createEmpresa, isMutatingEmpresa } = useEmpresa();
+  const { user } = useSession();
 
   const form = useForm<EmpresaData>({
     initialValues: {
@@ -19,6 +21,7 @@ const EmpresaForm: FC = () => {
       empresa_provincia: '',
       empresa_pais: '',
       empresa_telefono: '',
+      empresa_email: user?.email,
     },
     validate: {
       empresa_nombre: (value) => (value !== '' ? null : 'Ingrese un nombre'),
@@ -26,8 +29,10 @@ const EmpresaForm: FC = () => {
       empresa_CUIT: (value) => (value ? null : 'Ingrese un CUIT'),
       empresa_direccion: (value) => (value ? null : 'Ingrese una dirección'),
       empresa_localidad: (value) => (value ? null : 'Ingrese una localidad'),
+      empresa_provincia: (value) => (value ? null : 'Ingrese una provincia'),
       empresa_pais: (value) => (value ? null : 'Ingrese un país'),
       empresa_telefono: (value) => (value !== '' ? null : 'Ingrese un teléfono'),
+      empresa_email: (value) => (value !== '' ? null : 'Ingrese un email'),
     },
   });
 
@@ -61,6 +66,7 @@ const EmpresaForm: FC = () => {
             empresa_pais: form.values.empresa_pais,
             empresa_provincia: form.values.empresa_provincia,
             empresa_telefono: form.values.empresa_telefono,
+            empresa_email: form.values.empresa_email,
           });
         }
       })}
@@ -124,6 +130,15 @@ const EmpresaForm: FC = () => {
           label="Teléfono"
           placeholder="Teléfono"
           {...form.getInputProps('empresa_telefono')}
+        />
+        <TextInput
+          className="col-md-4"
+          readOnly
+          withAsterisk
+          disabled
+          label="Email"
+          placeholder="Email"
+          {...form.getInputProps('empresa_email')}
         />
       </Row>
       <Row className="d-flex justify-content-end pt-3 pe-3">

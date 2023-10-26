@@ -27,7 +27,7 @@ const HomeClient = () => {
           </Card.Body>
         </Card>
       </Col>
-      <Col className="col-md-3 d-flex flex-column align-items-center pt-3">
+      <Col className="col-md-3 align-items-center pt-3">
         <Card style={{ width: '300px' }} className="d-flex justify-content-center mb-2">
           <Card.Body className="d-flex justify-content-center">
             <Button

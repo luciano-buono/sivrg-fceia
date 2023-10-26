@@ -21,6 +21,7 @@ export interface Empresa {
   empresa_pais: string;
   empresa_telefono: string;
   empresa_id: number;
+  empresa_email: string | undefined;
 }
 
 export interface TurnoData {

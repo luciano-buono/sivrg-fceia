@@ -1,13 +1,26 @@
 import { Container } from 'react-bootstrap';
-import { Routes, Route } from 'react-router';
+import { Routes, Route, useNavigate } from 'react-router';
 import NotFound from '../NotFound';
 import { ProtectedRoutes } from '../../App';
 import HomeClient from '../HomeClient/HomeClient';
 import ReservationsPage from '../ReservationsPage';
 import BookingStepper from '../BookingFormPage/BookingStepper';
 import EmpresaPage from '../EmpresaPage';
+import { useEffect } from 'react';
+import useSessionEmpresa from '../../hooks/useSessionEmpresa';
+import useSession from '../../hooks/useSession';
 
 const ClientPage = () => {
+  const navigate = useNavigate();
+  const { isLoading } = useSession();
+  const { getEmpresaByUser } = useSessionEmpresa();
+
+  useEffect(() => {
+    if (!getEmpresaByUser.isLoading && !getEmpresaByUser.data?.length) {
+      navigate('/empresa');
+    }
+  }, [getEmpresaByUser.data, getEmpresaByUser.isLoading, navigate, isLoading]);
+
   return (
     <>
       <Container className="d-flex flex-wrap justify-content-center">
