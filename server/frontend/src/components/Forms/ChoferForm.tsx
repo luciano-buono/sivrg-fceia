@@ -7,11 +7,13 @@ import { useForm } from '@mantine/form';
 import useChoferes from '../../hooks/useChofer';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
+import useSessionEmpresa from '../../hooks/useSessionEmpresa';
 
 const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const bookingForm = useBookingFormContext();
 
   const { createChofer, isMutatingChofer } = useChoferes();
+  const { getEmpresaByUser } = useSessionEmpresa();
 
   const form = useForm({
     initialValues: {
@@ -60,7 +62,7 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
             rfid_uid: 0,
             dni: parseInt(form.values.documentNumber),
             habilitado: true,
-            empresa_id: 2,
+            empresa_id: getEmpresaByUser.data?.[0].empresa_id || -1,
           });
         }
       })}
