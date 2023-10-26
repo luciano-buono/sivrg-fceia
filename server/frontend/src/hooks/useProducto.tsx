@@ -1,4 +1,4 @@
-import { useMutation, useMutationState, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useMutationState, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { ProductoData, Producto } from '../types';
 
@@ -9,11 +9,6 @@ const createProductoFn = async (newProductoData: ProductoData) => {
 
 const useProducto = () => {
   const queryClient = useQueryClient();
-
-  const queryProducto = useQuery<Producto[]>({
-    queryKey: ['productos'],
-    queryFn: () => api.get('/productos/').then((res) => res.data),
-  });
 
   const createProducto = useMutation({
     mutationKey: ['producto'],
@@ -32,7 +27,7 @@ const useProducto = () => {
       select: (mutation) => mutation.state.variables,
     }).length > 0;
 
-  return { queryProducto, createProducto, isMutatingProducto };
+  return { createProducto, isMutatingProducto };
 };
 
 export default useProducto;

@@ -6,6 +6,8 @@ import { Button, Skeleton, em } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useMediaQuery } from '@mantine/hooks';
 import useTurno from '../../hooks/useTurno';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../api';
 
 const columnHelper = createColumnHelper<Turno>();
 
@@ -97,7 +99,11 @@ const ReservationsPage = () => {
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
-  const { queryTurno } = useTurno();
+  const queryTurno = useQuery<Turno[]>({
+    queryKey: ['turnos'],
+    queryFn: () => api.get('/turnos/').then((res) => res.data),
+  });
+
   const { data: turnos, isLoading: isLoadingTurnos } = queryTurno;
 
   const table = useReactTable({

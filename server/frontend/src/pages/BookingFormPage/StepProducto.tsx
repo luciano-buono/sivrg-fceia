@@ -2,14 +2,19 @@ import { FC, useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import SearchInput from '../../components/Forms/Inputs/SearchInput';
-import useProducto from '../../hooks/useProducto';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../api';
+import { Producto } from '../../types';
 
 const StepProducto: FC = () => {
   const [searchValue, setSearchValue] = useState('');
 
   const form = useBookingFormContext();
 
-  const { queryProducto } = useProducto();
+  const queryProducto = useQuery<Producto[]>({
+    queryKey: ['productos'],
+    queryFn: () => api.get('/productos/').then((res) => res.data),
+  });
   const { data: productos } = queryProducto;
 
   const selectData = productos?.map((producto) => ({

@@ -1,4 +1,4 @@
-import { useMutation, useMutationState, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useMutationState, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { Turno, TurnoData } from '../types';
 
@@ -9,11 +9,6 @@ const createTurnoFn = async (newTurnoData: TurnoData) => {
 
 const useTurno = () => {
   const queryClient = useQueryClient();
-
-  const queryTurno = useQuery<Turno[]>({
-    queryKey: ['turnos'],
-    queryFn: () => api.get('/turnos/').then((res) => res.data),
-  });
 
   const createTurno = useMutation({
     mutationKey: ['turno'],
@@ -32,7 +27,7 @@ const useTurno = () => {
       select: (mutation) => mutation.state.variables,
     }).length > 0;
 
-  return { queryTurno, createTurno, isMutatingTurno };
+  return { createTurno, isMutatingTurno };
 };
 
 export default useTurno;

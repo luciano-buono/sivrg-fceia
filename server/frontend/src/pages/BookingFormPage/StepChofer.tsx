@@ -5,6 +5,9 @@ import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import ChoferForm from '../../components/Forms/ChoferForm';
 import SearchInput from '../../components/Forms/Inputs/SearchInput';
 import useChofer from '../../hooks/useChofer';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../api';
+import { Chofer } from '../../types';
 
 const StepChofer: FC = () => {
   const [showForm, setShowForm] = useState(false);
@@ -22,7 +25,10 @@ const StepChofer: FC = () => {
 
   const form = useBookingFormContext();
 
-  const { queryChofer } = useChofer();
+  const queryChofer = useQuery<Chofer[]>({
+    queryKey: ['choferes'],
+    queryFn: () => api.get('/choferes/').then((res) => res.data),
+  });
   const { data: choferes } = queryChofer;
 
   const selectData = choferes?.map((chofer) => ({

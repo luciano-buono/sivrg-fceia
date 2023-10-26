@@ -1,4 +1,4 @@
-import { useMutation, useMutationState, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useMutationState, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { Empresa, EmpresaData } from '../types';
 
@@ -9,11 +9,6 @@ const createEmpresaFn = async (newEmpresaData: EmpresaData) => {
 
 const useEmpresa = () => {
   const queryClient = useQueryClient();
-
-  const queryEmpresa = useQuery<Empresa[]>({
-    queryKey: ['empresas'],
-    queryFn: () => api.get('/empresas/').then((res) => res.data),
-  });
 
   const createEmpresa = useMutation({
     mutationKey: ['empresa'],
@@ -32,7 +27,7 @@ const useEmpresa = () => {
       select: (mutation) => mutation.state.variables,
     }).length > 0;
 
-  return { queryEmpresa, createEmpresa, isMutatingEmpresa };
+  return { createEmpresa, isMutatingEmpresa };
 };
 
 export default useEmpresa;

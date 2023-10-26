@@ -1,4 +1,4 @@
-import { useMutation, useMutationState, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useMutationState, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { Vehiculo, VehiculoData } from '../types';
 
@@ -9,11 +9,6 @@ const createVehiculoFn = async (newVehiculoData: VehiculoData) => {
 
 const useVehiculo = () => {
   const queryClient = useQueryClient();
-
-  const queryVehiculo = useQuery<Vehiculo[]>({
-    queryKey: ['vehiculos'],
-    queryFn: () => api.get('/vehiculos/').then((res) => res.data),
-  });
 
   const createVehiculo = useMutation({
     mutationKey: ['vehiculo'],
@@ -32,7 +27,7 @@ const useVehiculo = () => {
       select: (mutation) => mutation.state.variables,
     }).length > 0;
 
-  return { queryVehiculo, createVehiculo, isMutatingVehiculo };
+  return { createVehiculo, isMutatingVehiculo };
 };
 
 export default useVehiculo;

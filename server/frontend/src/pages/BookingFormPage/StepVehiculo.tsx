@@ -5,6 +5,9 @@ import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import VehiculoForm from '../../components/Forms/VehiculoForm';
 import SearchInput from '../../components/Forms/Inputs/SearchInput';
 import useVehiculo from '../../hooks/useVehiculo';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../api';
+import { Vehiculo } from '../../types';
 
 const StepVehiculo: FC = () => {
   const [showForm, setShowForm] = useState(false);
@@ -22,7 +25,10 @@ const StepVehiculo: FC = () => {
     form.setFieldValue('vehiculo_id', value);
   };
 
-  const { queryVehiculo } = useVehiculo();
+  const queryVehiculo = useQuery<Vehiculo[]>({
+    queryKey: ['vehiculos'],
+    queryFn: () => api.get('/vehiculos/').then((res) => res.data),
+  });
   const { data: vehiculos } = queryVehiculo;
 
   const selectData = vehiculos?.map((vehiculo) => ({
