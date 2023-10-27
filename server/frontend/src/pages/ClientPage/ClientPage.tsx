@@ -19,7 +19,7 @@ const ClientPage = () => {
     if (!getEmpresaByUser.isLoading && !getEmpresaByUser.data?.length) {
       navigate('/empresa');
     }
-  }, [getEmpresaByUser.data, getEmpresaByUser.isLoading, navigate, isLoading]);
+  }, [getEmpresaByUser.data, getEmpresaByUser.isLoading, getEmpresaByUser.error, navigate, isLoading]);
 
   return (
     <>
@@ -30,7 +30,7 @@ const ClientPage = () => {
             <Route path="/booking" element={<BookingStepper />} />
             <Route path="/reservations" element={<ReservationsPage />} />
             <Route path="/empresa" element={<EmpresaPage />} />
-            <Route element={<NotFound />} />
+            <Route path="/error" element={<NotFound />} />
           </Route>
         </Routes>
       </Container>

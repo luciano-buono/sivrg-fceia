@@ -7,6 +7,7 @@ import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
 import useMutateVehiculos from '../../hooks/useVehiculo';
 import useSessionEmpresa from '../../hooks/useSessionEmpresa';
+import { AxiosError } from 'axios';
 
 const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const { createVehiculo, isMutatingVehiculo } = useMutateVehiculos();
@@ -42,12 +43,14 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
         color: 'green',
         message: `Se ha registrado el vehículo ${newVehiculoData.patente}`,
       });
-    } catch (error: any) {
-      notifications.show({
-        title: 'Error al crear vehículo',
-        color: 'red',
-        message: `${error.response.data?.detail ?? error.response.message}`,
-      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        notifications.show({
+          title: 'Error al crear vehículo',
+          color: 'red',
+          message: `${error.response?.data?.detail ?? error.response?.statusText}`,
+        });
+      }
     }
   };
 

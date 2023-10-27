@@ -8,6 +8,7 @@ import useChoferes from '../../hooks/useChofer';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
 import useSessionEmpresa from '../../hooks/useSessionEmpresa';
+import { AxiosError } from 'axios';
 
 const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const bookingForm = useBookingFormContext();
@@ -43,12 +44,14 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
         color: 'green',
         message: `Se ha registrado a ${newChoferData.nombre} ${newChoferData.apellido} como chofer`,
       });
-    } catch (error: any) {
-      notifications.show({
-        title: 'Error al crear chofer',
-        color: 'red',
-        message: `${error.response.data.detail}`,
-      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        notifications.show({
+          title: 'Error al crear chofer',
+          color: 'red',
+          message: `${error.response?.data.detail}`,
+        });
+      }
     }
   };
 

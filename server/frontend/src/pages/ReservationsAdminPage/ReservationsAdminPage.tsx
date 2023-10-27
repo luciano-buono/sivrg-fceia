@@ -5,7 +5,6 @@ import useSession from '../../hooks/useSession';
 import { Button, Skeleton, em } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useMediaQuery } from '@mantine/hooks';
-import useTurno from '../../hooks/useTurno';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api';
 
@@ -74,7 +73,7 @@ const ReservationsAdminPage = () => {
     }),
   ];
 
-  const columnsMobile: ColumnDef<Turno, any>[] = [
+  const columnsMobile = [
     columnHelper.accessor('chofer.dni', {
       cell: (info) => <span>{`${info.row.original.chofer.dni}`}</span>,
       header: () => <span>Chofer</span>,

@@ -6,6 +6,7 @@ import { useForm } from '@mantine/form';
 import { FC } from 'react';
 import useEmpresa from '../../hooks/useEmpresa';
 import useSession from '../../hooks/useSession';
+import { AxiosError } from 'axios';
 
 const EmpresaForm: FC = () => {
   const { createEmpresa, isMutatingEmpresa } = useEmpresa();
@@ -44,12 +45,14 @@ const EmpresaForm: FC = () => {
         color: 'green',
         message: `Se ha registrado la empresa ${newEmpresaData.empresa_nombre}`,
       });
-    } catch (error: any) {
-      notifications.show({
-        title: 'Error al crear empresa',
-        color: 'red',
-        message: `${error.response.data?.detail ?? error.response.message}`,
-      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        notifications.show({
+          title: 'Error al crear empresa',
+          color: 'red',
+          message: `${error.response?.data?.detail ?? error.response?.statusText}`,
+        });
+      }
     }
   };
 

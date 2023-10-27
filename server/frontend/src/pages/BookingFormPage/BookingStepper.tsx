@@ -14,6 +14,7 @@ import useChofer from '../../hooks/useChofer';
 import useVehiculo from '../../hooks/useVehiculo';
 import useProducto from '../../hooks/useProducto';
 import useSessionEmpresa from '../../hooks/useSessionEmpresa';
+import { AxiosError } from 'axios';
 
 const BookingStepper = () => {
   const [active, setActive] = useState(0);
@@ -71,12 +72,14 @@ const BookingStepper = () => {
         message: `Se ha agendado el turno para el ${turno.turno_fecha}`,
       });
       form.reset();
-    } catch (error: any) {
-      notifications.show({
-        title: 'Error al crear turno',
-        color: 'red',
-        message: `${error.response.data.detail}`,
-      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        notifications.show({
+          title: 'Error al crear turno',
+          color: 'red',
+          message: `${error.response?.data.detail}`,
+        });
+      }
     }
   };
 

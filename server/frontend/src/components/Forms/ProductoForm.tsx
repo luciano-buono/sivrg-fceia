@@ -6,6 +6,7 @@ import { useForm } from '@mantine/form';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
 import useProducto from '../../hooks/useProducto';
+import { AxiosError } from 'axios';
 
 const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const { createProducto, isMutatingProducto } = useProducto();
@@ -32,12 +33,14 @@ const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
         color: 'green',
         message: `Se ha creado el producto ${newProductoData.producto_nombre}`,
       });
-    } catch (error: any) {
-      notifications.show({
-        title: 'Error al crear producto',
-        color: 'red',
-        message: `${error.response.data?.detail}`,
-      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        notifications.show({
+          title: 'Error al crear producto',
+          color: 'red',
+          message: `${error?.response?.data?.detail}`,
+        });
+      }
     }
   };
 
