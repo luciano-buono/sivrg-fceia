@@ -1,8 +1,7 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { Card, Col, Nav, Row } from 'react-bootstrap';
 import './Header.css';
 import { LinkContainer } from 'react-router-bootstrap';
-import { useLocation, useNavigate } from 'react-router';
 import useSession from '../../hooks/useSession';
 import LoggedUserMenu from '../Menus/LoggedUserMenu';
 import { Loader, Button, Container, ActionIcon, Center, Burger, em } from '@mantine/core';
@@ -10,18 +9,9 @@ import { IconHome } from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
 
 const Header: FC<{ openNavbar: any; openedNavbar: boolean }> = ({ openNavbar, openedNavbar }) => {
-  const { loginWithPopup, isAuthenticated, isLoading, isEmployee } = useSession();
-
-  const location = useLocation();
-  const navigate = useNavigate();
+  const { loginWithRedirect, isAuthenticated, isLoading, isEmployee } = useSession();
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
-
-  useEffect(() => {
-    if (isAuthenticated && location.pathname === '/login') {
-      navigate(isEmployee ? '/admin' : '/');
-    }
-  }, [navigate, isEmployee, isAuthenticated, location]);
 
   return (
     <Container fluid className="no-select">
@@ -60,7 +50,7 @@ const Header: FC<{ openNavbar: any; openedNavbar: boolean }> = ({ openNavbar, op
                   style={{ width: '160px' }}
                   className="me-2"
                   variant="outline"
-                  onClick={() => loginWithPopup({})}
+                  onClick={() => loginWithRedirect({ appState: { returnTo: '/' } })}
                 >
                   Iniciar sesión
                 </Button>

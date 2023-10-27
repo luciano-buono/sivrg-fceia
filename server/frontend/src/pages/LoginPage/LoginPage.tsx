@@ -3,7 +3,7 @@ import { Card, Container } from 'react-bootstrap';
 import useSession from '../../hooks/useSession';
 
 const LoginPage = () => {
-  const { loginWithPopup, isLoading } = useSession();
+  const { loginWithRedirect, isLoading } = useSession();
 
   return (
     <Container className="d-flex flex-column justify-content-center align-content-center pt-2 h-50">
@@ -18,7 +18,7 @@ const LoginPage = () => {
               <Button
                 variant="outline"
                 className="d-flex flex-wrap justify-content-center align-content-center"
-                onClick={() => loginWithPopup()}
+                onClick={() => loginWithRedirect({ appState: { returnTo: '/' } })}
               >
                 <span className="fw-bold fs-6 p-4">Iniciar sesión</span>
               </Button>

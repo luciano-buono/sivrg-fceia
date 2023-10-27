@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Link, Navigate } from 'react-router-dom';
 import { Outlet, Route, Routes } from 'react-router';
-import { Auth0Provider } from '@auth0/auth0-react';
 import { AppShell, Container, Image, MantineProvider, NavLink, Text, createTheme } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -26,6 +25,7 @@ import Contact from './pages/Contact';
 import NotAllowedPage from './pages/NotAllowedPage';
 import useSessionEmpresa from './hooks/useSessionEmpresa';
 import { Empresa } from './types';
+import { Auth0ProviderWithNavigate } from './contexts/Auth0ProviderWithRedirect';
 
 const queryClient = new QueryClient();
 
@@ -52,14 +52,7 @@ function AppWrapper() {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <Auth0Provider
-          domain="methizul.us.auth0.com"
-          clientId="vum6xRm32RbmlDjMEaQb84dAxGD0AbgV"
-          authorizationParams={{
-            redirect_uri: window.location.origin,
-            audience: 'https://api.sivrg.methizul.com',
-          }}
-        >
+        <Auth0ProviderWithNavigate>
           <MantineProvider theme={theme}>
             <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 0, weekendDays: [0] }}>
               <Notifications />
@@ -67,7 +60,7 @@ function AppWrapper() {
             </DatesProvider>
           </MantineProvider>
           <ReactQueryDevtools initialIsOpen={false} />
-        </Auth0Provider>
+        </Auth0ProviderWithNavigate>
       </QueryClientProvider>
     </BrowserRouter>
   );
@@ -163,12 +156,12 @@ const App = () => {
         </AppShell.Navbar>
         <AppShell.Main>
           <Routes>
+            <Route index element={isClient ? <ClientApp /> : <AdminApp />} />
             <Route path="/admin/*" element={<AdminApp />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
             <Route path="/restricted" element={<NotAllowedPage />} />
-            <Route path="/*" element={<ClientApp />} />
             <Route path="*" element={<ClientApp />} />
           </Routes>
         </AppShell.Main>
