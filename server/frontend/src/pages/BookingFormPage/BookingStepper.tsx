@@ -13,14 +13,16 @@ import StepCompleted from './StepCompleted';
 import useChofer from '../../hooks/useChofer';
 import useVehiculo from '../../hooks/useVehiculo';
 import useProducto from '../../hooks/useProducto';
+import useSessionEmpresa from '../../hooks/useSessionEmpresa';
 
 const BookingStepper = () => {
   const [active, setActive] = useState(0);
+  const { empresa_id } = useSessionEmpresa();
 
   const form = useBookingForm({
     initialValues: {
       chofer_id: '',
-      empresa_id: 2,
+      empresa_id: empresa_id,
       producto_id: '',
       vehiculo_id: '',
       turno_fecha: null,

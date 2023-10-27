@@ -10,7 +10,9 @@ const useSessionEmpresa = () => {
     queryFn: () => api.get(`/empresas/?empresa_email=${user?.email}`).then((res) => res.data),
   });
 
-  return { getEmpresaByUser };
+  const empresa_id = getEmpresaByUser.data?.[0]?.empresa_id || null;
+
+  return { getEmpresaByUser, empresa_id };
 };
 
 export default useSessionEmpresa;

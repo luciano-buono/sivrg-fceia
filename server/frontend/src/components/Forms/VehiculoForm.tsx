@@ -6,11 +6,13 @@ import { useForm } from '@mantine/form';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
 import useMutateVehiculos from '../../hooks/useVehiculo';
+import useSessionEmpresa from '../../hooks/useSessionEmpresa';
 
 const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const { createVehiculo, isMutatingVehiculo } = useMutateVehiculos();
 
   const bookingForm = useBookingFormContext();
+  const { empresa_id } = useSessionEmpresa();
 
   const form = useForm({
     initialValues: {
@@ -60,7 +62,7 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
             año: form.values.año,
             marca: form.values.marca,
             habilitado: true,
-            empresa_id: 2,
+            empresa_id: empresa_id,
           });
         }
       })}

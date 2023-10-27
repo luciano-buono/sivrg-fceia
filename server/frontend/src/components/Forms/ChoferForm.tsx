@@ -13,7 +13,7 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const bookingForm = useBookingFormContext();
 
   const { createChofer, isMutatingChofer } = useChoferes();
-  const { getEmpresaByUser } = useSessionEmpresa();
+  const { empresa_id } = useSessionEmpresa();
 
   const form = useForm({
     initialValues: {
@@ -62,7 +62,7 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
             rfid_uid: 0,
             dni: parseInt(form.values.documentNumber),
             habilitado: true,
-            empresa_id: getEmpresaByUser.data?.[0].empresa_id || -1,
+            empresa_id: empresa_id,
           });
         }
       })}

@@ -87,7 +87,7 @@ const App = () => {
   const [active, setActive] = useState<number | undefined>();
 
   const { getEmpresaByUser } = useSessionEmpresa();
-  const empresa: Empresa = getEmpresaByUser.data ? getEmpresaByUser.data[0] : null;
+  const empresa: Empresa | null = getEmpresaByUser.data ? getEmpresaByUser.data[0] : null;
 
   const topNavbar = [
     {

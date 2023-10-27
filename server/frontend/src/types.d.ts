@@ -1,6 +1,6 @@
 export interface Turno {
   turno_id: string;
-  empresa_id: number;
+  empresa_id: number | null;
   chofer_id: string;
   vehiculo_id: string;
   producto_id: string;
@@ -20,12 +20,12 @@ export interface Empresa {
   empresa_provincia: string;
   empresa_pais: string;
   empresa_telefono: string;
-  empresa_id: number;
+  empresa_id: number | null;
   empresa_email: string | undefined;
 }
 
 export interface TurnoData {
-  empresa_id: number;
+  empresa_id: number | null;
   chofer_id: string;
   vehiculo_id: string;
   producto_id: string;
@@ -40,7 +40,7 @@ export interface Producto {
 
 export interface Chofer {
   chofer_id: string;
-  empresa_id: number;
+  empresa_id: number | null;
   rfid_uid: number;
   nombre: string;
   apellido: string;
@@ -50,7 +50,7 @@ export interface Chofer {
 
 export interface Vehiculo {
   vehiculo_id: string;
-  empresa_id: number;
+  empresa_id: number | null;
   patente: string;
   seguro: string;
   modelo: string;
