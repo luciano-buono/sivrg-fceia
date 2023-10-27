@@ -16,8 +16,13 @@ def get_empresa(db: Session, empresa_id: int):
 def get_empresa_by_name(db: Session, empresa_nombre: str):
     return (
         db.query(models.Empresa)
-        .filter(models.Empresa.empresa_nombre == empresa_nombre)
-        .first()
+        .filter(models.Empresa.empresa_nombre == empresa_nombre if empresa_nombre else True)
+    )
+
+def get_empresa_by_email(db: Session, empresa_email: str):
+    return (
+        db.query(models.Empresa)
+        .filter(models.Empresa.empresa_email == empresa_email if empresa_email else True)
     )
 
 
@@ -35,6 +40,7 @@ def create_empresa(db: Session, empresa: schemas.EmpresaCreate):
         empresa_provincia=empresa.empresa_provincia,
         empresa_pais=empresa.empresa_pais,
         empresa_telefono=empresa.empresa_telefono,
+        empresa_email=empresa.empresa_email
     )
     db.add(db_empresa)
     db.commit()

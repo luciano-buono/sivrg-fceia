@@ -17,8 +17,6 @@ import config
 
 settings = config.Settings()
 
-# models.Base.metadata.create_all(bind=engine)
-
 
 @lru_cache()
 def get_settings():
@@ -60,20 +58,24 @@ def create_empresa(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    db_empresa = crud.get_empresa_by_name(db, empresa_nombre=empresa.empresa_nombre)
-    if db_empresa:
+    if crud.get_empresa_by_name(db, empresa_nombre=empresa.empresa_nombre).count():
         raise HTTPException(status_code=400, detail="Name already registered")
+    if crud.get_empresa_by_email(db, empresa_email=empresa.empresa_email).count():
+        raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_empresa(db=db, empresa=empresa)
 
 
 @app.get("/empresas/", response_model=list[schemas.Empresa])
 def read_empresas(
     empresa_nombre: str | None = None,
+    empresa_email: str | None = None,
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
+    if empresa_email:
+        return crud.get_empresa_by_email(db=db, empresa_email=empresa_email)
     if empresa_nombre:
         return crud.get_empresa_by_name(db=db, empresa_nombre=empresa_nombre)
     return crud.get_empresas(db=db, skip=skip, limit=limit)
@@ -90,6 +92,7 @@ def read_empresa(
         raise HTTPException(status_code=404, detail="Empresa not found")
     return db_empresa
 
+
 @app.put("/empresas/{empresa_id}", response_model=schemas.Empresa)
 def update_empresa(
     empresa_id: int,
@@ -98,6 +101,7 @@ def update_empresa(
     user: Auth0User = Security(auth.get_user),
 ):
     return crud.update_empresa(db=db, empresa_id=empresa_id, data=data)
+
 
 ## ------------Producto operations---------------------
 # Create a Producto
@@ -239,9 +243,7 @@ def read_pesadas_by_date_range(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    pesadas = crud.get_pesadas_by_date_range(
-        db, start_date, end_date, skip, limit
-    )
+    pesadas = crud.get_pesadas_by_date_range(db, start_date, end_date, skip, limit)
     return pesadas
 
 
@@ -348,18 +350,24 @@ def read_turnos_by_date_range(
 ):
     return crud.get_turnos_by_date_range(db, start_date, end_date, skip, limit)
 
+
 # Validate turnos for OrangePI client
 @app.get("/public/turnos/validate", response_model=schemas.Turno)
 def read_turno_by_patente_rfid(
     turno_fecha: datetime = Query(datetime.now(), description="Fecha"),
-    patente: str = Query('a', description="Patente"),
+    patente: str = Query("a", description="Patente"),
     rfid_uid: int = Query(0, description="RFID"),
     db: Session = Depends(get_db),
 ):
-    data = crud.get_turnos_by_patente_rfid(db=db, patente=patente, rfid_uid=rfid_uid, turno_fecha=turno_fecha)
+    data = crud.get_turnos_by_patente_rfid(
+        db=db, patente=patente, rfid_uid=rfid_uid, turno_fecha=turno_fecha
+    )
     if not data:
-        raise HTTPException(status_code=404, detail= "Turno with that patente and RFID_UID not found!")
+        raise HTTPException(
+            status_code=404, detail="Turno with that patente and RFID_UID not found!"
+        )
     return data
+
 
 ## ------------Vehiculos operations---------------------
 # Create a Vehiculo
@@ -423,6 +431,7 @@ def read_vehiculo(
 @app.get("/api/private2")
 def get_secure(user: Auth0User = Security(auth.get_user)):
     return {"message": f"{user}"}
+
 
 @app.get("/public")
 def get_public():

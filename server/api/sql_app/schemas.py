@@ -11,7 +11,7 @@ class EmpresaBase(BaseModel):
     empresa_provincia: str
     empresa_pais: str
     empresa_telefono: str
-
+    empresa_email: str
 
 class EmpresaCreate(EmpresaBase):
     pass

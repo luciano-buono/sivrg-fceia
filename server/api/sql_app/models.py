@@ -30,6 +30,7 @@ class Empresa(Base):
     empresa_provincia = Column(String(255), nullable=False)
     empresa_pais = Column(String(255), nullable=False)
     empresa_telefono = Column(String(255), nullable=True)
+    empresa_email = Column(String(255), nullable=False)
 
 
 class Producto(Base):
