@@ -9,6 +9,25 @@ const HomeClient = () => {
 
   return (
     <Row className="col-md-12">
+      <Col className="col-md-3 align-items-center pt-3">
+        <Row className="col-md-12">
+          <Card className="justify-content-center mb-2 p-0">
+            <Card.Body className="justify-content-center">
+              <Button onClick={() => navigate('/booking')} className="w-100 py-">
+                <span className="text-white fw-bold fs-5">Agendar turno</span>
+              </Button>
+            </Card.Body>
+          </Card>
+          <Row className="col-md-12"></Row>
+          <Card className="mb-2 p-0">
+            <Card.Body className="justify-content-center">
+              <Button className="w-100" onClick={() => navigate('/reservations')}>
+                <span className="text-white fw-bold fs-5">Mis turnos</span>
+              </Button>
+            </Card.Body>
+          </Card>
+        </Row>
+      </Col>
       <Col className="col-md-9 justify-content-center pt-3">
         <Card>
           <Card.Body>
@@ -20,34 +39,16 @@ const HomeClient = () => {
                     <li>Noticia1</li>
                     <li>Noticia2</li>
                     <li>Noticia3</li>
+                    <li>Noticia1</li>
+                    <li>Noticia2</li>
+                    <li>Noticia3</li>
+                    <li>Noticia1</li>
+                    <li>Noticia2</li>
+                    <li>Noticia3</li>
                   </ul>
                 </Card.Body>
               </Card>
             </Skeleton>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col className="col-md-3 align-items-center pt-3">
-        <Card style={{ width: '300px' }} className="d-flex justify-content-center mb-2">
-          <Card.Body className="d-flex justify-content-center">
-            <Button
-              style={{ width: '250px', height: '70px' }}
-              className="d-flex justify-content-center"
-              onClick={() => navigate('/booking')}
-            >
-              <span className="text-white fw-bold fs-5">Agendar turno</span>
-            </Button>
-          </Card.Body>
-        </Card>
-        <Card style={{ width: '300px' }} className="d-flex flex-wrap justify-content-center mb-2">
-          <Card.Body className="d-flex flex-wrap justify-content-center">
-            <Button
-              style={{ width: '250px', height: '70px' }}
-              className="d-flex flex-wrap justify-content-center"
-              onClick={() => navigate('/reservations')}
-            >
-              <span className="text-white fw-bold fs-5">Mis turnos</span>
-            </Button>
           </Card.Body>
         </Card>
       </Col>

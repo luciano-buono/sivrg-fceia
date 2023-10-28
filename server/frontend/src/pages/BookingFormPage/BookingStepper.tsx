@@ -102,12 +102,6 @@ const BookingStepper = () => {
         <Card className="col-xl-8">
           <Card.Body>
             <Box pos="relative">
-              <LoadingOverlay
-                visible={isMutatingTurno}
-                zIndex={1000}
-                overlayProps={{ radius: 'sm', blur: 2 }}
-                loaderProps={{ color: 'blue', type: 'bars' }}
-              />
               <Stepper active={active} color={active === 4 ? 'green' : 'blue'}>
                 <Stepper.Step
                   icon={<i className="fa-solid fa-id-card"></i>}
@@ -141,7 +135,14 @@ const BookingStepper = () => {
                   <StepDetalles />
                 </Stepper.Step>
                 <Stepper.Completed>
-                  <StepCompleted />
+                  <StepCompleted>
+                    <LoadingOverlay
+                      visible={isMutatingTurno}
+                      zIndex={1000}
+                      overlayProps={{ radius: 'sm', blur: 2 }}
+                      loaderProps={{ color: 'blue', type: 'bars' }}
+                    />
+                  </StepCompleted>
                 </Stepper.Completed>
               </Stepper>
             </Box>

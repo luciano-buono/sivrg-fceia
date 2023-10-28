@@ -1,14 +1,16 @@
 import { Container, Card, Col } from 'react-bootstrap';
 import { ActionIcon, Center, RingProgress, Text, rem } from '@mantine/core';
 import { IconCheck } from '@tabler/icons-react';
+import { FC, PropsWithChildren } from 'react';
 
-const StepCompleted = () => {
+const StepCompleted: FC<PropsWithChildren> = ({ children }) => {
   return (
     <Container>
       <Card className="d-flex justify-content-center">
         <Card.Body className="d-flex justify-content-center">
           <Col>
             <Center>
+              {children}
               <RingProgress
                 sections={[{ value: 100, color: 'teal' }]}
                 label={
