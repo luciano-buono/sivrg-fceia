@@ -4,6 +4,7 @@ from sqlalchemy import (
     Date,
     ForeignKey,
     Integer,
+    BigInteger,
     String,
     ForeignKey,
     DECIMAL,
@@ -45,7 +46,7 @@ class Chofer(Base):
     __tablename__ = "choferes"
 
     chofer_id = Column(Integer, primary_key=True, autoincrement=True)
-    rfid_uid = Column(Integer, nullable=True)
+    rfid_uid = Column(BigInteger, nullable=True)
     nombre = Column(String(255), nullable=False)
     apellido = Column(String(255), nullable=False)
     dni = Column(Integer, nullable=False)
