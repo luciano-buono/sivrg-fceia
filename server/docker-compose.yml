@@ -32,16 +32,18 @@ services:
   frontend:
     container_name: frontend
     image: node:latest
-    volumes:
-      - ./frontend:/usr/src/app
-    working_dir: /usr/src/app
+    # volumes:
+    #   - ./frontend:/usr/src/app
+    # working_dir: /usr/src/app
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     environment:
       APP: frontend
-    command:
-      # - pip install alembic
-      - /bin/sh
+    # command:
+    #   - /bin/sh
 
   db:
     container_name: db
