@@ -26,14 +26,21 @@ import NotAllowedPage from './pages/NotAllowedPage';
 import useSessionEmpresa from './hooks/useSessionEmpresa';
 import { Empresa } from './types';
 import { Auth0ProviderWithNavigate } from './contexts/Auth0ProviderWithRedirect';
+import { NewsProvider } from './contexts/NewsContext';
 
 const queryClient = new QueryClient();
 
-export const ProtectedRoutes: FC<{ allowedRoles?: string[]; redirectPath: string }> = ({
+export const ProtectedRoutes: FC<{ allowedRoles?: string[]; redirectPath: string; isAllowed?: boolean }> = ({
   allowedRoles,
   redirectPath,
+  isAllowed,
 }) => {
   const { isAuthenticated, user } = useSession();
+
+  if (isAllowed !== undefined && !isAllowed) {
+    return <Navigate to={redirectPath} replace />;
+  }
+
   return user?.roles?.some((role) => (allowedRoles ? allowedRoles.includes(role) : true)) ? (
     <Outlet />
   ) : !isAuthenticated ? (
@@ -55,8 +62,10 @@ function AppWrapper() {
         <Auth0ProviderWithNavigate>
           <MantineProvider theme={theme}>
             <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 0, weekendDays: [0] }}>
-              <Notifications />
-              <App />
+              <NewsProvider>
+                <Notifications />
+                <App />
+              </NewsProvider>
             </DatesProvider>
           </MantineProvider>
           <ReactQueryDevtools initialIsOpen={false} />

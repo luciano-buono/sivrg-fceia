@@ -8,7 +8,7 @@ import useEmpresa from '../../hooks/useEmpresa';
 import useSession from '../../hooks/useSession';
 import { AxiosError } from 'axios';
 
-const EmpresaForm: FC = () => {
+const EmpresaForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
   const { createEmpresa, isMutatingEmpresa } = useEmpresa();
   const { user } = useSession();
 
@@ -17,11 +17,11 @@ const EmpresaForm: FC = () => {
       empresa_nombre: '',
       empresa_RS: '',
       empresa_CUIT: undefined,
-      empresa_direccion: '',
-      empresa_localidad: '',
-      empresa_provincia: '',
-      empresa_pais: '',
-      empresa_telefono: '',
+      empresa_direccion: 'Calle 123',
+      empresa_localidad: 'Rosario',
+      empresa_provincia: 'Santa Fe',
+      empresa_pais: 'Argentina',
+      empresa_telefono: '341872817',
       empresa_email: user?.email,
     },
     validate: {
@@ -40,6 +40,7 @@ const EmpresaForm: FC = () => {
   const handleCreateEmpresa = async (newEmpresaData: EmpresaData) => {
     try {
       await createEmpresa.mutateAsync(newEmpresaData);
+      onSubmit();
       notifications.show({
         title: 'Empresa creada!',
         color: 'green',

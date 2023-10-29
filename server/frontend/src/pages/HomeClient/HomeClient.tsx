@@ -2,14 +2,16 @@ import { Button, Skeleton, Text } from '@mantine/core';
 import { Card, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import useSession from '../../hooks/useSession';
+import { useNewsContext } from '../../contexts/NewsContext';
 
 const HomeClient = () => {
   const navigate = useNavigate();
+  const state = useNewsContext();
   const { isLoading } = useSession();
 
   return (
     <Row className="col-md-12">
-      <Col className="col-md-3 align-items-center pt-3">
+      <Col className="col-md-4 align-items-center pt-3">
         <Row className="col-md-12">
           <Card className="justify-content-center mb-2 p-0">
             <Card.Body className="justify-content-center">
@@ -28,24 +30,14 @@ const HomeClient = () => {
           </Card>
         </Row>
       </Col>
-      <Col className="col-md-9 justify-content-center pt-3">
+      <Col className="col-md-8 justify-content-center pt-3">
         <Card>
           <Card.Body>
             <Text className="fs-2">Noticias</Text>
             <Skeleton visible={isLoading}>
               <Card>
                 <Card.Body>
-                  <ul>
-                    <li>Noticia1</li>
-                    <li>Noticia2</li>
-                    <li>Noticia3</li>
-                    <li>Noticia1</li>
-                    <li>Noticia2</li>
-                    <li>Noticia3</li>
-                    <li>Noticia1</li>
-                    <li>Noticia2</li>
-                    <li>Noticia3</li>
-                  </ul>
+                  <ul>{state?.news?.map((n: string, index: number) => <li key={index + n}>{n}</li>)}</ul>
                 </Card.Body>
               </Card>
             </Skeleton>

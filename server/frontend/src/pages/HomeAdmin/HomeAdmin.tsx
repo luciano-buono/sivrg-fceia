@@ -2,6 +2,7 @@ import { Card, Row } from 'react-bootstrap';
 import ResourceCard from '../../components/ResourceCard';
 import useSession from '../../hooks/useSession';
 import { Skeleton, Text } from '@mantine/core';
+import { useNewsContext } from '../../contexts/NewsContext';
 
 const HomeAdmin = () => {
   const mockResources = [
@@ -11,6 +12,7 @@ const HomeAdmin = () => {
   ];
 
   const { isLoading } = useSession();
+  const state = useNewsContext();
 
   return (
     <>
@@ -31,11 +33,7 @@ const HomeAdmin = () => {
             <Text className="fs-2">Noticias</Text>
             <Card>
               <Card.Body>
-                <ul>
-                  <li>Noticia 1</li>
-                  <li>Noticia 2</li>
-                  <li>Noticia 3</li>
-                </ul>
+                <ul>{state?.news.map((n: string, index: number) => <li key={index + n}>{n}</li>)}</ul>
               </Card.Body>
             </Card>
           </Card.Body>

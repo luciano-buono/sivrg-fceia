@@ -1,11 +1,11 @@
 import { Skeleton, Text } from '@mantine/core';
 import { Card } from 'react-bootstrap';
-// import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import useSession from '../../hooks/useSession';
 import EmpresaForm from '../../components/Forms/EmpresaForm';
 
 const EmpresaPage = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { isLoading } = useSession();
 
   return (
@@ -15,7 +15,11 @@ const EmpresaPage = () => {
         <Skeleton visible={isLoading}>
           <Card className="d-flex flex-wrap justify-content-center mb-2">
             <Card.Body className="d-flex flex-wrap justify-content-center">
-              <EmpresaForm />
+              <EmpresaForm
+                onSubmit={() => {
+                  navigate('/');
+                }}
+              />
             </Card.Body>
           </Card>
         </Skeleton>

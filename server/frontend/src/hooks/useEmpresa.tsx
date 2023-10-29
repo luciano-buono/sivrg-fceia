@@ -1,6 +1,7 @@
 import { useMutation, useMutationState, useQueryClient } from '@tanstack/react-query';
 import api from '../api';
 import { Empresa, EmpresaData } from '../types';
+import useSession from './useSession';
 
 const createEmpresaFn = async (newEmpresaData: EmpresaData) => {
   const response = await api.post('/empresas/', newEmpresaData);
@@ -9,14 +10,14 @@ const createEmpresaFn = async (newEmpresaData: EmpresaData) => {
 
 const useEmpresa = () => {
   const queryClient = useQueryClient();
+  const { user } = useSession();
 
   const createEmpresa = useMutation({
     mutationKey: ['empresa'],
     mutationFn: createEmpresaFn,
     onSuccess: (data: Empresa) => {
-      queryClient.setQueryData<Empresa[]>(['empresas'], (oldData) => {
-        oldData = oldData || [];
-        return [...oldData, data];
+      queryClient.setQueryData<Empresa[]>(['empresas', user?.email], () => {
+        return [data];
       });
     },
   });

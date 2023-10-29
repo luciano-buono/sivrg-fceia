@@ -55,7 +55,7 @@ const LoggedUserMenu: FC = () => {
               {isMobile ? null : (
                 <div className="pe-2">
                   Bienvenido,
-                  {`${user.nickname ? user?.nickname.charAt(0).toUpperCase() + user.nickname.slice(1) : ''}!`}
+                  {` ${user.nickname ? user?.nickname.charAt(0).toUpperCase() + user.nickname.slice(1) : ''}!`}
                 </div>
               )}
               <img
