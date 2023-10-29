@@ -45,7 +45,7 @@ class Chofer(Base):
     __tablename__ = "choferes"
 
     chofer_id = Column(Integer, primary_key=True, autoincrement=True)
-    rfid_uid = Column(String(255), nullable=True)
+    rfid_uid = Column(Integer, nullable=True)
     nombre = Column(String(255), nullable=False)
     apellido = Column(String(255), nullable=False)
     dni = Column(Integer, nullable=False)
