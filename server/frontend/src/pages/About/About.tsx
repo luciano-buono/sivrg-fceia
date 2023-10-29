@@ -1,4 +1,4 @@
-import { Skeleton } from '@mantine/core';
+import { Skeleton, Text } from '@mantine/core';
 import { FC } from 'react';
 import { Container, Card } from 'react-bootstrap';
 import useSession from '../../hooks/useSession';
@@ -11,7 +11,7 @@ const About: FC = () => {
       <Skeleton visible={isLoadingUser}>
         <Card className="d-flex justify-content-center h-100 w-100">
           <Card.Body>
-            <h1> About us </h1>
+            <Text className="fs-2">About us</Text>
           </Card.Body>
         </Card>
       </Skeleton>

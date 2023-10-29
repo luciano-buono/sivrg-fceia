@@ -5,13 +5,12 @@ import useSession from '../../hooks/useSession';
 import { Button, Skeleton, em } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useMediaQuery } from '@mantine/hooks';
-import useTurno from '../../hooks/useTurno';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api';
 
 const columnHelper = createColumnHelper<Turno>();
 
-const ReservationsPage = () => {
+const ReservationsAdminPage = () => {
   const { isLoading } = useSession();
 
   const handleEditRow = () => {
@@ -60,6 +59,9 @@ const ReservationsPage = () => {
       header: () => 'Acciones',
       cell: () => (
         <div className="d-flex justify-content-around">
+          <Button size="compact-sm" color="green" onClick={handleEditRow}>
+            <i className="fa-solid fa-check"></i>
+          </Button>
           <Button size="compact-sm" color="yellow" onClick={handleEditRow}>
             <i className="fa-solid fa-pencil"></i>
           </Button>
@@ -71,7 +73,7 @@ const ReservationsPage = () => {
     }),
   ];
 
-  const columnsMobile: ColumnDef<Turno, any>[] = [
+  const columnsMobile = [
     columnHelper.accessor('chofer.dni', {
       cell: (info) => <span>{`${info.row.original.chofer.dni}`}</span>,
       header: () => <span>Chofer</span>,
@@ -86,6 +88,9 @@ const ReservationsPage = () => {
       header: () => 'Acciones',
       cell: () => (
         <div className="d-flex justify-content-around">
+          <Button size="compact-sm" color="green" onClick={handleEditRow}>
+            <i className="fa-solid fa-check"></i>
+          </Button>
           <Button size="compact-sm" color="yellow" onClick={handleEditRow}>
             <i className="fa-solid fa-pencil"></i>
           </Button>
@@ -97,14 +102,14 @@ const ReservationsPage = () => {
     }),
   ];
 
-  const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
-
   const queryTurno = useQuery<Turno[]>({
     queryKey: ['turnos'],
     queryFn: () => api.get('/turnos/').then((res) => res.data),
   });
 
   const { data: turnos, isLoading: isLoadingTurnos } = queryTurno;
+
+  const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
   const table = useReactTable({
     data: turnos ? turnos : [],
@@ -115,7 +120,7 @@ const ReservationsPage = () => {
     <>
       <Card className="d-flex w-100 my-3">
         <Card.Body>
-          <div className="fs-1"> Mis turnos </div>
+          <div className="fs-1"> Turnos </div>
           <Skeleton visible={isLoading || isLoadingTurnos}>
             <table className="table table-bordered">
               <thead>
@@ -146,4 +151,4 @@ const ReservationsPage = () => {
   );
 };
 
-export default ReservationsPage;
+export default ReservationsAdminPage;

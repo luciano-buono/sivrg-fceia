@@ -4,15 +4,17 @@ import { DateInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
 import { ChoferData, ModelForm } from '../../types';
 import { useForm } from '@mantine/form';
-import useMutateChoferes from '../../hooks/useMutateChoferes';
+import useChoferes from '../../hooks/useChofer';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
-import { useMutationState } from '@tanstack/react-query';
+import useSessionEmpresa from '../../hooks/useSessionEmpresa';
+import { AxiosError } from 'axios';
 
 const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const bookingForm = useBookingFormContext();
 
-  const createChoferMutation = useMutateChoferes();
+  const { createChofer, isMutatingChofer } = useChoferes();
+  const { empresa_id } = useSessionEmpresa();
 
   const form = useForm({
     initialValues: {
@@ -33,7 +35,7 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
 
   const handleCreateChofer = async (newChoferData: ChoferData) => {
     try {
-      const chofer = await createChoferMutation.mutateAsync(newChoferData);
+      const chofer = await createChofer.mutateAsync(newChoferData);
       bookingForm.setFieldValue('chofer_id', chofer.chofer_id.toString());
       updateSearch(`${chofer.nombre} ${chofer.apellido}, ${chofer.dni.toString()}`);
       closeFn();
@@ -42,31 +44,28 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
         color: 'green',
         message: `Se ha registrado a ${newChoferData.nombre} ${newChoferData.apellido} como chofer`,
       });
-    } catch (error: any) {
-      notifications.show({
-        title: 'Error al crear chofer',
-        color: 'red',
-        message: `${error.response.data.detail}`,
-      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        notifications.show({
+          title: 'Error al crear chofer',
+          color: 'red',
+          message: `${error.response?.data.detail}`,
+        });
+      }
     }
   };
-
-  const isMutatingChofer = useMutationState({
-    filters: { status: 'pending', mutationKey: ['chofer'] },
-    select: (mutation) => mutation.state.variables,
-  });
 
   return (
     <form
       onSubmit={form.onSubmit(() => {
-        if (!(isMutatingChofer.length > 0)) {
+        if (!isMutatingChofer) {
           handleCreateChofer({
             nombre: form.values.firstname,
             apellido: form.values.lastname,
             rfid_uid: 0,
             dni: parseInt(form.values.documentNumber),
             habilitado: true,
-            empresa_id: 2,
+            empresa_id: empresa_id,
           });
         }
       })}
@@ -116,7 +115,7 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
       </Row>
       <Row className="d-flex justify-content-end pt-3 pe-3">
         <Button type="submit" className="w-auto">
-          {isMutatingChofer.length > 0 ? <Loader type="dots" color="white" /> : 'Crear chofer'}
+          {isMutatingChofer ? <Loader type="dots" color="white" /> : 'Crear chofer'}
         </Button>
       </Row>
     </form>

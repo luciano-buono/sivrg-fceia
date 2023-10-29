@@ -1,12 +1,12 @@
 import { Collapse, Switch } from '@mantine/core';
 import { FC, useState } from 'react';
 import { Card, Container } from 'react-bootstrap';
-import { useQuery } from '@tanstack/react-query';
-import api from '../../api';
-import { Chofer } from '../../types';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import ChoferForm from '../../components/Forms/ChoferForm';
 import SearchInput from '../../components/Forms/Inputs/SearchInput';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../api';
+import { Chofer } from '../../types';
 
 const StepChofer: FC = () => {
   const [showForm, setShowForm] = useState(false);
@@ -24,10 +24,11 @@ const StepChofer: FC = () => {
 
   const form = useBookingFormContext();
 
-  const { data: choferes } = useQuery({
+  const queryChofer = useQuery<Chofer[]>({
     queryKey: ['choferes'],
-    queryFn: () => api.get<Chofer[]>('/choferes/').then((res) => res.data),
+    queryFn: () => api.get('/choferes/').then((res) => res.data),
   });
+  const { data: choferes } = queryChofer;
 
   const selectData = choferes?.map((chofer) => ({
     value: chofer.chofer_id.toString(),

@@ -1,28 +1,50 @@
 import { Container } from 'react-bootstrap';
 import { Routes, Route } from 'react-router';
-import About from '../About';
-import Contact from '../Contact';
 import NotFound from '../NotFound';
-import { PrivateRoutes } from '../../App';
+import { ProtectedRoutes } from '../../App';
 import HomeClient from '../HomeClient/HomeClient';
 import ReservationsPage from '../ReservationsPage';
 import BookingStepper from '../BookingFormPage/BookingStepper';
+import EmpresaPage from '../EmpresaPage';
+import useSession from '../../hooks/useSession';
+import { Skeleton } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../api';
+import { Empresa } from '../../types';
 
-const ClientPage = () => (
-  <>
-    <Container className="d-flex flex-wrap">
-      <Routes>
-        <Route element={<PrivateRoutes redirect_to="/login" />}>
-          <Route path="/" element={<HomeClient />} />
-          <Route path="/booking" element={<BookingStepper />} />
-          <Route path="/reservations" element={<ReservationsPage />} />
-          <Route element={<NotFound />} />
-        </Route>
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/about" element={<About />} />
-      </Routes>
-    </Container>
-  </>
-);
+const ClientPage = () => {
+  const { user, isLoading } = useSession();
+
+  const { data: empresa, isLoading: isLoadingEmpresa } = useQuery<Empresa[]>({
+    queryKey: ['empresas', user?.email],
+    queryFn: async () => await api.get(`/empresas/?empresa_email=${user?.email}`).then((res) => res.data),
+  });
+
+  return (
+    <>
+      <Skeleton visible={isLoadingEmpresa || isLoading}>
+        <Container className="d-flex flex-wrap justify-content-center">
+          <Routes>
+            <Route element={<ProtectedRoutes allowedRoles={['client']} redirectPath="/restricted" />}>
+              <Route index element={<HomeClient />} />
+              <Route
+                element={
+                  <ProtectedRoutes isAllowed={empresa !== undefined && empresa.length > 0} redirectPath="/empresa" />
+                }
+              >
+                <Route path="/booking" element={<BookingStepper />} />
+                <Route path="/reservations" element={<ReservationsPage />} />
+                <Route path="/error" element={<NotFound />} />
+              </Route>
+              <Route element={<ProtectedRoutes isAllowed={!empresa?.length} redirectPath="/" />}>
+                <Route path="/empresa" element={<EmpresaPage />} />
+              </Route>
+            </Route>
+          </Routes>
+        </Container>
+      </Skeleton>
+    </>
+  );
+};
 
 export default ClientPage;

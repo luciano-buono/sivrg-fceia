@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Card, Container } from 'react-bootstrap';
 import useSession from '../../hooks/useSession';
-import { Skeleton } from '@mantine/core';
+import { Skeleton, Text } from '@mantine/core';
 
 const Contact: FC = () => {
   const { isLoading } = useSession();
@@ -11,7 +11,7 @@ const Contact: FC = () => {
       <Skeleton visible={isLoading}>
         <Card className="d-flex justify-content-center h-100 w-100">
           <Card.Body>
-            <h1> Contacto </h1>
+            <Text className="fs-2">Contacto</Text>
           </Card.Body>
         </Card>
       </Skeleton>

@@ -1,12 +1,12 @@
 import { Collapse, Switch } from '@mantine/core';
 import { FC, useState } from 'react';
 import { Card } from 'react-bootstrap';
-import { useQuery } from '@tanstack/react-query';
-import api from '../../api';
-import { Vehiculo } from '../../types';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import VehiculoForm from '../../components/Forms/VehiculoForm';
 import SearchInput from '../../components/Forms/Inputs/SearchInput';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../api';
+import { Vehiculo } from '../../types';
 
 const StepVehiculo: FC = () => {
   const [showForm, setShowForm] = useState(false);
@@ -24,10 +24,11 @@ const StepVehiculo: FC = () => {
     form.setFieldValue('vehiculo_id', value);
   };
 
-  const { data: vehiculos } = useQuery({
+  const queryVehiculo = useQuery<Vehiculo[]>({
     queryKey: ['vehiculos'],
-    queryFn: () => api.get<Vehiculo[]>('/vehiculos/').then((res) => res.data),
+    queryFn: () => api.get('/vehiculos/').then((res) => res.data),
   });
+  const { data: vehiculos } = queryVehiculo;
 
   const selectData = vehiculos?.map((vehiculo) => ({
     value: vehiculo.vehiculo_id.toString(),

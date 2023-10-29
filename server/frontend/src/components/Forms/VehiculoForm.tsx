@@ -5,13 +5,15 @@ import { ModelForm, VehiculoData } from '../../types';
 import { useForm } from '@mantine/form';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
-import useMutateVehiculos from '../../hooks/useMutateVehiculos';
-import { useMutationState } from '@tanstack/react-query';
+import useMutateVehiculos from '../../hooks/useVehiculo';
+import useSessionEmpresa from '../../hooks/useSessionEmpresa';
+import { AxiosError } from 'axios';
 
 const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
-  const createVehiculoMutation = useMutateVehiculos();
+  const { createVehiculo, isMutatingVehiculo } = useMutateVehiculos();
 
   const bookingForm = useBookingFormContext();
+  const { empresa_id } = useSessionEmpresa();
 
   const form = useForm({
     initialValues: {
@@ -32,7 +34,7 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
 
   const handleCreateVehiculo = async (newVehiculoData: VehiculoData) => {
     try {
-      const vehiculo = await createVehiculoMutation.mutateAsync(newVehiculoData);
+      const vehiculo = await createVehiculo.mutateAsync(newVehiculoData);
       bookingForm.setFieldValue('vehiculo_id', vehiculo.vehiculo_id.toString());
       updateSearch(`${vehiculo.patente},  ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`);
       closeFn();
@@ -41,24 +43,21 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
         color: 'green',
         message: `Se ha registrado el vehículo ${newVehiculoData.patente}`,
       });
-    } catch (error: any) {
-      notifications.show({
-        title: 'Error al crear vehículo',
-        color: 'red',
-        message: `${error.response.data?.detail ?? error.response.message}`,
-      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        notifications.show({
+          title: 'Error al crear vehículo',
+          color: 'red',
+          message: `${error.response?.data?.detail ?? error.response?.statusText}`,
+        });
+      }
     }
   };
-
-  const isMutatingVehiculo = useMutationState({
-    filters: { status: 'pending', mutationKey: ['vehiculo'] },
-    select: (mutation) => mutation.state.variables,
-  });
 
   return (
     <form
       onSubmit={form.onSubmit(() => {
-        if (!(isMutatingVehiculo.length > 0)) {
+        if (!isMutatingVehiculo) {
           handleCreateVehiculo({
             patente: form.values.patente,
             seguro: form.values.seguro,
@@ -66,7 +65,7 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
             año: form.values.año,
             marca: form.values.marca,
             habilitado: true,
-            empresa_id: 2,
+            empresa_id: empresa_id,
           });
         }
       })}
@@ -115,7 +114,7 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
       </Row>
       <Row className="d-flex justify-content-end pt-3 pe-3">
         <Button type="submit" className="w-auto">
-          {isMutatingVehiculo.length > 0 ? <Loader type="dots" color="white" /> : 'Crear vehículo'}
+          {isMutatingVehiculo ? <Loader type="dots" color="white" /> : 'Crear vehículo'}
         </Button>
       </Row>
     </form>
