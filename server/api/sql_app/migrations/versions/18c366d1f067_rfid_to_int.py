@@ -23,7 +23,8 @@ def upgrade() -> None:
     op.alter_column('choferes', 'rfid_uid',
                existing_type=sa.VARCHAR(length=255),
                type_=sa.Integer(),
-               existing_nullable=True)
+               existing_nullable=True,
+               postgresql_using="rfid_uid::integer")
     # ### end Alembic commands ###
 
 
