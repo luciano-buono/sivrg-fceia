@@ -9,8 +9,9 @@ services:
     #   - ./api:/usr/src/app
     stdin_open: true # docker run -i
     tty: true        # docker run -t
-    ports:
-      - 8443:8443
+    # Api should be accesed from Nginx in frontend container
+    # ports:
+    #   - 8443:8443
     environment:
       APP: api
     # command: /bin/sh
@@ -36,10 +37,12 @@ services:
     #   - ./frontend:/usr/src/app
     # working_dir: /usr/src/app
     build:
-      context: ./frontend
-      dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./nginx/Dockerfile
     stdin_open: true # docker run -i
     tty: true        # docker run -t
+    ports:
+      - 8443:443
     environment:
       APP: frontend
     # command:

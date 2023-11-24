@@ -1,3 +1,3 @@
-import ClientPage from './ClientPage.1';
+import ClientPage from './ClientPage';
 
 export default ClientPage;

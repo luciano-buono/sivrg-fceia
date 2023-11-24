@@ -5,7 +5,6 @@ import useSession from '../../hooks/useSession';
 import { Button, Skeleton, em } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useMediaQuery } from '@mantine/hooks';
-import useTurno from '../../hooks/useTurno';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api';
 

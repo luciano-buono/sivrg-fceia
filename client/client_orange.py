@@ -3,7 +3,7 @@ import cv2
 import yaml
 import glob
 
-import requests, json
+import requests, json, datetime
 
 
 from time import sleep
@@ -61,15 +61,19 @@ def get_RFID():
         raise
 
 if __name__ == "__main__":
-    get_RFID()
+    # get_RFID()
 
-    # tag_id = "10ABA3"
-    # data= {
-    #     'tag_id': tag_id,
-    #     'license_plate': 'prediccion'
-    # }
-    # response = requests.post(url='http://localhost:5000/validate', data=json.dumps(data))
-    # print(response.text)
+    tag_id = 357677372858
+    license_plate = 'BLA123'
+
+    params = {
+        'turno_fecha': str(datetime.datetime.now()),
+        'patente': license_plate,
+        'rfid_uid': tag_id
+        }
+    print(params)
+    response = requests.get(url='https://api-sivrg.methizul.com.ar:8443/public/turnos/validate', params=params)
+    print(response.text)
 
 
 
