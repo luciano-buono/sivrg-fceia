@@ -26,6 +26,9 @@ client/rfid/MFRC522_python/build
 client/rfid/MFRC522_python/dist
 client/rfid/MFRC522_python/mfrc522.egg-info
 
+#db
+*.db
+
 #To Remove
 FOTOS/*.mp4
 OLD/

@@ -21,4 +21,7 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     DATABASE_URL: str
 
+    # Local
+    is_local: bool
+
     model_config = SettingsConfigDict(env_file=".env")
