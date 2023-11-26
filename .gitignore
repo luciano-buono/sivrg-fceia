@@ -1,10 +1,17 @@
 .vscode/
 .DS_Store
 *.pyc
+__pycache__
+server/database/postgres_data/
+
+
+node_modules/
 
 #api
 api/venv/
-
+.config
+*.crt
+*.key
 
 venv/
 .venv/
@@ -19,6 +26,12 @@ client/rfid/MFRC522_python/build
 client/rfid/MFRC522_python/dist
 client/rfid/MFRC522_python/mfrc522.egg-info
 
-#To Remove 
+#db
+*.db
+
+#To Remove
 FOTOS/*.mp4
 OLD/
+
+# Frontend
+node_modules/

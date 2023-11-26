@@ -1,14 +1,14 @@
-# from .lpr.ConvALPR.alpr.alpr import ALPR
 from lpr.ConvALPR.alpr.alpr import ALPR
 import cv2
 import yaml
 import glob
 
 import requests, json
+import cv2, time
 
 
 from time import sleep
-from rfid.MFRC522_python.mfrc522 import SimpleMFRC522
+# from rfid.MFRC522_python.mfrc522 import SimpleMFRC522
 from utils import *
 import os
 
@@ -19,6 +19,7 @@ def get_LPR():
     with open(CONFIGFILE, 'r') as stream:
         cfg = yaml.safe_load(stream)
     SOURCE_DIR =glob.glob('../../../FOTOS/img8.jpg')
+    SOURCE_DIR =glob.glob('../../../FOTOS/opencv_frame_0.png')
 
     # Get all images in directory
     print(f"Source dir:{SOURCE_DIR}")
@@ -32,6 +33,7 @@ def get_LPR():
     for i, x in enumerate(cv2_images):
         print("Predicting..")
         predicciones = alpr.predict(cv2_images[i])
+        print(predicciones)
 
     #Get back to current directotry
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -42,29 +44,29 @@ def get_LPR():
         print("Hay mas de una patente reconozida\nRevisar cuantas imagenes de entrada hay\Exitting..")
         exit(1)
 
-def get_RFID():
-    reader = SimpleMFRC522()
 
-    try:
-        while True:
-            prGreen("Hold a tag near the reader")
-            id, text = reader.read()
-            print(f"ID: {id}\nText: {text}")
-            sleep(5)
-            print(f"Reading lisence from image..")
-            prediccion = get_LPR()
-            print({"LICENSE_PLATE":prediccion})
-            print("Verifying truck credentials against the database..")
 
-            prCyan(f"End of process flow..\nRestarting..\n")
-    except KeyboardInterrupt:
-        raise
 
 if __name__ == "__main__":
-    # prediccion = get_LPR()
-    # print({"LICENSE_PLATE":prediccion})
+    cam = cv2.VideoCapture(0)
+    cv2.namedWindow("test")
+    ret, frame = cam.read()
+    if not ret:
+        print("failed to grab frame")
 
-    get_RFID()
+    img_path = "../FOTOS/"
+    img_name = "../FOTOS/opencv_frame_{}.png".format(0)
+    cv2.imwrite(img_name, frame)
+    print("{} written!".format(img_name))
+
+    cam.release
+    cv2.destroyAllWindows()
+    print("Saving photo...")
+    time.sleep(5)
+    prediccion = get_LPR()
+    print({"LICENSE_PLATE":prediccion})
+
+    # get_RFID()
 
     # tag_id = "10ABA3"
     # data= {

@@ -1,3 +1,7 @@
 fastapi[all]
 uvicorn[standard]
 sqlalchemy
+fastapi_auth0
+alembic
+python-dotenv
+psycopg2-binary

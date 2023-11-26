@@ -1,0 +1,75 @@
+services:
+  api:
+    container_name: api
+    # image: python:latest
+    build:
+      context: ./api
+      dockerfile: ./Dockerfile.orange
+    # volumes:
+    #   - ./api:/usr/src/app
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    # Api should be accesed from Nginx in frontend container
+    # ports:
+    #   - 8443:8443
+    environment:
+      APP: api
+    # command: /bin/sh
+
+  migrations:
+    container_name: migrations
+    image: python:3.11
+    volumes:
+      - ./api:/usr/src/app
+    working_dir: /usr/src/app
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    environment:
+      APP: migrations
+    command:
+      # - pip install alembic
+      - /bin/sh
+
+  frontend:
+    container_name: frontend
+    image: node:latest
+    # volumes:
+    #   - ./frontend:/usr/src/app
+    # working_dir: /usr/src/app
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    ports:
+      - 8443:443
+    environment:
+      APP: frontend
+    # command:
+    #   - /bin/sh
+
+  db:
+    container_name: db
+    image: postgres:latest
+    volumes:
+      - ./database/postgres_data:/var/lib/postgresql/data
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    ports:
+      - 5432:5432
+    environment:
+      APP: db
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: sivrg_db
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@sivrg.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
