@@ -10,14 +10,25 @@ from sqlalchemy import (
     DECIMAL,
     TIMESTAMP,
     DateTime,
+    UniqueConstraint,
     func,
     text,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy_utils import ChoiceType
 
 Base = declarative_base()
 
+CHOICES_STATES = [
+    ("pending", "Pendiente"),
+    ("canceled", "Cancelado"),
+    ("accepted", "Aceptado"),
+    ("in_progress_entrada", "En progreso. Entrada planta"),
+    ("in_progress_balanza_in", "En progreso. Balanza ingreso"),
+    ("in_progress_balanza_out", "En progreso. Balanza egreso"),
+    ("finished", "Finalizado"),
+]
 
 class Empresa(Base):
     __tablename__ = "empresas"
@@ -62,18 +73,19 @@ class Pesada(Base):
     __tablename__ = "pesadas"
 
     pesada_id = Column(Integer, primary_key=True, autoincrement=True)
-    fecha_hora_in = Column(
+    fecha_hora_planta_in = Column(
         TIMESTAMP, nullable=False, server_default=func.current_timestamp()
     )
-    fecha_hora_out = Column(TIMESTAMP, nullable=False)
-    chofer_id = Column(Integer, ForeignKey("choferes.chofer_id"))
-    peso_bruto_in = Column(DECIMAL(9, 2), nullable=False)
+    fecha_hora_balanza_in = Column(TIMESTAMP, nullable=True)
+    fecha_hora_balanza_out = Column(TIMESTAMP, nullable=True)
+    peso_bruto_in = Column(DECIMAL(9, 2), nullable=True)
     peso_bruto_out = Column(DECIMAL(9, 2), nullable=True)
-    empresa_id = Column(Integer, ForeignKey("empresas.empresa_id"))
-    producto_id = Column(Integer, ForeignKey("productos.producto_id"))
-    chofer = relationship("Chofer")
-    empresa = relationship("Empresa")
-    producto = relationship("Producto")
+    turno_id = Column(Integer, ForeignKey("turnos.turno_id"))
+    turno = relationship("Turno", backref="pesada_turno")
+
+    __table_args__ = (UniqueConstraint('turno_id', name='unique_pesada_per_turno'),)
+
+
 
 
 class Silo(Base):
@@ -90,6 +102,7 @@ class Turno(Base):
     __tablename__ = "turnos"
 
     turno_id = Column(Integer, primary_key=True, autoincrement=True)
+    turno_state = Column(ChoiceType(CHOICES_STATES), default="pending")
     created_on = Column(
         TIMESTAMP, nullable=False, server_default=func.current_timestamp()
     )

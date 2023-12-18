@@ -1,5 +1,18 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_serializer, field_validator
+from typing import Literal
 from datetime import date, datetime
+from sqlalchemy_utils import ChoiceType
+from models import CHOICES_STATES
+
+TURNO_STATE = Literal[
+    "pending",
+    "canceled",
+    "accepted",
+    "in_progress_entrada",
+    "in_progress_balanza_in",
+    "in_progress_balanza_out",
+    "finished",
+]
 
 
 class EmpresaBase(BaseModel):
@@ -12,6 +25,7 @@ class EmpresaBase(BaseModel):
     empresa_pais: str
     empresa_telefono: str
     empresa_email: str
+
 
 class EmpresaCreate(EmpresaBase):
     pass
@@ -61,11 +75,11 @@ class Chofer(ChoferBase):
 
 
 class PesadaBase(BaseModel):
-    chofer_id: int
-    peso_bruto: float
-    patente: str
-    empresa_id: int
-    producto_id: int
+    fecha_hora_balanza_in: datetime | None = None
+    fecha_hora_balanza_out: datetime | None = None
+    peso_bruto_in: float | None = None
+    peso_bruto_out: float | None = None
+    turno_id: int
 
 
 class PesadaCreate(PesadaBase):
@@ -74,6 +88,7 @@ class PesadaCreate(PesadaBase):
 
 class Pesada(PesadaBase):
     pesada_id: int
+    fecha_hora_planta_in: datetime
 
     class Config:
         from_attributes = True
@@ -127,6 +142,7 @@ class TurnoBase(BaseModel):
     empresa_id: int
     producto_id: int
     vehiculo_id: int
+    turno_state: TURNO_STATE
 
 
 class TurnoCreate(TurnoBase):
@@ -140,6 +156,10 @@ class Turno(TurnoBase):
     chofer: Chofer
     producto: Producto
     vehiculo: Vehiculo
+
+    @field_validator("turno_state", mode="before")
+    def serialize_turno_state(cls, value: ChoiceType) -> str:
+        return value.code
 
     class Config:
         from_attributes = True

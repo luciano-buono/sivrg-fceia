@@ -1,4 +1,5 @@
-from fastapi import Depends, FastAPI, HTTPException, Query, Response, status, Security
+from typing import Literal
+from fastapi import Depends, FastAPI, HTTPException, Query, Response, status, Security, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_auth0 import Auth0, Auth0User
 
@@ -65,20 +66,20 @@ def create_empresa(
     return crud.create_empresa(db=db, empresa=empresa)
 
 
-@app.get("/empresas/", response_model=list[schemas.Empresa])
-def read_empresas(
-    empresa_nombre: str | None = None,
-    empresa_email: str | None = None,
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(get_db),
-    user: Auth0User = Security(auth.get_user),
-):
-    if empresa_email:
-        return crud.get_empresa_by_email(db=db, empresa_email=empresa_email)
-    if empresa_nombre:
-        return crud.get_empresa_by_name(db=db, empresa_nombre=empresa_nombre)
-    return crud.get_empresas(db=db, skip=skip, limit=limit)
+# @app.get("/empresas/", response_model=list[schemas.Empresa])
+# def read_empresas(
+#     empresa_nombre: str | None = None,
+#     empresa_email: str | None = None,
+#     skip: int = 0,
+#     limit: int = 100,
+#     db: Session = Depends(get_db),
+#     user: Auth0User = Security(auth.get_user),
+# ):
+#     if empresa_email:
+#         return crud.get_empresa_by_email(db=db, empresa_email=empresa_email)
+#     if empresa_nombre:
+#         return crud.get_empresa_by_name(db=db, empresa_nombre=empresa_nombre)
+#     return crud.get_empresas(db=db, skip=skip, limit=limit)
 
 
 @app.get("/empresas/{empresa_id}", response_model=schemas.Empresa)
@@ -92,6 +93,18 @@ def read_empresa(
         raise HTTPException(status_code=404, detail="Empresa not found")
     return db_empresa
 
+
+@app.get("/empresas/",)
+def read_empresa(
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    # db_empresa = crud.get_empresa(db, empresa_id=empresa_id)
+    # if db_empresa is None:
+    #     raise HTTPException(status_code=404, detail="Empresa not found")
+    # return db_empresa
+    print(user)
+    return{"detail": user.email}
 
 @app.put("/empresas/{empresa_id}", response_model=schemas.Empresa)
 def update_empresa(
@@ -216,7 +229,7 @@ def read_pesadas(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    pesadas = crud.get_pesadas(db, skip=skip, limit=limit)
+    pesadas = crud.get_pesada(db, skip=skip, limit=limit)
     return pesadas
 
 
@@ -338,6 +351,22 @@ def read_turno(
     return turno
 
 
+# Get a Turno by ID
+@app.get("/turnos/{turno_id}/pesada", response_model=schemas.Pesada)
+def read_pesada_by_turno_id(
+    turno_id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    turno = crud.get_turno(db, turno_id)
+    if turno is None:
+        raise HTTPException(status_code=404, detail="Turno not found")
+    pesada = crud.get_pesadas_by_turno_id(db=db, turno_id=turno_id)
+    if pesada is None:
+        raise HTTPException(status_code=404, detail="Pesada not found")
+    return pesada
+
+
 # Get Pesada records by date range
 @app.get("/turnos/by-date-range/", response_model=list[schemas.Turno])
 def read_turnos_by_date_range(
@@ -367,6 +396,18 @@ def read_turno_by_patente_rfid(
             status_code=404, detail="Turno with that patente and RFID_UID not found!"
         )
     return data
+
+@app.put("/turnos/{turno_id}", response_model=schemas.Turno)
+def update_turno(
+    turno_id: int,
+    turno_state: schemas.TURNO_STATE,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if turno_state == 'in_progress':
+        instance = schemas.PesadaCreate(turno_id=turno_id)
+        crud.create_pesada(db=db, pesada=instance)
+    return crud.update_turno(db=db, turno_id=turno_id, turno_state=turno_state)
 
 
 ## ------------Vehiculos operations---------------------
@@ -437,6 +478,59 @@ def get_secure(user: Auth0User = Security(auth.get_user)):
 def get_public():
     return {"message": "Anonymous user"}
 
+@app.get("/public/test_create")
+def test_create(
+    db: Session = Depends(get_db),
+):
+    test_empresa = schemas.EmpresaCreate(
+        empresa_nombre= "HOLA",
+        empresa_RS= "HOLA",
+        empresa_CUIT= 123,
+        empresa_direccion= "HOLA",
+        empresa_localidad= "HOLA",
+        empresa_provincia= "HOLA",
+        empresa_pais= "HOLA",
+        empresa_telefono= "HOLA",
+        empresa_email= "HOLA",
+    )
+    test_producto = schemas.ProductoCreate(
+        producto_nombre = "str"
+    )
+    test_chofer = schemas.ChoferCreate(
+        rfid_uid= None,
+        nombre= "hola|",
+        apellido= "aps",
+        dni= 123,
+        empresa_id=1,
+        habilitado= True,
+    )
+    test_vehiculo = schemas.VehiculoCreate(
+        patente= "str",
+        seguro= "str",
+        modelo= "str",
+        año= 1,
+        marca= "str",
+        habilitado= True,
+        empresa_id= 1,
+    )
+    test_turno = schemas.TurnoCreate(
+        turno_fecha= datetime.now(),
+        cantidad_estimada= 1,
+        chofer_id= 1,
+        empresa_id= 1,
+        producto_id= 1,
+        vehiculo_id= 1,
+        turno_state= 'pending',
+    )
+    print(test_producto)
+    print(test_vehiculo)
+
+    crud.create_empresa(db=db, empresa=test_empresa)
+    crud.create_producto(db=db, producto=test_producto)
+    crud.create_chofer(db=db, chofer=test_chofer)
+    crud.create_vehiculo(db=db, vehiculo=test_vehiculo)
+    crud.create_turno(db=db, turno=test_turno)
+    return {"message": "DONE"}
 
 def main():
     uvicorn.run("main:app", port=5000, log_level="info", reload=True, host="0.0.0.0")

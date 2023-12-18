@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from fastapi import HTTPException
 from sqlalchemy import extract, func
 from sqlalchemy.orm import Session
 
@@ -54,6 +55,8 @@ def update_empresa(db: Session, empresa_id: int, data: schemas.EmpresaCreate):
         .filter(models.Empresa.empresa_id == empresa_id)
         .one_or_none()
     )
+    if not empresa:
+        raise HTTPException(status_code=404, detail="Empresa not found")
     for var, value in vars(data).items():
         setattr(empresa, var, value) if value else None
     db.add(empresa)
@@ -142,23 +145,13 @@ def get_pesada(db: Session, pesada_id: int):
     return db.query(models.Pesada).filter(models.Pesada.pesada_id == pesada_id).first()
 
 
-def get_pesadas_in(db: Session, skip: int = 0, limit: int = 100):
+def get_pesadas(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Pesada).offset(skip).limit(limit).all()
 
+def get_pesadas_by_turno_id(db: Session, turno_id):
+    return db.query(models.Pesada).filter(models.Pesada.turno_id == turno_id).first()
 
-def get_pesadas_in_by_chofer(
-    db: Session, chofer_id: int, skip: int = 0, limit: int = 100
-):
-    return (
-        db.query(models.Pesada)
-        .filter(models.Pesada.chofer_id == chofer_id)
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
-
-
-def get_pesadas_in_by_date(
+def get_pesada_in_by_date(
     db: Session, target_date: datetime, skip: int = 0, limit: int = 100
 ):
     return (
@@ -170,7 +163,7 @@ def get_pesadas_in_by_date(
     )
 
 
-def get_pesadas_in_by_date_range(
+def get_pesada_by_date_range(
     db: Session,
     start_date: datetime,
     end_date: datetime,
@@ -188,11 +181,11 @@ def get_pesadas_in_by_date_range(
 
 def create_pesada(db: Session, pesada: schemas.PesadaCreate):
     db_pesada = models.Pesada(
-        chofer_id=pesada.chofer_id,
-        peso_bruto=pesada.peso_bruto,
-        patente=pesada.patente,
-        empresa_id=pesada.empresa_id,
-        producto_id=pesada.producto_id,
+        fecha_hora_balanza_in=pesada.fecha_hora_balanza_in,
+        fecha_hora_balanza_out=pesada.fecha_hora_balanza_out,
+        peso_bruto_in=pesada.peso_bruto_in,
+        peso_bruto_out=pesada.peso_bruto_out,
+        turno_id=pesada.turno_id,
     )
     db.add(db_pesada)
     db.commit()
@@ -245,6 +238,7 @@ def get_silos(db: Session, skip: int = 0, limit: int = 100):
 # Create a Turno
 def create_turno(db: Session, turno: schemas.TurnoCreate):
     db_turno = models.Turno(
+        turno_state=turno.turno_state,
         turno_fecha=turno.turno_fecha,
         cantidad_estimada=turno.cantidad_estimada,
         chofer_id=turno.chofer_id,
@@ -255,6 +249,7 @@ def create_turno(db: Session, turno: schemas.TurnoCreate):
     db.add(db_turno)
     db.commit()
     db.refresh(db_turno)
+    # db_turno.turno_state = db_turno.turno_state.code
     return db_turno
 
 
@@ -303,6 +298,20 @@ def get_turnos_by_patente_rfid(
         .filter(func.date(models.Turno.turno_fecha) == turno_fecha.date())
         .first()
     )
+
+def update_turno(db: Session, turno_id: int, turno_state: str):
+    turno = (
+        db.query(models.Turno)
+        .filter(models.Turno.turno_id == turno_id)
+        .one_or_none()
+    )
+    if not turno:
+        raise HTTPException(status_code=404, detail="Turno not found")
+    setattr(turno, 'turno_state', turno_state)
+    db.add(turno)
+    db.commit()
+    db.refresh(turno)
+    return turno
 
 
 ## ------------Vehiculos operations---------------------
