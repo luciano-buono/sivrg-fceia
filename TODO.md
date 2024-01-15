@@ -18,3 +18,10 @@ endpoint dias disponibles
 orangepi usuaraio de servicio
 
 endpoins segurixzar role o scpode
+
+
+-----
+2023/01/15
+
+- chequear como cargar a posterior el RFID UID al chofer ya creado sin eso
+- crear pesada y ver como se conecta con el turno
