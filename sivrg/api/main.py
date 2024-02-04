@@ -66,20 +66,22 @@ def create_empresa(
     return crud.create_empresa(db=db, empresa=empresa)
 
 
-# @app.get("/empresas/", response_model=list[schemas.Empresa])
-# def read_empresas(
-#     empresa_nombre: str | None = None,
-#     empresa_email: str | None = None,
-#     skip: int = 0,
-#     limit: int = 100,
-#     db: Session = Depends(get_db),
-#     user: Auth0User = Security(auth.get_user),
-# ):
-#     if empresa_email:
-#         return crud.get_empresa_by_email(db=db, empresa_email=empresa_email)
-#     if empresa_nombre:
-#         return crud.get_empresa_by_name(db=db, empresa_nombre=empresa_nombre)
-#     return crud.get_empresas(db=db, skip=skip, limit=limit)
+@app.get("/empresas/", response_model=list[schemas.Empresa])
+def read_empresas(
+    empresa_nombre: str | None = None,
+    empresa_email: str | None = None,
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if empresa_email:
+        return crud.get_empresa_by_email(db=db, empresa_email=empresa_email)
+    if empresa_nombre:
+        return crud.get_empresa_by_name(db=db, empresa_nombre=empresa_nombre)
+    if user.email:
+        return crud.get_empresa_by_email(db=db, empresa_email=user.email)
+    return crud.get_empresas(db=db, skip=skip, limit=limit)
 
 
 @app.get("/empresas/{empresa_id}", response_model=schemas.Empresa)
@@ -93,18 +95,6 @@ def read_empresa(
         raise HTTPException(status_code=404, detail="Empresa not found")
     return db_empresa
 
-
-@app.get("/empresas/",)
-def read_empresa(
-    db: Session = Depends(get_db),
-    user: Auth0User = Security(auth.get_user),
-):
-    # db_empresa = crud.get_empresa(db, empresa_id=empresa_id)
-    # if db_empresa is None:
-    #     raise HTTPException(status_code=404, detail="Empresa not found")
-    # return db_empresa
-    print(user)
-    return{"detail": user.email}
 
 @app.put("/empresas/{empresa_id}", response_model=schemas.Empresa)
 def update_empresa(
@@ -183,6 +173,9 @@ def read_choferes(
 ):
     if empresa_id:
         return crud.get_choferes_by_empresa(db, empresa_id, skip=skip, limit=limit)
+    if user.email:
+        empresa=crud.get_empresa_by_email(db=db, empresa_email=user.email)
+        return crud.get_choferes_by_empresa(db=db, empresa_id=empresa.one().empresa_id, skip=skip, limit=limit)
     return crud.get_choferes(db, skip=skip, limit=limit)
 
 
@@ -208,6 +201,15 @@ def read_chofer_by_dni(
     if chofer is None:
         raise HTTPException(status_code=404, detail="Chofer not found")
     return chofer
+
+@app.put("/choferes/{chofer_id}", response_model=schemas.Chofer)
+def update_chofer(
+    chofer_id: int,
+    data: schemas.ChoferCreate,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    return crud.update_chofer(db=db, chofer_id=chofer_id, data=data)
 
 
 ## ------------Pesada operations---------------------
@@ -327,15 +329,18 @@ def create_turno(
 # Get all Turnos
 @app.get("/turnos/", response_model=list[schemas.Turno])
 def read_turnos(
-    date: str | None = None,
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
+    is_employee: int = 0
 ):
-    if date:
-        return crud.get_turnos_by_date(db, date, skip=skip, limit=limit)
-    return crud.get_turnos(db, skip=skip, limit=limit)
+    if is_employee:
+        print("get todos los turnos")
+        return crud.get_turnos(db, skip=skip, limit=limit)
+    print("entrando a user email")
+    empresa=crud.get_empresa_by_email(db=db, empresa_email=user.email)
+    return crud.get_turnos_by_empresa(db, empresa_id=empresa.one().empresa_id, skip=skip, limit=limit)
 
 
 # Get a Turno by ID
@@ -376,8 +381,12 @@ def read_turnos_by_date_range(
     limit: int = Query(100, description="Maximum number of records to retrieve"),
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
+    is_employee: int = 0
 ):
-    return crud.get_turnos_by_date_range(db, start_date, end_date, skip, limit)
+    if is_employee:
+        return crud.get_turnos_by_date_range(db, start_date, end_date, skip=skip, limit=limit)
+    empresa=crud.get_empresa_by_email(db=db, empresa_email=user.email)
+    return crud.get_turnos_by_date_range_by_empresa(db, start_date, end_date, empresa_id=empresa.one().empresa_id, skip=skip, limit=limit)
 
 
 # Validate turnos for OrangePI client
@@ -467,9 +476,19 @@ def read_vehiculo(
         raise HTTPException(status_code=404, detail="Vehiculo not found")
     return vehiculo
 
+@app.put("/vehiculos/{vehiculo_id}", response_model=schemas.Vehiculo)
+def update_vehiculo(
+    vehiculo_id: int,
+    data: schemas.VehiculoCreate,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    return crud.update_vehiculo(db=db, vehiculo_id=vehiculo_id, data=data)
 
+
+######################
 # FastAPI auth AUTH0
-@app.get("/api/private2")
+@app.get("/api/get_auth0_user")
 def get_secure(user: Auth0User = Security(auth.get_user)):
     return {"message": f"{user}"}
 

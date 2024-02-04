@@ -137,6 +137,20 @@ def create_chofer(db: Session, chofer: schemas.ChoferCreate):
     db.refresh(db_chofer)
     return db_chofer
 
+def update_chofer(db: Session, chofer_id: int, data: schemas.ChoferCreate):
+    chofer = (
+        db.query(models.Chofer)
+        .filter(models.Chofer.chofer_id == chofer_id)
+        .one_or_none()
+    )
+    if not chofer:
+        raise HTTPException(status_code=404, detail="Chofer not found")
+    for var, value in vars(data).items():
+        setattr(chofer, var, value) if value else None
+    db.add(chofer)
+    db.commit()
+    db.refresh(chofer)
+    return chofer
 
 ## ------------Pesada operations---------------------
 
@@ -262,12 +276,24 @@ def get_turno(db: Session, turno_id: int):
 def get_turnos(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Turno).offset(skip).limit(limit).all()
 
+# Get turno by empresa ID
+def get_turnos_by_empresa(
+    db: Session, empresa_id: int, skip: int = 0, limit: int = 100
+):
+    return (
+        db.query(models.Turno)
+        .filter(models.Turno.empresa_id == empresa_id)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
 # Get Turnos by date
-def get_turnos_by_date(db: Session, date: str, skip: int = 0, limit: int = 100):
+def get_turnos_by_date(db: Session, date: str, empresa_id: int, skip: int = 0, limit: int = 100):
     return (
         db.query(models.Turno)
         .filter(models.Turno.turno_fecha == date)
+        # .filter(models.Turno.empresa_id == empresa_id)
         .offset(skip)
         .limit(limit)
         .all()
@@ -281,6 +307,17 @@ def get_turnos_by_date_range(
     return (
         db.query(models.Turno)
         .filter(models.Turno.turno_fecha.between(start_date, end_date))
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+def get_turnos_by_date_range_by_empresa(
+    db: Session, start_date: str, end_date: str, empresa_id: int, skip: int = 0, limit: int = 100
+):
+    return (
+        db.query(models.Turno)
+        .filter(models.Turno.turno_fecha.between(start_date, end_date))
+        .filter(models.Turno.empresa_id == empresa_id)
         .offset(skip)
         .limit(limit)
         .all()
@@ -349,3 +386,19 @@ def get_vehiculo_by_patente(db: Session, patente: str):
 # Get all Vehiculos
 def get_vehiculos(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Vehiculo).offset(skip).limit(limit).all()
+
+# Update Vehiculo
+def update_vehiculo(db: Session, vehiculo_id: int, data: schemas.VehiculoCreate):
+    vehiculo = (
+        db.query(models.Vehiculo)
+        .filter(models.Vehiculo.vehiculo_id == vehiculo_id)
+        .one_or_none()
+    )
+    if not vehiculo:
+        raise HTTPException(status_code=404, detail="Vehiculo not found")
+    for var, value in vars(data).items():
+        setattr(vehiculo, var, value) if value else None
+    db.add(vehiculo)
+    db.commit()
+    db.refresh(vehiculo)
+    return vehiculo
