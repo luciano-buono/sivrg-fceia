@@ -33,23 +33,23 @@ CHOICES_STATES = [
 class Empresa(Base):
     __tablename__ = "empresas"
 
-    empresa_id = Column(Integer, primary_key=True, autoincrement=True)
-    empresa_nombre = Column(String(255), nullable=False)
-    empresa_RS = Column(String(255), nullable=False)
-    empresa_CUIT = Column(String(255), nullable=False)
-    empresa_direccion = Column(String(255), nullable=False)
-    empresa_localidad = Column(String(255), nullable=False)
-    empresa_provincia = Column(String(255), nullable=False)
-    empresa_pais = Column(String(255), nullable=False)
-    empresa_telefono = Column(String(255), nullable=True)
-    empresa_email = Column(String(255), nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nombre = Column(String(255), nullable=False)
+    RS = Column(String(255), nullable=False)
+    CUIT = Column(String(255), nullable=False)
+    direccion = Column(String(255), nullable=False)
+    localidad = Column(String(255), nullable=False)
+    provincia = Column(String(255), nullable=False)
+    pais = Column(String(255), nullable=False)
+    telefono = Column(String(255), nullable=True)
+    email = Column(String(255), nullable=False)
 
 
 class Producto(Base):
     __tablename__ = "productos"
 
-    producto_id = Column(Integer, primary_key=True, autoincrement=True)
-    producto_nombre = Column(String(255), nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nombre = Column(String(255), nullable=False)
     silo = relationship("Silo", backref="producto")
 
 
@@ -61,12 +61,12 @@ class Chofer(Base):
     nombre = Column(String(255), nullable=False)
     apellido = Column(String(255), nullable=False)
     dni = Column(Integer, nullable=False)
-    empresa_id = Column(Integer, ForeignKey("empresas.empresa_id"))
+    empresa_id = Column(Integer, ForeignKey("empresas.id"))
     habilitado = Column(Boolean, nullable=False)
     created_on = Column(
         TIMESTAMP, nullable=False, server_default=func.current_timestamp()
     )
-    empresa = relationship("Empresa", backref="empresa_chofer")
+    empresa = relationship("Empresa", backref="chofer")
 
 
 class Pesada(Base):
@@ -92,7 +92,7 @@ class Silo(Base):
     __tablename__ = "silos"
 
     silo_id = Column(Integer, primary_key=True, autoincrement=True)
-    producto_id = Column(Integer, ForeignKey("productos.producto_id"))
+    producto_id = Column(Integer, ForeignKey("productos.id"))
     capacidad = Column(Integer, nullable=False)
     utilizado = Column(Integer, nullable=False)
     estado = Column(Integer, nullable=False)
@@ -109,8 +109,8 @@ class Turno(Base):
     turno_fecha = Column(TIMESTAMP, nullable=False)
     cantidad_estimada = Column(Integer, nullable=False)
     chofer_id = Column(Integer, ForeignKey("choferes.chofer_id"))
-    empresa_id = Column(Integer, ForeignKey("empresas.empresa_id"))
-    producto_id = Column(Integer, ForeignKey("productos.producto_id"))
+    empresa_id = Column(Integer, ForeignKey("empresas.id"))
+    producto_id = Column(Integer, ForeignKey("productos.id"))
     vehiculo_id = Column(Integer, ForeignKey("vehiculos.vehiculo_id"))
     chofer = relationship("Chofer", backref="chofer_turno")
     empresa = relationship("Empresa", backref="empresa_turno")
@@ -130,5 +130,5 @@ class Vehiculo(Base):
     año = Column(Integer, nullable=False)
     marca = Column(String(255), nullable=False)
     habilitado = Column(Boolean, nullable=False)
-    empresa_id = Column(Integer, ForeignKey("empresas.empresa_id"))
-    empresa = relationship("Empresa", backref="empresa_vehiculo")
+    empresa_id = Column(Integer, ForeignKey("empresas.id"))
+    empresa = relationship("Empresa", backref="vehiculo")

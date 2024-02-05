@@ -8,22 +8,22 @@ import models, schemas
 ## ------------Empresa operations---------------------
 
 
-def get_empresa(db: Session, empresa_id: int):
+def get_empresa(db: Session, id: int):
     return (
-        db.query(models.Empresa).filter(models.Empresa.empresa_id == empresa_id).first()
+        db.query(models.Empresa).filter(models.Empresa.id == id).first()
     )
 
 
-def get_empresa_by_name(db: Session, empresa_nombre: str):
+def get_empresa_by_name(db: Session, nombre: str):
     return (
         db.query(models.Empresa)
-        .filter(models.Empresa.empresa_nombre == empresa_nombre if empresa_nombre else True)
+        .filter(models.Empresa.nombre == nombre if nombre else True)
     )
 
-def get_empresa_by_email(db: Session, empresa_email: str):
+def get_empresa_by_email(db: Session, email: str):
     return (
         db.query(models.Empresa)
-        .filter(models.Empresa.empresa_email == empresa_email if empresa_email else True)
+        .filter(models.Empresa.email == email if email else True)
     )
 
 
@@ -33,26 +33,26 @@ def get_empresas(db: Session, skip: int = 0, limit: int = 100):
 
 def create_empresa(db: Session, empresa: schemas.EmpresaCreate):
     db_empresa = models.Empresa(
-        empresa_nombre=empresa.empresa_nombre,
-        empresa_RS=empresa.empresa_RS,
-        empresa_CUIT=empresa.empresa_CUIT,
-        empresa_direccion=empresa.empresa_direccion,
-        empresa_localidad=empresa.empresa_localidad,
-        empresa_provincia=empresa.empresa_provincia,
-        empresa_pais=empresa.empresa_pais,
-        empresa_telefono=empresa.empresa_telefono,
-        empresa_email=empresa.empresa_email
+        nombre=empresa.nombre,
+        RS=empresa.RS,
+        CUIT=empresa.CUIT,
+        direccion=empresa.direccion,
+        localidad=empresa.localidad,
+        provincia=empresa.provincia,
+        pais=empresa.pais,
+        telefono=empresa.telefono,
+        email=empresa.email
     )
     db.add(db_empresa)
     db.commit()
     db.refresh(db_empresa)
-    return db_empresa
+    return db
 
 
-def update_empresa(db: Session, empresa_id: int, data: schemas.EmpresaCreate):
+def update_empresa(db: Session, id: int, data: schemas.EmpresaCreate):
     empresa = (
         db.query(models.Empresa)
-        .filter(models.Empresa.empresa_id == empresa_id)
+        .filter(models.Empresa.id == id)
         .one_or_none()
     )
     if not empresa:
@@ -68,18 +68,18 @@ def update_empresa(db: Session, empresa_id: int, data: schemas.EmpresaCreate):
 ## ------------Producto operations---------------------
 
 
-def get_producto(db: Session, producto_id: int):
+def get_producto(db: Session, id: int):
     return (
         db.query(models.Producto)
-        .filter(models.Producto.producto_id == producto_id)
+        .filter(models.Producto.id == id)
         .first()
     )
 
 
-def get_producto_by_name(db: Session, producto_nombre: str):
+def get_producto_by_name(db: Session, nombre: str):
     return (
         db.query(models.Producto)
-        .filter(models.Producto.producto_nombre == producto_nombre)
+        .filter(models.Producto.nombre == nombre)
         .first()
     )
 
@@ -89,7 +89,7 @@ def get_productos(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_producto(db: Session, producto: schemas.ProductoCreate):
-    db_producto = models.Producto(producto_nombre=producto.producto_nombre)
+    db_producto = models.Producto(nombre=producto.nombre)
     db.add(db_producto)
     db.commit()
     db.refresh(db_producto)
@@ -112,11 +112,11 @@ def get_choferes(db: Session, skip: int = 0, limit: int = 100):
 
 
 def get_choferes_by_empresa(
-    db: Session, empresa_id: int, skip: int = 0, limit: int = 100
+    db: Session, id: int, skip: int = 0, limit: int = 100
 ):
     return (
         db.query(models.Chofer)
-        .filter(models.Chofer.empresa_id == empresa_id)
+        .filter(models.Chofer.id == id)
         .offset(skip)
         .limit(limit)
         .all()
@@ -214,7 +214,7 @@ def create_pesada(db: Session, pesada: schemas.PesadaCreate):
 # Create a Silo
 def create_silo(db: Session, silo: schemas.SiloCreate):
     db_silo = models.Silo(
-        producto_id=silo.producto_id,
+        id=silo.id,
         capacidad=silo.capacidad,
         utilizado=silo.utilizado,
         estado=silo.estado,
@@ -278,22 +278,22 @@ def get_turnos(db: Session, skip: int = 0, limit: int = 100):
 
 # Get turno by empresa ID
 def get_turnos_by_empresa(
-    db: Session, empresa_id: int, skip: int = 0, limit: int = 100
+    db: Session, id: int, skip: int = 0, limit: int = 100
 ):
     return (
         db.query(models.Turno)
-        .filter(models.Turno.empresa_id == empresa_id)
+        .filter(models.Turno.id == id)
         .offset(skip)
         .limit(limit)
         .all()
     )
 
 # Get Turnos by date
-def get_turnos_by_date(db: Session, date: str, empresa_id: int, skip: int = 0, limit: int = 100):
+def get_turnos_by_date(db: Session, date: str, id: int, skip: int = 0, limit: int = 100):
     return (
         db.query(models.Turno)
         .filter(models.Turno.turno_fecha == date)
-        # .filter(models.Turno.empresa_id == empresa_id)
+        # .filter(models.Turno.id == id)
         .offset(skip)
         .limit(limit)
         .all()
@@ -312,12 +312,12 @@ def get_turnos_by_date_range(
         .all()
     )
 def get_turnos_by_date_range_by_empresa(
-    db: Session, start_date: str, end_date: str, empresa_id: int, skip: int = 0, limit: int = 100
+    db: Session, start_date: str, end_date: str, id: int, skip: int = 0, limit: int = 100
 ):
     return (
         db.query(models.Turno)
         .filter(models.Turno.turno_fecha.between(start_date, end_date))
-        .filter(models.Turno.empresa_id == empresa_id)
+        .filter(models.Turno.id == id)
         .offset(skip)
         .limit(limit)
         .all()

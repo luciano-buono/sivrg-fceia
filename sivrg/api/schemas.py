@@ -16,15 +16,15 @@ TURNO_STATE = Literal[
 
 
 class EmpresaBase(BaseModel):
-    empresa_nombre: str
-    empresa_RS: str
-    empresa_CUIT: int
-    empresa_direccion: str
-    empresa_localidad: str
-    empresa_provincia: str
-    empresa_pais: str
-    empresa_telefono: str
-    empresa_email: str
+    nombre: str
+    RS: str
+    CUIT: int
+    direccion: str
+    localidad: str
+    provincia: str
+    pais: str
+    telefono: str
+    email: str
 
 
 class EmpresaCreate(EmpresaBase):
@@ -32,14 +32,14 @@ class EmpresaCreate(EmpresaBase):
 
 
 class Empresa(EmpresaBase):
-    empresa_id: int
+    id: int
 
     class Config:
         from_attributes = True
 
 
 class ProductoBase(BaseModel):
-    producto_nombre: str
+    nombre: str
 
 
 class ProductoCreate(ProductoBase):
@@ -47,7 +47,7 @@ class ProductoCreate(ProductoBase):
 
 
 class Producto(ProductoBase):
-    producto_id: int
+    id: int
 
     class Config:
         from_attributes = True

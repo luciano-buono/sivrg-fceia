@@ -59,51 +59,51 @@ def create_empresa(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if crud.get_empresa_by_name(db, empresa_nombre=empresa.empresa_nombre).count():
+    if crud.get_empresa_by_name(db, nombre=empresa.nombre).count():
         raise HTTPException(status_code=400, detail="Name already registered")
-    if crud.get_empresa_by_email(db, empresa_email=empresa.empresa_email).count():
+    if crud.get_empresa_by_email(db, email=empresa.email).count():
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_empresa(db=db, empresa=empresa)
 
 
 @app.get("/empresas/", response_model=list[schemas.Empresa])
 def read_empresas(
-    empresa_nombre: str | None = None,
-    empresa_email: str | None = None,
+    nombre: str | None = None,
+    email: str | None = None,
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if empresa_email:
-        return crud.get_empresa_by_email(db=db, empresa_email=empresa_email)
-    if empresa_nombre:
-        return crud.get_empresa_by_name(db=db, empresa_nombre=empresa_nombre)
+    if email:
+        return crud.get_empresa_by_email(db=db, email=email)
+    if nombre:
+        return crud.get_empresa_by_name(db=db, nombre=nombre)
     if user.email:
-        return crud.get_empresa_by_email(db=db, empresa_email=user.email)
+        return crud.get_empresa_by_email(db=db, email=user.email)
     return crud.get_empresas(db=db, skip=skip, limit=limit)
 
 
-@app.get("/empresas/{empresa_id}", response_model=schemas.Empresa)
+@app.get("/empresas/{id}", response_model=schemas.Empresa)
 def read_empresa(
-    empresa_id: int,
+    id: int,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    db_empresa = crud.get_empresa(db, empresa_id=empresa_id)
+    db_empresa = crud.get_empresa(db, id=id)
     if db_empresa is None:
         raise HTTPException(status_code=404, detail="Empresa not found")
     return db_empresa
 
 
-@app.put("/empresas/{empresa_id}", response_model=schemas.Empresa)
+@app.put("/empresas/{id}", response_model=schemas.Empresa)
 def update_empresa(
-    empresa_id: int,
+    id: int,
     data: schemas.EmpresaCreate,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    return crud.update_empresa(db=db, empresa_id=empresa_id, data=data)
+    return crud.update_empresa(db=db, id=id, data=data)
 
 
 ## ------------Producto operations---------------------
@@ -120,14 +120,14 @@ def create_producto(
 # Get all Productos
 @app.get("/productos/", response_model=list[schemas.Producto])
 def read_productos(
-    producto_nombre: str | None = None,
+    nombre: str | None = None,
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if producto_nombre:
-        producto = crud.get_producto_by_name(db=db, producto_nombre=producto_nombre)
+    if nombre:
+        producto = crud.get_producto_by_name(db=db, nombre=nombre)
         if producto is None:
             raise HTTPException(status_code=404, detail="Producto not found")
         return producto
@@ -135,13 +135,13 @@ def read_productos(
 
 
 # Get Producto by ID
-@app.get("/productos/{producto_id}", response_model=schemas.Producto)
+@app.get("/productos/{id}", response_model=schemas.Producto)
 def read_producto(
-    producto_id: int,
+    id: int,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    producto = crud.get_producto(db, producto_id)
+    producto = crud.get_producto(db, id)
     if producto is None:
         raise HTTPException(status_code=404, detail="Producto not found")
     return producto
@@ -155,7 +155,7 @@ def create_chofer(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if not crud.get_empresa(db=db, empresa_id=chofer.empresa_id):
+    if not crud.get_empresa(db=db, id=chofer.id):
         raise HTTPException(status_code=404, detail="Empresa ID not found!")
     if crud.get_chofer_by_dni(db=db, dni=chofer.dni):
         raise HTTPException(status_code=404, detail="DNI already in use!")
@@ -165,17 +165,17 @@ def create_chofer(
 # Get all Choferes
 @app.get("/choferes/", response_model=list[schemas.Chofer])
 def read_choferes(
-    empresa_id: int | None = None,
+    id: int | None = None,
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if empresa_id:
-        return crud.get_choferes_by_empresa(db, empresa_id, skip=skip, limit=limit)
+    if id:
+        return crud.get_choferes_by_empresa(db, id, skip=skip, limit=limit)
     if user.email:
-        empresa=crud.get_empresa_by_email(db=db, empresa_email=user.email)
-        return crud.get_choferes_by_empresa(db=db, empresa_id=empresa.one().empresa_id, skip=skip, limit=limit)
+        empresa=crud.get_by_email(db=db, email=user.email)
+        return crud.get_choferes_by_empresa(db=db, id=empresa.one().id, skip=skip, limit=limit)
     return crud.get_choferes(db, skip=skip, limit=limit)
 
 
@@ -273,7 +273,7 @@ def create_silo(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if not crud.get_producto(db=db, producto_id=silo.producto_id):
+    if not crud.get_producto(db=db, id=silo.id):
         raise HTTPException(status_code=404, detail="Producto ID not found!")
     return crud.create_silo(db, silo)
 
@@ -314,12 +314,12 @@ def create_turno(
     user: Auth0User = Security(auth.get_user),
 ):
     print("-------Starting turno create--------")
-    # empresa_id lo provee el front en el header
-    if not crud.get_empresa(db=db, empresa_id=turno.empresa_id):
+    # id lo provee el front en el header
+    if not crud.get_empresa(db=db, id=turno.id):
         raise HTTPException(status_code=404, detail="Empresa ID not found")
     if not crud.get_chofer(db=db, chofer_id=turno.chofer_id):
         raise HTTPException(status_code=404, detail="Chofer ID not found")
-    if not crud.get_producto(db=db, producto_id=turno.producto_id):
+    if not crud.get_producto(db=db, id=turno.id):
         raise HTTPException(status_code=404, detail="Producto ID not found")
     if not crud.get_vehiculo(db=db, vehiculo_id=turno.vehiculo_id):
         raise HTTPException(status_code=404, detail="Vehiculo ID not found")
@@ -339,8 +339,8 @@ def read_turnos(
         print("get todos los turnos")
         return crud.get_turnos(db, skip=skip, limit=limit)
     print("entrando a user email")
-    empresa=crud.get_empresa_by_email(db=db, empresa_email=user.email)
-    return crud.get_turnos_by_empresa(db, empresa_id=empresa.one().empresa_id, skip=skip, limit=limit)
+    empresa=crud.get_by_email(db=db, email=user.email)
+    return crud.get_turnos_by_empresa(db, id=empresa.one().id, skip=skip, limit=limit)
 
 
 # Get a Turno by ID
@@ -385,8 +385,8 @@ def read_turnos_by_date_range(
 ):
     if is_employee:
         return crud.get_turnos_by_date_range(db, start_date, end_date, skip=skip, limit=limit)
-    empresa=crud.get_empresa_by_email(db=db, empresa_email=user.email)
-    return crud.get_turnos_by_date_range_by_empresa(db, start_date, end_date, empresa_id=empresa.one().empresa_id, skip=skip, limit=limit)
+    empresa=crud.get_by_email(db=db, email=user.email)
+    return crud.get_turnos_by_date_range_by_empresa(db, start_date, end_date, id=empresa.one().id, skip=skip, limit=limit)
 
 
 # Validate turnos for OrangePI client
@@ -427,7 +427,7 @@ def create_vehiculo(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if not crud.get_empresa(db=db, empresa_id=vehiculo.empresa_id):
+    if not crud.get_empresa(db=db, id=vehiculo.id):
         raise HTTPException(status_code=404, detail="Empresa ID not found!")
     if crud.get_vehiculo_by_patente(db=db, patente=vehiculo.patente):
         raise HTTPException(status_code=404, detail="Patente already in use!")
@@ -502,18 +502,18 @@ def test_create(
     db: Session = Depends(get_db),
 ):
     test_empresa = schemas.EmpresaCreate(
-        empresa_nombre= "HOLA",
-        empresa_RS= "HOLA",
-        empresa_CUIT= 123,
-        empresa_direccion= "HOLA",
-        empresa_localidad= "HOLA",
-        empresa_provincia= "HOLA",
-        empresa_pais= "HOLA",
-        empresa_telefono= "HOLA",
-        empresa_email= "HOLA",
+        nombre= "HOLA",
+        RS= "HOLA",
+        CUIT= 123,
+        direccion= "HOLA",
+        localidad= "HOLA",
+        provincia= "HOLA",
+        pais= "HOLA",
+        telefono= "HOLA",
+        email= "HOLA",
     )
     test_producto = schemas.ProductoCreate(
-        producto_nombre = "str"
+        nombre = "str"
     )
     test_chofer = schemas.ChoferCreate(
         rfid_uid= None,
