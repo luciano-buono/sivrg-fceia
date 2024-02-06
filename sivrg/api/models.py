@@ -56,7 +56,7 @@ class Producto(Base):
 class Chofer(Base):
     __tablename__ = "choferes"
 
-    chofer_id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     rfid_uid = Column(BigInteger, nullable=True)
     nombre = Column(String(255), nullable=False)
     apellido = Column(String(255), nullable=False)
@@ -72,7 +72,7 @@ class Chofer(Base):
 class Pesada(Base):
     __tablename__ = "pesadas"
 
-    pesada_id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     fecha_hora_planta_in = Column(
         TIMESTAMP, nullable=False, server_default=func.current_timestamp()
     )
@@ -80,7 +80,7 @@ class Pesada(Base):
     fecha_hora_balanza_out = Column(TIMESTAMP, nullable=True)
     peso_bruto_in = Column(DECIMAL(9, 2), nullable=True)
     peso_bruto_out = Column(DECIMAL(9, 2), nullable=True)
-    turno_id = Column(Integer, ForeignKey("turnos.turno_id"))
+    turno_id = Column(Integer, ForeignKey("turnos.id"))
     turno = relationship("Turno", backref="pesada_turno")
 
     __table_args__ = (UniqueConstraint('turno_id', name='unique_pesada_per_turno'),)
@@ -91,7 +91,7 @@ class Pesada(Base):
 class Silo(Base):
     __tablename__ = "silos"
 
-    silo_id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     producto_id = Column(Integer, ForeignKey("productos.id"))
     capacidad = Column(Integer, nullable=False)
     utilizado = Column(Integer, nullable=False)
@@ -101,17 +101,17 @@ class Silo(Base):
 class Turno(Base):
     __tablename__ = "turnos"
 
-    turno_id = Column(Integer, primary_key=True, autoincrement=True)
-    turno_state = Column(ChoiceType(CHOICES_STATES), default="pending")
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    state = Column(ChoiceType(CHOICES_STATES), default="pending")
     created_on = Column(
         TIMESTAMP, nullable=False, server_default=func.current_timestamp()
     )
-    turno_fecha = Column(TIMESTAMP, nullable=False)
+    fecha = Column(TIMESTAMP, nullable=False)
     cantidad_estimada = Column(Integer, nullable=False)
-    chofer_id = Column(Integer, ForeignKey("choferes.chofer_id"))
+    chofer_id = Column(Integer, ForeignKey("choferes.id"))
     empresa_id = Column(Integer, ForeignKey("empresas.id"))
     producto_id = Column(Integer, ForeignKey("productos.id"))
-    vehiculo_id = Column(Integer, ForeignKey("vehiculos.vehiculo_id"))
+    vehiculo_id = Column(Integer, ForeignKey("vehiculos.id"))
     chofer = relationship("Chofer", backref="chofer_turno")
     empresa = relationship("Empresa", backref="empresa_turno")
     producto = relationship("Producto", backref="producto_turno")
@@ -123,7 +123,7 @@ class Turno(Base):
 class Vehiculo(Base):
     __tablename__ = "vehiculos"
 
-    vehiculo_id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     patente = Column(String, unique=True, nullable=False)
     seguro = Column(String(255), nullable=False)
     modelo = Column(String(255), nullable=False)

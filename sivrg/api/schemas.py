@@ -67,7 +67,7 @@ class ChoferCreate(ChoferBase):
 
 
 class Chofer(ChoferBase):
-    chofer_id: int
+    id: int
     empresa: Empresa
 
     class Config:
@@ -87,7 +87,7 @@ class PesadaCreate(PesadaBase):
 
 
 class Pesada(PesadaBase):
-    pesada_id: int
+    id: int
     fecha_hora_planta_in: datetime
 
     class Config:
@@ -106,7 +106,7 @@ class SiloCreate(SiloBase):
 
 
 class Silo(SiloBase):
-    silo_id: int
+    id: int
     producto: Producto
 
     class Config:
@@ -128,7 +128,7 @@ class VehiculoCreate(VehiculoBase):
 
 
 class Vehiculo(VehiculoBase):
-    vehiculo_id: int
+    id: int
     empresa: Empresa
 
     class Config:
@@ -136,13 +136,13 @@ class Vehiculo(VehiculoBase):
 
 
 class TurnoBase(BaseModel):
-    turno_fecha: datetime
+    fecha: datetime
     cantidad_estimada: int
     chofer_id: int
     empresa_id: int
     producto_id: int
     vehiculo_id: int
-    turno_state: TURNO_STATE
+    state: TURNO_STATE
 
 
 class TurnoCreate(TurnoBase):
@@ -150,15 +150,15 @@ class TurnoCreate(TurnoBase):
 
 
 class Turno(TurnoBase):
-    turno_id: int
+    id: int
     created_on: datetime
     empresa: Empresa
     chofer: Chofer
     producto: Producto
     vehiculo: Vehiculo
 
-    @field_validator("turno_state", mode="before")
-    def serialize_turno_state(cls, value: ChoiceType) -> str:
+    @field_validator("state", mode="before")
+    def serialize_state(cls, value: ChoiceType) -> str:
         return value.code
 
     class Config:

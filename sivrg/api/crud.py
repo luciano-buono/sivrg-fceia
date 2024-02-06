@@ -99,8 +99,8 @@ def create_producto(db: Session, producto: schemas.ProductoCreate):
 ## ------------Chofer operations---------------------
 
 
-def get_chofer(db: Session, chofer_id: int):
-    return db.query(models.Chofer).filter(models.Chofer.chofer_id == chofer_id).first()
+def get_chofer(db: Session, id: int):
+    return db.query(models.Chofer).filter(models.Chofer.id == id).first()
 
 
 def get_chofer_by_dni(db: Session, dni: int):
@@ -112,11 +112,11 @@ def get_choferes(db: Session, skip: int = 0, limit: int = 100):
 
 
 def get_choferes_by_empresa(
-    db: Session, id: int, skip: int = 0, limit: int = 100
+    db: Session, empresa_id: int, skip: int = 0, limit: int = 100
 ):
     return (
         db.query(models.Chofer)
-        .filter(models.Chofer.id == id)
+        .filter(models.Chofer.empresa_id == empresa_id)
         .offset(skip)
         .limit(limit)
         .all()
@@ -137,10 +137,10 @@ def create_chofer(db: Session, chofer: schemas.ChoferCreate):
     db.refresh(db_chofer)
     return db_chofer
 
-def update_chofer(db: Session, chofer_id: int, data: schemas.ChoferCreate):
+def update_chofer(db: Session, id: int, data: schemas.ChoferCreate):
     chofer = (
         db.query(models.Chofer)
-        .filter(models.Chofer.chofer_id == chofer_id)
+        .filter(models.Chofer.id == id)
         .one_or_none()
     )
     if not chofer:
@@ -155,8 +155,8 @@ def update_chofer(db: Session, chofer_id: int, data: schemas.ChoferCreate):
 ## ------------Pesada operations---------------------
 
 
-def get_pesada(db: Session, pesada_id: int):
-    return db.query(models.Pesada).filter(models.Pesada.pesada_id == pesada_id).first()
+def get_pesada(db: Session, id: int):
+    return db.query(models.Pesada).filter(models.Pesada.id == id).first()
 
 
 def get_pesadas(db: Session, skip: int = 0, limit: int = 100):
@@ -165,7 +165,7 @@ def get_pesadas(db: Session, skip: int = 0, limit: int = 100):
 def get_pesadas_by_turno_id(db: Session, turno_id):
     return db.query(models.Pesada).filter(models.Pesada.turno_id == turno_id).first()
 
-def get_pesada_in_by_date(
+def get_pesadas_in_by_date(
     db: Session, target_date: datetime, skip: int = 0, limit: int = 100
 ):
     return (
@@ -177,7 +177,7 @@ def get_pesada_in_by_date(
     )
 
 
-def get_pesada_by_date_range(
+def get_pesadas_by_date_range(
     db: Session,
     start_date: datetime,
     end_date: datetime,
@@ -226,8 +226,8 @@ def create_silo(db: Session, silo: schemas.SiloCreate):
 
 
 # Get a Silo by ID
-def get_silo(db: Session, silo_id: int):
-    return db.query(models.Silo).filter(models.Silo.silo_id == silo_id).first()
+def get_silo(db: Session, id: int):
+    return db.query(models.Silo).filter(models.Silo.id == id).first()
 
 
 # Get Silos by producto_id
@@ -252,8 +252,8 @@ def get_silos(db: Session, skip: int = 0, limit: int = 100):
 # Create a Turno
 def create_turno(db: Session, turno: schemas.TurnoCreate):
     db_turno = models.Turno(
-        turno_state=turno.turno_state,
-        turno_fecha=turno.turno_fecha,
+        state=turno.state,
+        fecha=turno.fecha,
         cantidad_estimada=turno.cantidad_estimada,
         chofer_id=turno.chofer_id,
         empresa_id=turno.empresa_id,
@@ -263,13 +263,13 @@ def create_turno(db: Session, turno: schemas.TurnoCreate):
     db.add(db_turno)
     db.commit()
     db.refresh(db_turno)
-    # db_turno.turno_state = db_turno.turno_state.code
+    # db_turno.state = db_turno.state.code
     return db_turno
 
 
 # Get a Turno by ID
-def get_turno(db: Session, turno_id: int):
-    return db.query(models.Turno).filter(models.Turno.turno_id == turno_id).first()
+def get_turno(db: Session, id: int):
+    return db.query(models.Turno).filter(models.Turno.id == id).first()
 
 
 # Get all Turnos
@@ -292,7 +292,7 @@ def get_turnos_by_empresa(
 def get_turnos_by_date(db: Session, date: str, id: int, skip: int = 0, limit: int = 100):
     return (
         db.query(models.Turno)
-        .filter(models.Turno.turno_fecha == date)
+        .filter(models.Turno.fecha == date)
         # .filter(models.Turno.id == id)
         .offset(skip)
         .limit(limit)
@@ -306,7 +306,7 @@ def get_turnos_by_date_range(
 ):
     return (
         db.query(models.Turno)
-        .filter(models.Turno.turno_fecha.between(start_date, end_date))
+        .filter(models.Turno.fecha.between(start_date, end_date))
         .offset(skip)
         .limit(limit)
         .all()
@@ -316,7 +316,7 @@ def get_turnos_by_date_range_by_empresa(
 ):
     return (
         db.query(models.Turno)
-        .filter(models.Turno.turno_fecha.between(start_date, end_date))
+        .filter(models.Turno.fecha.between(start_date, end_date))
         .filter(models.Turno.id == id)
         .offset(skip)
         .limit(limit)
@@ -326,25 +326,25 @@ def get_turnos_by_date_range_by_empresa(
 
 # Get Turnos by patente and RFID_UID
 def get_turnos_by_patente_rfid(
-    db: Session, patente: str, rfid_uid: int, turno_fecha: datetime
+    db: Session, patente: str, rfid_uid: int, fecha: datetime
 ):
     return (
         db.query(models.Turno)
         .filter(models.Turno.vehiculo.has(patente=patente))
         .filter(models.Turno.chofer.has(rfid_uid=rfid_uid))
-        .filter(func.date(models.Turno.turno_fecha) == turno_fecha.date())
+        .filter(func.date(models.Turno.fecha) == fecha.date())
         .first()
     )
 
-def update_turno(db: Session, turno_id: int, turno_state: str):
+def update_turno(db: Session, id: int, state: str):
     turno = (
         db.query(models.Turno)
-        .filter(models.Turno.turno_id == turno_id)
+        .filter(models.Turno.id == id)
         .one_or_none()
     )
     if not turno:
         raise HTTPException(status_code=404, detail="Turno not found")
-    setattr(turno, 'turno_state', turno_state)
+    setattr(turno, 'state', state)
     db.add(turno)
     db.commit()
     db.refresh(turno)
@@ -370,13 +370,16 @@ def create_vehiculo(db: Session, vehiculo: schemas.VehiculoCreate):
 
 
 # Get a Vehiculo by ID
-def get_vehiculo(db: Session, vehiculo_id: int):
+def get_vehiculo(db: Session, id: int):
     return (
         db.query(models.Vehiculo)
-        .filter(models.Vehiculo.vehiculo_id == vehiculo_id)
+        .filter(models.Vehiculo.id == id)
         .first()
     )
 
+# Get a Vehiculo by empresa
+def get_vehiculo_by_empresa(db: Session, empresa_id: str):
+    return db.query(models.Vehiculo).filter(models.Vehiculo.empresa_id == empresa_id).first()
 
 # Get a Vehiculo by patente
 def get_vehiculo_by_patente(db: Session, patente: str):
@@ -388,10 +391,10 @@ def get_vehiculos(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Vehiculo).offset(skip).limit(limit).all()
 
 # Update Vehiculo
-def update_vehiculo(db: Session, vehiculo_id: int, data: schemas.VehiculoCreate):
+def update_vehiculo(db: Session, id: int, data: schemas.VehiculoCreate):
     vehiculo = (
         db.query(models.Vehiculo)
-        .filter(models.Vehiculo.vehiculo_id == vehiculo_id)
+        .filter(models.Vehiculo.id == id)
         .one_or_none()
     )
     if not vehiculo:
