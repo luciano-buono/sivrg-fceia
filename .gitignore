@@ -4,7 +4,7 @@
 __pycache__
 server/database/postgres_data/
 
-
+postgres_data/
 node_modules/
 
 #api
