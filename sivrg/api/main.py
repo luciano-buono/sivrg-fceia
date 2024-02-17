@@ -236,6 +236,8 @@ def create_pesada(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
+    if not crud.get_turno(db=db, id=pesada.turno_id):
+        raise HTTPException(status_code=404, detail="Turno ID not found!")
     return crud.create_pesada(db, pesada)
 
 
@@ -277,8 +279,15 @@ def read_pesadas_by_date_range(
     pesadas = crud.get_pesadas_by_date_range(db, start_date, end_date, skip, limit)
     return pesadas
 
-
-## ------------PesadasOut operations---------------------
+# Edit a Pesada
+@app.put("/pesadas/{id}", response_model=schemas.Pesada)
+def update_pesada(
+    id: int,
+    data: schemas.PesadaCreate,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    return crud.update_pesada(db=db, id=id, data=data)
 
 
 ## ------------Silos operations---------------------
@@ -331,7 +340,7 @@ def create_turno(
 ):
     print("-------Starting turno create--------")
     # id lo provee el front en el header
-    if not crud.get_empresa(db=db, id=turno.id):
+    if not crud.get_empresa(db=db, id=turno.empresa_id):
         raise HTTPException(status_code=404, detail="Empresa ID not found")
     if not crud.get_chofer(db=db, id=turno.chofer_id):
         raise HTTPException(status_code=404, detail="Chofer ID not found")
@@ -434,7 +443,7 @@ def update_turno(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if state == "in_progress":
+    if state == "in_progress_entrada":
         instance = schemas.PesadaCreate(turno_id=id)
         crud.create_pesada(db=db, pesada=instance)
     return crud.update_turno(db=db, id=id, state=state)
@@ -448,7 +457,7 @@ def create_vehiculo(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if not crud.get_empresa(db=db, id=vehiculo.id):
+    if not crud.get_empresa(db=db, id=vehiculo.empresa_id):
         raise HTTPException(status_code=404, detail="Empresa ID not found!")
     if crud.get_vehiculo_by_patente(db=db, patente=vehiculo.patente):
         raise HTTPException(status_code=404, detail="Patente already in use!")
@@ -533,37 +542,37 @@ def test_create(
     db: Session = Depends(get_db),
 ):
     test_empresa = schemas.EmpresaCreate(
-        nombre="HOLA",
-        RS="HOLA",
-        CUIT=123,
-        direccion="HOLA",
-        localidad="HOLA",
-        provincia="HOLA",
-        pais="HOLA",
-        telefono="HOLA",
-        email="HOLA",
+        nombre="Empresin",
+        RS="RI",
+        CUIT=3029139232,
+        direccion="San Martin 123",
+        localidad="Resistencia",
+        provincia="Chaco",
+        pais="Argentina",
+        telefono="+54910410583",
+        email="empresin@external.com.ar",
     )
-    test_producto = schemas.ProductoCreate(nombre="str")
+    test_producto = schemas.ProductoCreate(nombre="Soja")
     test_chofer = schemas.ChoferCreate(
         rfid_uid=None,
-        nombre="hola|",
-        apellido="aps",
-        dni=123,
+        nombre="Gustavo",
+        apellido="Figs",
+        dni=40112012,
         empresa_id=1,
         habilitado=True,
     )
     test_vehiculo = schemas.VehiculoCreate(
-        patente="str",
-        seguro="str",
-        modelo="str",
-        año=1,
-        marca="str",
+        patente="ABC123",
+        seguro="La segunda",
+        modelo="Vento",
+        año=2006,
+        marca="Vento",
         habilitado=True,
         empresa_id=1,
     )
     test_turno = schemas.TurnoCreate(
         fecha=datetime.now(),
-        cantidad_estimada=1,
+        cantidad_estimada=10000,
         chofer_id=1,
         empresa_id=1,
         producto_id=1,

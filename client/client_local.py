@@ -12,6 +12,11 @@ from time import sleep
 from utils import *
 import os
 
+import config
+
+settings = config.Settings()
+class AuthError(Exception): pass
+
 def get_LPR():
     # Get into the module directory. Avoid errors in relative paths used there
     os.chdir("lpr/ConvALPR")
@@ -44,10 +49,7 @@ def get_LPR():
         print("Hay mas de una patente reconozida\nRevisar cuantas imagenes de entrada hay\Exitting..")
         exit(1)
 
-
-
-
-if __name__ == "__main__":
+def local_camera():
     cam = cv2.VideoCapture(0)
     cv2.namedWindow("test")
     ret, frame = cam.read()
@@ -66,18 +68,54 @@ if __name__ == "__main__":
     prediccion = get_LPR()
     print({"LICENSE_PLATE":prediccion})
 
+def login_auth0():
+    payload = {
+        "client_id":settings.AUTH_CLIENT_ID,
+        "client_secret":settings.AUTH_CLIENT_SECRET,
+        "audience":settings.AUTH_CLIENT_AUDIENCE,
+        "grant_type":"client_credentials"
+    }
+    response = requests.post(url=f'{settings.AUTH0_DOMAIN}/oauth/token', data=payload)
+    print(response.text)
+    response_json = json.loads(response.text)
+    if response_json.get("error"):
+        raise AuthError("Invalid client or secret key")
+    return response_json.get("access_token")
+
+def test_apis():
+
+    rfid_uid = 1111
+    patente = 'ABC123'
+    fecha = '2024-02-17T06:30:05.260862'
+    data= {
+        'rfid_uid': rfid_uid,
+        'patente': patente,
+        'fecha': fecha
+    }
+    response = requests.get(url='http://localhost:5000/public/turnos/validate', params=data)
+    print(response.text)
+
+
+    # Create initial pesada with no values just to have time of arrival
+    data = {
+        "peso_bruto_in": 0,
+        "peso_bruto_out": 0,
+        "turno_id": 2
+    }
+    response = requests.get(url='http://localhost:5000/pesadas', data=json.dumps(data))
+
+
+    # Edit pesada with with ingress weight
+    data = {
+        "peso_bruto_in": 0,
+        "peso_bruto_out": 0,
+        "turno_id": 2
+    }
+    response = requests.get(url='http://localhost:5000/pesadas', data=json.dumps(data))
+
+
+if __name__ == "__main__":
+    # local_camera()
     # get_RFID()
-
-    # tag_id = "10ABA3"
-    # data= {
-    #     'tag_id': tag_id,
-    #     'license_plate': 'prediccion'
-    # }
-    # response = requests.post(url='http://localhost:5000/validate', data=json.dumps(data))
-    # print(response.text)
-
-
-
-
-
-
+    # access_token = login_auth0()
+    access_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBlQjZ4Znp2am53TVhoSkpJUlV0dCJ9.eyJpc3MiOiJodHRwczovL21ldGhpenVsLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJpaU5zQ0JjWmNmT0lvMERMVnk2SXRuM1RFZnlQMlpPRUBjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9hcGkuc2l2cmcubWV0aGl6dWwuY29tIiwiaWF0IjoxNzA4MjEwMTkxLCJleHAiOjE3MDgyOTY1OTEsImF6cCI6ImlpTnNDQmNaY2ZPSW8wRExWeTZJdG4zVEVmeVAyWk9FIiwic2NvcGUiOiJyZWFkOnRlc3QiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMiLCJwZXJtaXNzaW9ucyI6WyJyZWFkOnRlc3QiXX0.PhoNWTX3FZxyuWCvspkhhuFLo5sJzepT7Z9OkU-Rxwjif7rnm0jKvcvNAgtnqCXsM0_i_wG9j0aNJ2scG5KPVE-TOYw0NMrAEX0BLTVHkFSiDY9XcC1VyuCY2E4KjXJMnPxpHJ4lBuBoE7urQo58tvrd-1fbj4BtDbjD0xlNIguhIG148jjJq2NZq7LTPSkEpteYV1L2GBwHgsTI16GBC1hQXhH2i-zqQkfYc_ejeN2yz5FT4HEMsmOVlRDj6bsBMvNlsQ-qITA7YZX7RcafAwTgMJ8rUXx8BHy6MQRe4GyJDzi34b0eQqLOWjWOesGTa3IZ6lllkj7ADpMQP9x1iQ"

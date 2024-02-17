@@ -43,7 +43,7 @@ def create_empresa(db: Session, empresa: schemas.EmpresaCreate):
     db.add(db_empresa)
     db.commit()
     db.refresh(db_empresa)
-    return db
+    return db_empresa
 
 
 def update_empresa(db: Session, id: int, data: schemas.EmpresaCreate):
@@ -192,6 +192,18 @@ def create_pesada(db: Session, pesada: schemas.PesadaCreate):
     return db_pesada
 
 
+def update_pesada(db: Session, id: int, data: schemas.PesadaCreate):
+    pesada = db.query(models.Pesada).filter(models.Pesada.id == id).one_or_none()
+    if not pesada:
+        raise HTTPException(status_code=404, detail="Pesada not found")
+    for var, value in vars(data).items():
+        setattr(pesada, var, value) if value else None
+    db.add(pesada)
+    db.commit()
+    db.refresh(pesada)
+    return pesada
+
+
 ## ------------PesadasOut operations---------------------
 
 
@@ -324,9 +336,9 @@ def get_turnos_by_patente_rfid(
 ):
     return (
         db.query(models.Turno)
+        .filter(func.date(models.Turno.fecha) == fecha.date())
         .filter(models.Turno.vehiculo.has(patente=patente))
         .filter(models.Turno.chofer.has(rfid_uid=rfid_uid))
-        .filter(func.date(models.Turno.fecha) == fecha.date())
         .first()
     )
 

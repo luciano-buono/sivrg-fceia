@@ -84,8 +84,6 @@ class Pesada(Base):
     turno_id = Column(Integer, ForeignKey("turnos.id"))
     turno = relationship("Turno", backref="pesada_turno")
 
-    __table_args__ = (UniqueConstraint("turno_id", name="unique_pesada_per_turno"),)
-
 
 class Silo(Base):
     __tablename__ = "silos"
