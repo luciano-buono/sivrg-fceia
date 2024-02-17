@@ -30,6 +30,7 @@ CHOICES_STATES = [
     ("finished", "Finalizado"),
 ]
 
+
 class Empresa(Base):
     __tablename__ = "empresas"
 
@@ -83,9 +84,7 @@ class Pesada(Base):
     turno_id = Column(Integer, ForeignKey("turnos.id"))
     turno = relationship("Turno", backref="pesada_turno")
 
-    __table_args__ = (UniqueConstraint('turno_id', name='unique_pesada_per_turno'),)
-
-
+    __table_args__ = (UniqueConstraint("turno_id", name="unique_pesada_per_turno"),)
 
 
 class Silo(Base):

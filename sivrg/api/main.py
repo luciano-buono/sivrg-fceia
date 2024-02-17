@@ -1,5 +1,14 @@
 from typing import Literal
-from fastapi import Depends, FastAPI, HTTPException, Query, Response, status, Security, Header
+from fastapi import (
+    Depends,
+    FastAPI,
+    HTTPException,
+    Query,
+    Response,
+    status,
+    Security,
+    Header,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_auth0 import Auth0, Auth0User
 
@@ -170,7 +179,7 @@ def read_choferes(
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
-    is_employee: int = 0
+    is_employee: int = 0,
 ):
     if is_employee:
         # Get all choferes
@@ -178,8 +187,10 @@ def read_choferes(
     if empresa_id:
         return crud.get_choferes_by_empresa(db, id, skip=skip, limit=limit)
     # Get only the resources from that empresa
-    empresa=crud.get_empresa_by_email(db=db, email=user.email)
-    return crud.get_choferes_by_empresa(db=db, id=empresa.one().id, skip=skip, limit=limit)
+    empresa = crud.get_empresa_by_email(db=db, email=user.email)
+    return crud.get_choferes_by_empresa(
+        db=db, id=empresa.one().id, skip=skip, limit=limit
+    )
 
 
 # Get Chofer by ID
@@ -204,6 +215,7 @@ def read_chofer_by_dni(
     if chofer is None:
         raise HTTPException(status_code=404, detail="Chofer not found")
     return chofer
+
 
 # Edit a Chofer
 @app.put("/choferes/{id}", response_model=schemas.Chofer)
@@ -337,13 +349,13 @@ def read_turnos(
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
-    is_employee: int = 0
+    is_employee: int = 0,
 ):
     if is_employee:
         # Get all turns
         return crud.get_turnos(db, skip=skip, limit=limit)
     # Get only the resources from that empresa
-    empresa=crud.get_empresa_by_email(db=db, email=user.email)
+    empresa = crud.get_empresa_by_email(db=db, email=user.email)
     return crud.get_turnos_by_empresa(db, id=empresa.one().id, skip=skip, limit=limit)
 
 
@@ -385,12 +397,16 @@ def read_turnos_by_date_range(
     limit: int = Query(100, description="Maximum number of records to retrieve"),
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
-    is_employee: int = 0
+    is_employee: int = 0,
 ):
     if is_employee:
-        return crud.get_turnos_by_date_range(db, start_date, end_date, skip=skip, limit=limit)
-    empresa=crud.get_by_email(db=db, email=user.email)
-    return crud.get_turnos_by_date_range_by_empresa(db, start_date, end_date, id=empresa.one().id, skip=skip, limit=limit)
+        return crud.get_turnos_by_date_range(
+            db, start_date, end_date, skip=skip, limit=limit
+        )
+    empresa = crud.get_by_email(db=db, email=user.email)
+    return crud.get_turnos_by_date_range_by_empresa(
+        db, start_date, end_date, id=empresa.one().id, skip=skip, limit=limit
+    )
 
 
 # Validate turnos for OrangePI client
@@ -410,6 +426,7 @@ def read_turno_by_patente_rfid(
         )
     return data
 
+
 @app.put("/turnos/{id}", response_model=schemas.Turno)
 def update_turno(
     id: int,
@@ -417,7 +434,7 @@ def update_turno(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if state == 'in_progress':
+    if state == "in_progress":
         instance = schemas.PesadaCreate(turno_id=id)
         crud.create_pesada(db=db, pesada=instance)
     return crud.update_turno(db=db, id=id, state=state)
@@ -446,7 +463,7 @@ def read_vehiculos(
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
-    is_employee: int = 0
+    is_employee: int = 0,
 ):
     if is_employee:
         # Get all turns
@@ -457,8 +474,10 @@ def read_vehiculos(
             raise HTTPException(status_code=404, detail="Vehiculo not found")
         return vehiculo
     # Get only the resources from that empresa
-    empresa=crud.get_empresa_by_email(db=db, email=user.email)
-    return crud.get_vehiculo_by_empresa(db, empresa_id=empresa.one().id, skip=skip, limit=limit)
+    empresa = crud.get_empresa_by_email(db=db, email=user.email)
+    return crud.get_vehiculo_by_empresa(
+        db, empresa_id=empresa.one().id, skip=skip, limit=limit
+    )
 
 
 # Get a Vehiculo by ID
@@ -486,6 +505,7 @@ def read_vehiculo(
         raise HTTPException(status_code=404, detail="Vehiculo not found")
     return vehiculo
 
+
 @app.put("/vehiculos/{id}", response_model=schemas.Vehiculo)
 def update_vehiculo(
     id: int,
@@ -507,49 +527,48 @@ def get_secure(user: Auth0User = Security(auth.get_user)):
 def get_public():
     return {"message": "Anonymous user"}
 
+
 @app.get("/public/test_create")
 def test_create(
     db: Session = Depends(get_db),
 ):
     test_empresa = schemas.EmpresaCreate(
-        nombre= "HOLA",
-        RS= "HOLA",
-        CUIT= 123,
-        direccion= "HOLA",
-        localidad= "HOLA",
-        provincia= "HOLA",
-        pais= "HOLA",
-        telefono= "HOLA",
-        email= "HOLA",
+        nombre="HOLA",
+        RS="HOLA",
+        CUIT=123,
+        direccion="HOLA",
+        localidad="HOLA",
+        provincia="HOLA",
+        pais="HOLA",
+        telefono="HOLA",
+        email="HOLA",
     )
-    test_producto = schemas.ProductoCreate(
-        nombre = "str"
-    )
+    test_producto = schemas.ProductoCreate(nombre="str")
     test_chofer = schemas.ChoferCreate(
-        rfid_uid= None,
-        nombre= "hola|",
-        apellido= "aps",
-        dni= 123,
+        rfid_uid=None,
+        nombre="hola|",
+        apellido="aps",
+        dni=123,
         empresa_id=1,
-        habilitado= True,
+        habilitado=True,
     )
     test_vehiculo = schemas.VehiculoCreate(
-        patente= "str",
-        seguro= "str",
-        modelo= "str",
-        año= 1,
-        marca= "str",
-        habilitado= True,
-        empresa_id= 1,
+        patente="str",
+        seguro="str",
+        modelo="str",
+        año=1,
+        marca="str",
+        habilitado=True,
+        empresa_id=1,
     )
     test_turno = schemas.TurnoCreate(
-        fecha= datetime.now(),
-        cantidad_estimada= 1,
-        chofer_id= 1,
-        empresa_id= 1,
-        producto_id= 1,
-        vehiculo_id= 1,
-        state= 'pending',
+        fecha=datetime.now(),
+        cantidad_estimada=1,
+        chofer_id=1,
+        empresa_id=1,
+        producto_id=1,
+        vehiculo_id=1,
+        state="pending",
     )
     print(test_producto)
     print(test_vehiculo)
@@ -560,6 +579,7 @@ def test_create(
     crud.create_vehiculo(db=db, vehiculo=test_vehiculo)
     crud.create_turno(db=db, turno=test_turno)
     return {"message": "DONE"}
+
 
 def main():
     uvicorn.run("main:app", port=5000, log_level="info", reload=True, host="0.0.0.0")

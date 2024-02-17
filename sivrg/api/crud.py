@@ -9,21 +9,18 @@ import models, schemas
 
 
 def get_empresa(db: Session, id: int):
-    return (
-        db.query(models.Empresa).filter(models.Empresa.id == id).first()
-    )
+    return db.query(models.Empresa).filter(models.Empresa.id == id).first()
 
 
 def get_empresa_by_name(db: Session, nombre: str):
-    return (
-        db.query(models.Empresa)
-        .filter(models.Empresa.nombre == nombre if nombre else True)
+    return db.query(models.Empresa).filter(
+        models.Empresa.nombre == nombre if nombre else True
     )
 
+
 def get_empresa_by_email(db: Session, email: str):
-    return (
-        db.query(models.Empresa)
-        .filter(models.Empresa.email == email if email else True)
+    return db.query(models.Empresa).filter(
+        models.Empresa.email == email if email else True
     )
 
 
@@ -41,7 +38,7 @@ def create_empresa(db: Session, empresa: schemas.EmpresaCreate):
         provincia=empresa.provincia,
         pais=empresa.pais,
         telefono=empresa.telefono,
-        email=empresa.email
+        email=empresa.email,
     )
     db.add(db_empresa)
     db.commit()
@@ -50,11 +47,7 @@ def create_empresa(db: Session, empresa: schemas.EmpresaCreate):
 
 
 def update_empresa(db: Session, id: int, data: schemas.EmpresaCreate):
-    empresa = (
-        db.query(models.Empresa)
-        .filter(models.Empresa.id == id)
-        .one_or_none()
-    )
+    empresa = db.query(models.Empresa).filter(models.Empresa.id == id).one_or_none()
     if not empresa:
         raise HTTPException(status_code=404, detail="Empresa not found")
     for var, value in vars(data).items():
@@ -69,19 +62,11 @@ def update_empresa(db: Session, id: int, data: schemas.EmpresaCreate):
 
 
 def get_producto(db: Session, id: int):
-    return (
-        db.query(models.Producto)
-        .filter(models.Producto.id == id)
-        .first()
-    )
+    return db.query(models.Producto).filter(models.Producto.id == id).first()
 
 
 def get_producto_by_name(db: Session, nombre: str):
-    return (
-        db.query(models.Producto)
-        .filter(models.Producto.nombre == nombre)
-        .first()
-    )
+    return db.query(models.Producto).filter(models.Producto.nombre == nombre).first()
 
 
 def get_productos(db: Session, skip: int = 0, limit: int = 100):
@@ -137,12 +122,9 @@ def create_chofer(db: Session, chofer: schemas.ChoferCreate):
     db.refresh(db_chofer)
     return db_chofer
 
+
 def update_chofer(db: Session, id: int, data: schemas.ChoferCreate):
-    chofer = (
-        db.query(models.Chofer)
-        .filter(models.Chofer.id == id)
-        .one_or_none()
-    )
+    chofer = db.query(models.Chofer).filter(models.Chofer.id == id).one_or_none()
     if not chofer:
         raise HTTPException(status_code=404, detail="Chofer not found")
     for var, value in vars(data).items():
@@ -151,6 +133,7 @@ def update_chofer(db: Session, id: int, data: schemas.ChoferCreate):
     db.commit()
     db.refresh(chofer)
     return chofer
+
 
 ## ------------Pesada operations---------------------
 
@@ -162,8 +145,10 @@ def get_pesada(db: Session, id: int):
 def get_pesadas(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Pesada).offset(skip).limit(limit).all()
 
+
 def get_pesadas_by_turno_id(db: Session, turno_id):
     return db.query(models.Pesada).filter(models.Pesada.turno_id == turno_id).first()
+
 
 def get_pesadas_in_by_date(
     db: Session, target_date: datetime, skip: int = 0, limit: int = 100
@@ -276,10 +261,9 @@ def get_turno(db: Session, id: int):
 def get_turnos(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Turno).offset(skip).limit(limit).all()
 
+
 # Get turno by empresa ID
-def get_turnos_by_empresa(
-    db: Session, id: int, skip: int = 0, limit: int = 100
-):
+def get_turnos_by_empresa(db: Session, id: int, skip: int = 0, limit: int = 100):
     return (
         db.query(models.Turno)
         .filter(models.Turno.id == id)
@@ -288,8 +272,11 @@ def get_turnos_by_empresa(
         .all()
     )
 
+
 # Get Turnos by date
-def get_turnos_by_date(db: Session, date: str, id: int, skip: int = 0, limit: int = 100):
+def get_turnos_by_date(
+    db: Session, date: str, id: int, skip: int = 0, limit: int = 100
+):
     return (
         db.query(models.Turno)
         .filter(models.Turno.fecha == date)
@@ -311,8 +298,15 @@ def get_turnos_by_date_range(
         .limit(limit)
         .all()
     )
+
+
 def get_turnos_by_date_range_by_empresa(
-    db: Session, start_date: str, end_date: str, id: int, skip: int = 0, limit: int = 100
+    db: Session,
+    start_date: str,
+    end_date: str,
+    id: int,
+    skip: int = 0,
+    limit: int = 100,
 ):
     return (
         db.query(models.Turno)
@@ -336,15 +330,12 @@ def get_turnos_by_patente_rfid(
         .first()
     )
 
+
 def update_turno(db: Session, id: int, state: str):
-    turno = (
-        db.query(models.Turno)
-        .filter(models.Turno.id == id)
-        .one_or_none()
-    )
+    turno = db.query(models.Turno).filter(models.Turno.id == id).one_or_none()
     if not turno:
         raise HTTPException(status_code=404, detail="Turno not found")
-    setattr(turno, 'state', state)
+    setattr(turno, "state", state)
     db.add(turno)
     db.commit()
     db.refresh(turno)
@@ -371,15 +362,17 @@ def create_vehiculo(db: Session, vehiculo: schemas.VehiculoCreate):
 
 # Get a Vehiculo by ID
 def get_vehiculo(db: Session, id: int):
-    return (
-        db.query(models.Vehiculo)
-        .filter(models.Vehiculo.id == id)
-        .first()
-    )
+    return db.query(models.Vehiculo).filter(models.Vehiculo.id == id).first()
+
 
 # Get a Vehiculo by empresa
 def get_vehiculo_by_empresa(db: Session, empresa_id: str):
-    return db.query(models.Vehiculo).filter(models.Vehiculo.empresa_id == empresa_id).first()
+    return (
+        db.query(models.Vehiculo)
+        .filter(models.Vehiculo.empresa_id == empresa_id)
+        .first()
+    )
+
 
 # Get a Vehiculo by patente
 def get_vehiculo_by_patente(db: Session, patente: str):
@@ -390,13 +383,10 @@ def get_vehiculo_by_patente(db: Session, patente: str):
 def get_vehiculos(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Vehiculo).offset(skip).limit(limit).all()
 
+
 # Update Vehiculo
 def update_vehiculo(db: Session, id: int, data: schemas.VehiculoCreate):
-    vehiculo = (
-        db.query(models.Vehiculo)
-        .filter(models.Vehiculo.id == id)
-        .one_or_none()
-    )
+    vehiculo = db.query(models.Vehiculo).filter(models.Vehiculo.id == id).one_or_none()
     if not vehiculo:
         raise HTTPException(status_code=404, detail="Vehiculo not found")
     for var, value in vars(data).items():
