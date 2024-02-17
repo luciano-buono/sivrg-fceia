@@ -1,7 +1,7 @@
 services:
   api:
     container_name: api
-    # image: python:latest
+    image: sivrg-backend
     build:
       context: ./api
       dockerfile: ./Dockerfile.orange
@@ -26,19 +26,19 @@ services:
     tty: true        # docker run -t
     environment:
       APP: migrations
+    entrypoint: /bin/sh -c
     command:
-      # - pip install alembic
-      - /bin/sh
+      - "pip install -r requirements/migrations.txt && pwd && sleep infinity"
 
   frontend:
     container_name: frontend
-    image: node:latest
-    # volumes:
-    #   - ./frontend:/usr/src/app
-    # working_dir: /usr/src/app
+    image: sivrg-nginx
     build:
       context: .
       dockerfile: ./nginx/Dockerfile
+    # volumes:
+    #   - ./frontend:/usr/src/app
+    # working_dir: /usr/src/app
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     ports:
@@ -71,5 +71,10 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=admin
     ports:
       - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
     depends_on:
       - db
+
+volumes:
+  pgadmin-data:
