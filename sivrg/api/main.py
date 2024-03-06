@@ -412,19 +412,22 @@ def read_turnos_by_date_range(
         return crud.get_turnos_by_date_range(
             db, start_date, end_date, skip=skip, limit=limit
         )
-    empresa = crud.get_by_email(db=db, email=user.email)
+    empresa = crud.get_empresa_by_email(db=db, email=user.email)
+    if not empresa.one_or_none():
+        raise HTTPException(status_code=404, detail="That empresa doesn't have any turnos!")
     return crud.get_turnos_by_date_range_by_empresa(
         db, start_date, end_date, id=empresa.one().id, skip=skip, limit=limit
     )
 
 
 # Validate turnos for OrangePI client
-@app.get("/public/turnos/validate", response_model=schemas.Turno)
+@app.get("/turnos/validate/", response_model=schemas.Turno)
 def read_turno_by_patente_rfid(
     fecha: datetime = Query(datetime.now(), description="Fecha"),
     patente: str = Query("a", description="Patente"),
     rfid_uid: int = Query(0, description="RFID"),
     db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
 ):
     data = crud.get_turnos_by_patente_rfid(
         db=db, patente=patente, rfid_uid=rfid_uid, fecha=fecha

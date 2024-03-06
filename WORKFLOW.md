@@ -33,3 +33,8 @@
 4. Inicia proceso de pesado con PLC
 5. Se edita la pesada con un PUT request a http://localhost:5000/pesadas, donde se agrega fecha_hora_balanza_out, peso_bruto_out
 6. Se edita el turno y su estado se pasa a finished
+
+
+### Pantalla controlada solo por la orange de entrada a planta
+1. Desp del /validate, se crea un array local donde se van agregando cada turno que va llegando a la planta.
+2. Para actualizar la pantalla, se lleva el control del elemento N que se llamo y cuando el PLC envie finalizacion de pesada en balanza de ingreso, entonces se llama al N+1 turno por pantalla

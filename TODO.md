@@ -42,3 +42,14 @@ Tema pantalla y llamado de turnos
 
 
 Se llama turno o cupo?
+
+
+
+# INFORME
+
+Tener cuidado con el copyright al decir que vamos a usar fotos de autos particulares para verificar que funcione el LPR
+Hablarlo con el director
+
+Mostrar en el informe la foto de 2 o 3 patentes mostrando como funciona el LPR
+Y despues decir que se comprobo con 15 patentes que no se van a mostrar por razones de privacidad
+Decir que se probo tambien con camiones, tanto como autos.
