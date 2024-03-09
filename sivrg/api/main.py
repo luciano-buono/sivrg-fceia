@@ -1,7 +1,15 @@
-from fastapi import Depends, FastAPI, HTTPException, Query, Response, status, Security
+from typing import Literal
+from fastapi import (
+    Depends,
+    FastAPI,
+    HTTPException,
+    Query,
+    Response,
+    status,
+    Security,
+    Header,
+)
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_auth0 import Auth0, Auth0User
-
 
 import uvicorn
 
@@ -17,6 +25,10 @@ import config
 
 settings = config.Settings()
 
+from pydantic import Field
+from typing import Optional, Dict, List, Type
+
+from auth0_extended import Auth0User, Auth0
 
 @lru_cache()
 def get_settings():
@@ -58,49 +70,51 @@ def create_empresa(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if crud.get_empresa_by_name(db, empresa_nombre=empresa.empresa_nombre).count():
+    if crud.get_empresa_by_name(db, nombre=empresa.nombre).count():
         raise HTTPException(status_code=400, detail="Name already registered")
-    if crud.get_empresa_by_email(db, empresa_email=empresa.empresa_email).count():
+    if crud.get_empresa_by_email(db, email=empresa.email).count():
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_empresa(db=db, empresa=empresa)
 
 
 @app.get("/empresas/", response_model=list[schemas.Empresa])
 def read_empresas(
-    empresa_nombre: str | None = None,
-    empresa_email: str | None = None,
+    nombre: str | None = None,
+    email: str | None = None,
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if empresa_email:
-        return crud.get_empresa_by_email(db=db, empresa_email=empresa_email)
-    if empresa_nombre:
-        return crud.get_empresa_by_name(db=db, empresa_nombre=empresa_nombre)
+    if email:
+        return crud.get_empresa_by_email(db=db, email=email)
+    if nombre:
+        return crud.get_empresa_by_name(db=db, nombre=nombre)
+    if user.email:
+        return crud.get_empresa_by_email(db=db, email=user.email)
     return crud.get_empresas(db=db, skip=skip, limit=limit)
 
 
-@app.get("/empresas/{empresa_id}", response_model=schemas.Empresa)
+@app.get("/empresas/{id}", response_model=schemas.Empresa)
 def read_empresa(
-    empresa_id: int,
+    id: int,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    db_empresa = crud.get_empresa(db, empresa_id=empresa_id)
+    db_empresa = crud.get_empresa(db, id=id)
     if db_empresa is None:
         raise HTTPException(status_code=404, detail="Empresa not found")
     return db_empresa
 
 
-@app.put("/empresas/{empresa_id}", response_model=schemas.Empresa)
+@app.put("/empresas/{id}", response_model=schemas.Empresa)
 def update_empresa(
-    empresa_id: int,
+    id: int,
     data: schemas.EmpresaCreate,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    return crud.update_empresa(db=db, empresa_id=empresa_id, data=data)
+    return crud.update_empresa(db=db, id=id, data=data)
 
 
 ## ------------Producto operations---------------------
@@ -117,14 +131,14 @@ def create_producto(
 # Get all Productos
 @app.get("/productos/", response_model=list[schemas.Producto])
 def read_productos(
-    producto_nombre: str | None = None,
+    nombre: str | None = None,
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if producto_nombre:
-        producto = crud.get_producto_by_name(db=db, producto_nombre=producto_nombre)
+    if nombre:
+        producto = crud.get_producto_by_name(db=db, nombre=nombre)
         if producto is None:
             raise HTTPException(status_code=404, detail="Producto not found")
         return producto
@@ -132,13 +146,13 @@ def read_productos(
 
 
 # Get Producto by ID
-@app.get("/productos/{producto_id}", response_model=schemas.Producto)
+@app.get("/productos/{id}", response_model=schemas.Producto)
 def read_producto(
-    producto_id: int,
+    id: int,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    producto = crud.get_producto(db, producto_id)
+    producto = crud.get_producto(db, id)
     if producto is None:
         raise HTTPException(status_code=404, detail="Producto not found")
     return producto
@@ -152,7 +166,7 @@ def create_chofer(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if not crud.get_empresa(db=db, empresa_id=chofer.empresa_id):
+    if not crud.get_empresa(db=db, id=chofer.empresa_id):
         raise HTTPException(status_code=404, detail="Empresa ID not found!")
     if crud.get_chofer_by_dni(db=db, dni=chofer.dni):
         raise HTTPException(status_code=404, detail="DNI already in use!")
@@ -168,19 +182,26 @@ def read_choferes(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
+    if "employee" in user.roles:
+        # Get all choferes
+        return crud.get_choferes(db, skip=skip, limit=limit)
     if empresa_id:
-        return crud.get_choferes_by_empresa(db, empresa_id, skip=skip, limit=limit)
-    return crud.get_choferes(db, skip=skip, limit=limit)
+        return crud.get_choferes_by_empresa(db, id, skip=skip, limit=limit)
+    # Get only the resources from that empresa
+    empresa = crud.get_empresa_by_email(db=db, email=user.email)
+    return crud.get_choferes_by_empresa(
+        db=db, id=empresa.one().id, skip=skip, limit=limit
+    )
 
 
 # Get Chofer by ID
-@app.get("/choferes/{chofer_id}", response_model=schemas.Chofer)
+@app.get("/choferes/{id}", response_model=schemas.Chofer)
 def read_chofer(
-    chofer_id: int,
+    id: int,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    chofer = crud.get_chofer(db, chofer_id)
+    chofer = crud.get_chofer(db, id)
     if chofer is None:
         raise HTTPException(status_code=404, detail="Chofer not found")
     return chofer
@@ -197,6 +218,17 @@ def read_chofer_by_dni(
     return chofer
 
 
+# Edit a Chofer
+@app.put("/choferes/{id}", response_model=schemas.Chofer)
+def update_chofer(
+    id: int,
+    data: schemas.ChoferCreate,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    return crud.update_chofer(db=db, id=id, data=data)
+
+
 ## ------------Pesada operations---------------------
 # Create a Pesada
 @app.post("/pesadas/", response_model=schemas.Pesada)
@@ -205,6 +237,8 @@ def create_pesada(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
+    if not crud.get_turno(db=db, id=pesada.turno_id):
+        raise HTTPException(status_code=404, detail="Turno ID not found!")
     return crud.create_pesada(db, pesada)
 
 
@@ -216,18 +250,18 @@ def read_pesadas(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    pesadas = crud.get_pesadas(db, skip=skip, limit=limit)
+    pesadas = crud.get_pesada(db, skip=skip, limit=limit)
     return pesadas
 
 
 # Get Pesada by ID
-@app.get("/pesadas/{pesada_id}", response_model=schemas.Pesada)
+@app.get("/pesadas/{id}", response_model=schemas.Pesada)
 def read_pesada(
-    pesada_id: int,
+    id: int,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    pesada = crud.get_pesada(db, pesada_id)
+    pesada = crud.get_pesada(db, id)
     if pesada is None:
         raise HTTPException(status_code=404, detail="Pesada not found")
     return pesada
@@ -246,8 +280,15 @@ def read_pesadas_by_date_range(
     pesadas = crud.get_pesadas_by_date_range(db, start_date, end_date, skip, limit)
     return pesadas
 
-
-## ------------PesadasOut operations---------------------
+# Edit a Pesada
+@app.put("/pesadas/{id}", response_model=schemas.Pesada)
+def update_pesada(
+    id: int,
+    data: schemas.PesadaCreate,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    return crud.update_pesada(db=db, id=id, data=data)
 
 
 ## ------------Silos operations---------------------
@@ -258,7 +299,7 @@ def create_silo(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if not crud.get_producto(db=db, producto_id=silo.producto_id):
+    if not crud.get_producto(db=db, id=silo.id):
         raise HTTPException(status_code=404, detail="Producto ID not found!")
     return crud.create_silo(db, silo)
 
@@ -278,13 +319,13 @@ def read_silos(
 
 
 # Get Silo by ID
-@app.get("/silos/{silo_id}", response_model=schemas.Silo)
+@app.get("/silos/{id}", response_model=schemas.Silo)
 def read_silo(
-    silo_id: int,
+    id: int,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    silo = crud.get_silo(db, silo_id)
+    silo = crud.get_silo(db, id)
     if silo is None:
         raise HTTPException(status_code=404, detail="Silo not found")
     return silo
@@ -299,14 +340,14 @@ def create_turno(
     user: Auth0User = Security(auth.get_user),
 ):
     print("-------Starting turno create--------")
-    # empresa_id lo provee el front en el header
-    if not crud.get_empresa(db=db, empresa_id=turno.empresa_id):
+    # id lo provee el front en el header
+    if not crud.get_empresa(db=db, id=turno.empresa_id):
         raise HTTPException(status_code=404, detail="Empresa ID not found")
-    if not crud.get_chofer(db=db, chofer_id=turno.chofer_id):
+    if not crud.get_chofer(db=db, id=turno.chofer_id):
         raise HTTPException(status_code=404, detail="Chofer ID not found")
-    if not crud.get_producto(db=db, producto_id=turno.producto_id):
+    if not crud.get_producto(db=db, id=turno.producto_id):
         raise HTTPException(status_code=404, detail="Producto ID not found")
-    if not crud.get_vehiculo(db=db, vehiculo_id=turno.vehiculo_id):
+    if not crud.get_vehiculo(db=db, id=turno.vehiculo_id):
         raise HTTPException(status_code=404, detail="Vehiculo ID not found")
     return crud.create_turno(db=db, turno=turno)
 
@@ -314,20 +355,35 @@ def create_turno(
 # Get all Turnos
 @app.get("/turnos/", response_model=list[schemas.Turno])
 def read_turnos(
-    date: str | None = None,
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if date:
-        return crud.get_turnos_by_date(db, date, skip=skip, limit=limit)
-    return crud.get_turnos(db, skip=skip, limit=limit)
+    if "employee" in user.roles:
+        # Get all turns
+        return crud.get_turnos(db, skip=skip, limit=limit)
+    # Get only the resources from that empresa
+    empresa = crud.get_empresa_by_email(db=db, email=user.email)
+    return crud.get_turnos_by_empresa(db, id=empresa.one().id, skip=skip, limit=limit)
 
 
 # Get a Turno by ID
-@app.get("/turnos/{turno_id}", response_model=schemas.Turno)
+@app.get("/turnos/{id}", response_model=schemas.Turno)
 def read_turno(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    turno = crud.get_turno(db, id)
+    if turno is None:
+        raise HTTPException(status_code=404, detail="Turno not found")
+    return turno
+
+
+# Get a Turno by ID
+@app.get("/turnos/{turno_id}/pesada", response_model=schemas.Pesada)
+def read_pesada_by_turno_id(
     turno_id: int,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
@@ -335,7 +391,10 @@ def read_turno(
     turno = crud.get_turno(db, turno_id)
     if turno is None:
         raise HTTPException(status_code=404, detail="Turno not found")
-    return turno
+    pesada = crud.get_pesadas_by_turno_id(db=db, turno_id=turno_id)
+    if pesada is None:
+        raise HTTPException(status_code=404, detail="Pesada not found")
+    return pesada
 
 
 # Get Pesada records by date range
@@ -348,25 +407,50 @@ def read_turnos_by_date_range(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    return crud.get_turnos_by_date_range(db, start_date, end_date, skip, limit)
+    if "employee" in user.roles:
+        return crud.get_turnos_by_date_range(
+            db, start_date, end_date, skip=skip, limit=limit
+        )
+    empresa = crud.get_empresa_by_email(db=db, email=user.email)
+    if not empresa.one_or_none():
+        raise HTTPException(status_code=404, detail="That empresa doesn't have any turnos!")
+    return crud.get_turnos_by_date_range_by_empresa(
+        db, start_date, end_date, id=empresa.one().id, skip=skip, limit=limit
+    )
 
 
 # Validate turnos for OrangePI client
-@app.get("/public/turnos/validate", response_model=schemas.Turno)
+@app.get("/turnos/validate/", response_model=schemas.Turno)
 def read_turno_by_patente_rfid(
-    turno_fecha: datetime = Query(datetime.now(), description="Fecha"),
+    fecha: datetime = Query(datetime.now(), description="Fecha"),
     patente: str = Query("a", description="Patente"),
     rfid_uid: int = Query(0, description="RFID"),
     db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
 ):
     data = crud.get_turnos_by_patente_rfid(
-        db=db, patente=patente, rfid_uid=rfid_uid, turno_fecha=turno_fecha
+        db=db, patente=patente, rfid_uid=rfid_uid, fecha=fecha
     )
     if not data:
         raise HTTPException(
             status_code=404, detail="Turno with that patente and RFID_UID not found!"
         )
     return data
+
+
+@app.put("/turnos/{id}", response_model=schemas.Turno)
+def update_turno(
+    id: int,
+    state: schemas.TURNO_STATE,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    checking_time = None
+    if state == "in_progress_entrada":
+        instance = schemas.PesadaCreate(turno_id=id)
+        crud.create_pesada(db=db, pesada=instance)
+        checking_time = datetime.now()
+    return crud.update_turno(db=db, id=id, state=state, checking_time=checking_time)
 
 
 ## ------------Vehiculos operations---------------------
@@ -377,7 +461,7 @@ def create_vehiculo(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if not crud.get_empresa(db=db, empresa_id=vehiculo.empresa_id):
+    if not crud.get_empresa(db=db, id=vehiculo.empresa_id):
         raise HTTPException(status_code=404, detail="Empresa ID not found!")
     if crud.get_vehiculo_by_patente(db=db, patente=vehiculo.patente):
         raise HTTPException(status_code=404, detail="Patente already in use!")
@@ -393,42 +477,60 @@ def read_vehiculos(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
+    if "employee" in user.roles:
+        # Get all turns
+        return crud.get_vehiculos(db, skip=skip, limit=limit)
     if patente:
         vehiculo = crud.get_vehiculo_by_patente(db, patente)
         if vehiculo is None:
             raise HTTPException(status_code=404, detail="Vehiculo not found")
         return vehiculo
-    return crud.get_vehiculos(db, skip=skip, limit=limit)
+    # Get only the resources from that empresa
+    empresa = crud.get_empresa_by_email(db=db, email=user.email)
+    return crud.get_vehiculo_by_empresa(
+        db, empresa_id=empresa.one().id, skip=skip, limit=limit
+    )
 
 
 # Get a Vehiculo by ID
-@app.get("/vehiculos/{vehiculo_id}", response_model=schemas.Vehiculo)
+@app.get("/vehiculos/{id}", response_model=schemas.Vehiculo)
 def read_vehiculo(
-    vehiculo_id: int,
+    id: int,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    vehiculo = crud.get_vehiculo(db, vehiculo_id)
+    vehiculo = crud.get_vehiculo(db, id)
     if vehiculo is None:
         raise HTTPException(status_code=404, detail="Vehiculo not found")
     return vehiculo
 
 
 # Get a Vehiculo by ID SECURE
-@app.get("/vehiculos/secure/{vehiculo_id}", response_model=schemas.Vehiculo)
+@app.get("/vehiculos/secure/{id}", response_model=schemas.Vehiculo)
 def read_vehiculo(
-    vehiculo_id: int,
+    id: int,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    vehiculo = crud.get_vehiculo(db, vehiculo_id)
+    vehiculo = crud.get_vehiculo(db, id)
     if vehiculo is None:
         raise HTTPException(status_code=404, detail="Vehiculo not found")
     return vehiculo
 
 
+@app.put("/vehiculos/{id}", response_model=schemas.Vehiculo)
+def update_vehiculo(
+    id: int,
+    data: schemas.VehiculoCreate,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    return crud.update_vehiculo(db=db, id=id, data=data)
+
+
+######################
 # FastAPI auth AUTH0
-@app.get("/api/private2")
+@app.get("/api/get_auth0_user")
 def get_secure(user: Auth0User = Security(auth.get_user)):
     return {"message": f"{user}"}
 
@@ -436,6 +538,59 @@ def get_secure(user: Auth0User = Security(auth.get_user)):
 @app.get("/public")
 def get_public():
     return {"message": "Anonymous user"}
+
+
+@app.get("/public/test_create")
+def test_create(
+    db: Session = Depends(get_db),
+):
+    test_empresa = schemas.EmpresaCreate(
+        nombre="Empresin",
+        RS="RI",
+        CUIT=3029139232,
+        direccion="San Martin 123",
+        localidad="Resistencia",
+        provincia="Chaco",
+        pais="Argentina",
+        telefono="+54910410583",
+        email="empresin@external.com.ar",
+    )
+    test_producto = schemas.ProductoCreate(nombre="Soja")
+    test_chofer = schemas.ChoferCreate(
+        rfid_uid=None,
+        nombre="Gustavo",
+        apellido="Figs",
+        dni=40112012,
+        empresa_id=1,
+        habilitado=True,
+    )
+    test_vehiculo = schemas.VehiculoCreate(
+        patente="ABC123",
+        seguro="La segunda",
+        modelo="Vento",
+        año=2006,
+        marca="Vento",
+        habilitado=True,
+        empresa_id=1,
+    )
+    test_turno = schemas.TurnoCreate(
+        fecha=datetime.now(),
+        cantidad_estimada=10000,
+        chofer_id=1,
+        empresa_id=1,
+        producto_id=1,
+        vehiculo_id=1,
+        state="pending",
+    )
+    print(test_producto)
+    print(test_vehiculo)
+
+    crud.create_empresa(db=db, empresa=test_empresa)
+    crud.create_producto(db=db, producto=test_producto)
+    crud.create_chofer(db=db, chofer=test_chofer)
+    crud.create_vehiculo(db=db, vehiculo=test_vehiculo)
+    crud.create_turno(db=db, turno=test_turno)
+    return {"message": "DONE"}
 
 
 def main():

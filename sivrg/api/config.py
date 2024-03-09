@@ -1,5 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 class Settings(BaseSettings):
     api_v1_prefix: str
@@ -13,6 +15,7 @@ class Settings(BaseSettings):
     domain: str
     api_audience: str
     scopes: list[str]
+    auth0_rule_namespace: str
 
     #Postgres:
     POSTGRES_USERNAME: str

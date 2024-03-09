@@ -1,31 +1,45 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_serializer, field_validator
+from typing import Literal
 from datetime import date, datetime
+from sqlalchemy_utils import ChoiceType
+from models import CHOICES_STATES
+
+TURNO_STATE = Literal[
+    "pending",
+    "canceled",
+    "accepted",
+    "in_progress_entrada",
+    "in_progress_balanza_in",
+    "in_progress_balanza_out",
+    "finished",
+]
 
 
 class EmpresaBase(BaseModel):
-    empresa_nombre: str
-    empresa_RS: str
-    empresa_CUIT: int
-    empresa_direccion: str
-    empresa_localidad: str
-    empresa_provincia: str
-    empresa_pais: str
-    empresa_telefono: str
-    empresa_email: str
+    nombre: str
+    RS: str
+    CUIT: int
+    direccion: str
+    localidad: str
+    provincia: str
+    pais: str
+    telefono: str
+    email: str
+
 
 class EmpresaCreate(EmpresaBase):
     pass
 
 
 class Empresa(EmpresaBase):
-    empresa_id: int
+    id: int
 
     class Config:
         from_attributes = True
 
 
 class ProductoBase(BaseModel):
-    producto_nombre: str
+    nombre: str
 
 
 class ProductoCreate(ProductoBase):
@@ -33,7 +47,7 @@ class ProductoCreate(ProductoBase):
 
 
 class Producto(ProductoBase):
-    producto_id: int
+    id: int
 
     class Config:
         from_attributes = True
@@ -53,7 +67,7 @@ class ChoferCreate(ChoferBase):
 
 
 class Chofer(ChoferBase):
-    chofer_id: int
+    id: int
     empresa: Empresa
 
     class Config:
@@ -61,11 +75,11 @@ class Chofer(ChoferBase):
 
 
 class PesadaBase(BaseModel):
-    chofer_id: int
-    peso_bruto: float
-    patente: str
-    empresa_id: int
-    producto_id: int
+    fecha_hora_balanza_in: datetime | None = None
+    fecha_hora_balanza_out: datetime | None = None
+    peso_bruto_in: float | None = None
+    peso_bruto_out: float | None = None
+    turno_id: int
 
 
 class PesadaCreate(PesadaBase):
@@ -73,7 +87,8 @@ class PesadaCreate(PesadaBase):
 
 
 class Pesada(PesadaBase):
-    pesada_id: int
+    id: int
+    fecha_hora_planta_in: datetime
 
     class Config:
         from_attributes = True
@@ -91,7 +106,7 @@ class SiloCreate(SiloBase):
 
 
 class Silo(SiloBase):
-    silo_id: int
+    id: int
     producto: Producto
 
     class Config:
@@ -113,7 +128,7 @@ class VehiculoCreate(VehiculoBase):
 
 
 class Vehiculo(VehiculoBase):
-    vehiculo_id: int
+    id: int
     empresa: Empresa
 
     class Config:
@@ -121,12 +136,13 @@ class Vehiculo(VehiculoBase):
 
 
 class TurnoBase(BaseModel):
-    turno_fecha: datetime
+    fecha: datetime
     cantidad_estimada: int
     chofer_id: int
     empresa_id: int
     producto_id: int
     vehiculo_id: int
+    state: TURNO_STATE
 
 
 class TurnoCreate(TurnoBase):
@@ -134,12 +150,16 @@ class TurnoCreate(TurnoBase):
 
 
 class Turno(TurnoBase):
-    turno_id: int
+    id: int
     created_on: datetime
     empresa: Empresa
     chofer: Chofer
     producto: Producto
     vehiculo: Vehiculo
+
+    @field_validator("state", mode="before")
+    def serialize_state(cls, value: ChoiceType) -> str:
+        return value.code
 
     class Config:
         from_attributes = True
