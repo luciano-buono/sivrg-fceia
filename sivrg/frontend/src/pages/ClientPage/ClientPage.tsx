@@ -20,6 +20,10 @@ const ClientPage = () => {
     queryFn: async () => await api.get(`/empresas/?empresa_email=${user?.email}`).then((res) => res.data),
   });
 
+  if (isLoadingEmpresa) {
+    return <></>;
+  }
+
   return (
     <>
       <Skeleton visible={isLoadingEmpresa || isLoading}>
