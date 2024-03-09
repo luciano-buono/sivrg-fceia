@@ -4,7 +4,7 @@ import yaml
 import glob
 
 import requests, json
-import cv2, time
+import cv2, time, datetime
 
 
 from time import sleep
@@ -13,8 +13,8 @@ from utils import *
 import os
 
 import config
-
 settings = config.Settings()
+
 class AuthError(Exception): pass
 
 def get_LPR():
@@ -82,40 +82,91 @@ def login_auth0():
         raise AuthError("Invalid client or secret key")
     return response_json.get("access_token")
 
-def test_apis():
+def test_ingreso_playon(access_token: str, rfid_uid, patente, fecha):
+    DOMAIN = 'http://localhost:5000'
+    headers = {"Authorization": f"Bearer {access_token}"}
 
-    rfid_uid = 1111
-    patente = 'ABC123'
-    fecha = '2024-02-17T06:30:05.260862'
+    # Validate endpoint
+    PATH = '/turnos/validate/'
     data= {
         'rfid_uid': rfid_uid,
         'patente': patente,
         'fecha': fecha
     }
-    response = requests.get(url='http://localhost:5000/public/turnos/validate', params=data)
-    print(response.text)
+    response = requests.get(url=f'{DOMAIN}{PATH}',headers=headers, params=data)
+    response_text = json.loads(response.text)
+    # print(response_text)
+    if response.status_code == 401:
+        print(response_text)
+        return False
+    turno_id = response_text.get('id')
 
-
-    # Create initial pesada with no values just to have time of arrival
-    data = {
-        "peso_bruto_in": 0,
-        "peso_bruto_out": 0,
-        "turno_id": 2
+    # PUT turno in in_progress_entrada state
+    PATH = f'/turnos/{turno_id}/'
+    data= {
+        'state': 'in_progress_entrada',
     }
-    response = requests.get(url='http://localhost:5000/pesadas', data=json.dumps(data))
+    response = json.loads(requests.put(url=f'{DOMAIN}{PATH}',headers=headers, params=data).text)
+    # print(response)
 
+    print("Turno validado y en in_progress_entrada")
+    return True
 
-    # Edit pesada with with ingress weight
-    data = {
-        "peso_bruto_in": 0,
-        "peso_bruto_out": 0,
-        "turno_id": 2
+def test_ingreso_balanza(access_token: str, rfid_uid, patente, fecha):
+    DOMAIN = 'http://localhost:5000'
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    # Validate endpoint
+    PATH = '/turnos/validate/'
+    data= {
+        'rfid_uid': rfid_uid,
+        'patente': patente,
+        'fecha': fecha
     }
-    response = requests.get(url='http://localhost:5000/pesadas', data=json.dumps(data))
+    response = requests.get(url=f'{DOMAIN}{PATH}',headers=headers, params=data)
+    response_text = json.loads(response.text)
+    # print(response_text)
+    if response.status_code == 401:
+        print(response_text)
+        return False
+    turno_id = response_text.get('id')
+
+    # PUT turno in in_progress_entrada state
+    PATH = f'/turnos/{turno_id}/'
+    data= {
+        'state': 'in_progress_balanza_in',
+    }
+    response = requests.put(url=f'{DOMAIN}{PATH}',headers=headers, params=data)
+    response_text = json.loads(response.text)
+    print("Turno validado y en in_progress_balanza_in")
+
+
+    PATH = f'/turnos/{turno_id}/pesada'
+    response = requests.get(url=f'{DOMAIN}{PATH}',headers=headers)
+    response_text = json.loads(response.text)
+    pesada_id = response_text.get('id')
+
+    # PUT pesada time and value IN
+    PATH = f'/pesadas/{pesada_id}/'
+    data= {
+        "fecha_hora_balanza_in": "2024-02-17T21:30:55.749Z",
+        "peso_bruto_in": 10000,
+        "turno_id": turno_id
+    }
+    response = requests.put(url=f'{DOMAIN}{PATH}',headers=headers, params=data)
+    response_text = json.loads(response.text)
+    print("Turno validado y en in_progress_balanza_in")
+
+    return True
 
 
 if __name__ == "__main__":
     # local_camera()
     # get_RFID()
     # access_token = login_auth0()
-    access_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBlQjZ4Znp2am53TVhoSkpJUlV0dCJ9.eyJpc3MiOiJodHRwczovL21ldGhpenVsLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJpaU5zQ0JjWmNmT0lvMERMVnk2SXRuM1RFZnlQMlpPRUBjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9hcGkuc2l2cmcubWV0aGl6dWwuY29tIiwiaWF0IjoxNzA4MjEwMTkxLCJleHAiOjE3MDgyOTY1OTEsImF6cCI6ImlpTnNDQmNaY2ZPSW8wRExWeTZJdG4zVEVmeVAyWk9FIiwic2NvcGUiOiJyZWFkOnRlc3QiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMiLCJwZXJtaXNzaW9ucyI6WyJyZWFkOnRlc3QiXX0.PhoNWTX3FZxyuWCvspkhhuFLo5sJzepT7Z9OkU-Rxwjif7rnm0jKvcvNAgtnqCXsM0_i_wG9j0aNJ2scG5KPVE-TOYw0NMrAEX0BLTVHkFSiDY9XcC1VyuCY2E4KjXJMnPxpHJ4lBuBoE7urQo58tvrd-1fbj4BtDbjD0xlNIguhIG148jjJq2NZq7LTPSkEpteYV1L2GBwHgsTI16GBC1hQXhH2i-zqQkfYc_ejeN2yz5FT4HEMsmOVlRDj6bsBMvNlsQ-qITA7YZX7RcafAwTgMJ8rUXx8BHy6MQRe4GyJDzi34b0eQqLOWjWOesGTa3IZ6lllkj7ADpMQP9x1iQ"
+    access_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBlQjZ4Znp2am53TVhoSkpJUlV0dCJ9.eyJodHRwczovL3NpdnJnLm1ldGhpenVsLmNvbS9yb2xlcyI6WyJlbXBsb3llZSJdLCJodHRwczovL3NpdnJnLm1ldGhpenVsLmNvbS9lbWFpbCI6InJpY2FyZGl0b2ZvcnRAbWV0aGl6dWwubGl2ZSIsImlzcyI6Imh0dHBzOi8vbWV0aGl6dWwudXMuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDYxNGNlODUxNjE3MThlMDA2OWUzZDI1NCIsImF1ZCI6Imh0dHBzOi8vYXBpLnNpdnJnLm1ldGhpenVsLmNvbSIsImlhdCI6MTcwODI5MzA4MSwiZXhwIjoxNzA4Mzc5NDgxLCJhenAiOiJ2dW02eFJtMzJSYm1sRGpNRWFRYjg0ZEF4R0QwQWJnViIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOltdfQ.gFdd-CLiWEex7WwOuUNB3vovc-YMXDKpVc61igh2Wrb5cj1qxTAq_nVNCdZp4RoJM4O5eTcghQniM1uUrInTrnXnzrhOqcgV-Z9Sih0pAhPnniQVIxV7bKOCmSOcRg5DiITN4i387F_TNtJaW6ogsITQ5GTTno38Hp1XPa2GPozF0K6Zt1k6geuca303Byb8jwropXPiLkqDGao8i28V43fvoOBX7PX4qEwWvuktnJXdVY_2JRmPiO_S8ck0poThmr1gI_RNEun7Ep79mNLBu1T0--l0cvnvxLmtUDitSbDx3cjKIKo4dl9MjRAJeVEVButATqMK2lH9_v5XdKxJRg'
+    rfid_uid = 2222
+    patente = 'ABC321'
+    fecha = datetime.datetime.today() - datetime.timedelta(days=1)
+    inp = input('Confirmar')
+    test_ingreso_playon(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)

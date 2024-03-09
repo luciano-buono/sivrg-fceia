@@ -4,7 +4,7 @@ from  tkinter import *
 import tkinter as tk
 import pygame
 from gtts import gTTS
-  
+
 
 texto_patente= "AR245CA"
 num_silo= "1"
@@ -23,7 +23,7 @@ def llamado():
 
     for caracter in texto_patente:
         texto_patente_espaciado = texto_patente_espaciado + caracter + ", "
-        
+
     # Texto que deseas convertir a voz
     texto_a_leer = "Vehículo patente: " + texto_patente + ", dirigirse a balanza de ingreso para descargar en silo número " + num_silo + ". . . . . Repito. " + "Vehículo patente: " + texto_patente_espaciado + " dirigirse a balanza de ingreso para descargar en silo número " + num_silo + ". . . Muchas gracias. "
 
@@ -86,5 +86,5 @@ silo.place(relx=0.5,rely=0.5,anchor='center')
 prox_patente.place(relx=0.5,rely=0.8,anchor='center')
 
 
-cambio_patente()
+# cambio_patente()
 root.mainloop()
