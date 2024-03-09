@@ -5,6 +5,7 @@ import glob
 
 import requests, json, datetime
 
+from camera_orange import take_photo
 
 from time import sleep
 from rfid.MFRC522_python.mfrc522 import SimpleMFRC522
@@ -18,7 +19,7 @@ def get_LPR():
     with open(CONFIGFILE, 'r') as stream:
         cfg = yaml.safe_load(stream)
     SOURCE_DIR =glob.glob('../../../FOTOS/img8.jpg')
-
+    SOURCE_DIR =glob.glob('../../../FOTOS/opencv_frame_0.png')
     # Get all images in directory
     print(f"Source dir:{SOURCE_DIR}")
     cv2_images = []
@@ -51,7 +52,8 @@ def get_RFID():
             id, text = reader.read()
             print(f"ID: {id}\nText: {text}")
             sleep(5)
-            print(f"Reading lisence from image..")
+            print(f"Reading lisence from image or photo..")
+            take_photo()
             prediccion = get_LPR()
             print({"LICENSE_PLATE":prediccion})
             print("Verifying truck credentials against the database..")
@@ -61,19 +63,19 @@ def get_RFID():
         raise
 
 if __name__ == "__main__":
-    # get_RFID()
+    get_RFID()
 
-    tag_id = 357677372858
-    license_plate = 'BLA123'
+    # tag_id = 357677372858
+    # license_plate = 'BLA123'
 
-    params = {
-        'turno_fecha': str(datetime.datetime.now()),
-        'patente': license_plate,
-        'rfid_uid': tag_id
-        }
-    print(params)
-    response = requests.get(url='https://api-sivrg.methizul.com.ar:8443/public/turnos/validate', params=params)
-    print(response.text)
+    # params = {
+    #     'turno_fecha': str(datetime.datetime.now()),
+    #     'patente': license_plate,
+    #     'rfid_uid': tag_id
+    #     }
+    # print(params)
+    # response = requests.get(url='https://api-sivrg.methizul.com.ar:8443/public/turnos/validate', params=params)
+    # print(response.text)
 
 
 
