@@ -104,6 +104,7 @@ class Turno(Base):
         TIMESTAMP, nullable=False, server_default=func.current_timestamp()
     )
     fecha = Column(TIMESTAMP, nullable=False)
+    checking_time = Column(TIMESTAMP, nullable=True)
     cantidad_estimada = Column(Integer, nullable=False)
     chofer_id = Column(Integer, ForeignKey("choferes.id"))
     empresa_id = Column(Integer, ForeignKey("empresas.id"))

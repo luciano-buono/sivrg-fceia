@@ -10,8 +10,6 @@ from fastapi import (
     Header,
 )
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi_auth0 import Auth0, Auth0User
-
 
 import uvicorn
 
@@ -27,6 +25,10 @@ import config
 
 settings = config.Settings()
 
+from pydantic import Field
+from typing import Optional, Dict, List, Type
+
+from auth0_extended import Auth0User, Auth0
 
 @lru_cache()
 def get_settings():
@@ -179,9 +181,8 @@ def read_choferes(
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
-    is_employee: int = 0,
 ):
-    if is_employee:
+    if "employee" in user.roles:
         # Get all choferes
         return crud.get_choferes(db, skip=skip, limit=limit)
     if empresa_id:
@@ -358,9 +359,8 @@ def read_turnos(
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
-    is_employee: int = 0,
 ):
-    if is_employee:
+    if "employee" in user.roles:
         # Get all turns
         return crud.get_turnos(db, skip=skip, limit=limit)
     # Get only the resources from that empresa
@@ -406,9 +406,8 @@ def read_turnos_by_date_range(
     limit: int = Query(100, description="Maximum number of records to retrieve"),
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
-    is_employee: int = 0,
 ):
-    if is_employee:
+    if "employee" in user.roles:
         return crud.get_turnos_by_date_range(
             db, start_date, end_date, skip=skip, limit=limit
         )
@@ -446,10 +445,12 @@ def update_turno(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
+    checking_time = None
     if state == "in_progress_entrada":
         instance = schemas.PesadaCreate(turno_id=id)
         crud.create_pesada(db=db, pesada=instance)
-    return crud.update_turno(db=db, id=id, state=state)
+        checking_time = datetime.now()
+    return crud.update_turno(db=db, id=id, state=state, checking_time=checking_time)
 
 
 ## ------------Vehiculos operations---------------------
@@ -475,9 +476,8 @@ def read_vehiculos(
     limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
-    is_employee: int = 0,
 ):
-    if is_employee:
+    if "employee" in user.roles:
         # Get all turns
         return crud.get_vehiculos(db, skip=skip, limit=limit)
     if patente:
