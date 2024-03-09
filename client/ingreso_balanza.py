@@ -3,6 +3,7 @@ import time
 # pip install pymodbus
 import signal, sys, time
 from pymodbus.client.tcp import ModbusTcpClient as ModbusClient
+from sivrg_http_requests import TURNO_STATE, sivrg_send_validate, sivrg_update_pesada, sivrg_update_turno
 from client_local import test_ingreso_balanza, test_ingreso_playon
 
 from utils import *
@@ -58,11 +59,15 @@ if __name__ == '__main__':
             print({"LICENSE_PLATE":patente})
 
             ## FastAPI
-            access_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBlQjZ4Znp2am53TVhoSkpJUlV0dCJ9.eyJodHRwczovL3NpdnJnLm1ldGhpenVsLmNvbS9yb2xlcyI6WyJlbXBsb3llZSJdLCJodHRwczovL3NpdnJnLm1ldGhpenVsLmNvbS9lbWFpbCI6InJpY2FyZGl0b2ZvcnRAbWV0aGl6dWwubGl2ZSIsImlzcyI6Imh0dHBzOi8vbWV0aGl6dWwudXMuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDYxNGNlODUxNjE3MThlMDA2OWUzZDI1NCIsImF1ZCI6Imh0dHBzOi8vYXBpLnNpdnJnLm1ldGhpenVsLmNvbSIsImlhdCI6MTcwODI5MzA4MSwiZXhwIjoxNzA4Mzc5NDgxLCJhenAiOiJ2dW02eFJtMzJSYm1sRGpNRWFRYjg0ZEF4R0QwQWJnViIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOltdfQ.gFdd-CLiWEex7WwOuUNB3vovc-YMXDKpVc61igh2Wrb5cj1qxTAq_nVNCdZp4RoJM4O5eTcghQniM1uUrInTrnXnzrhOqcgV-Z9Sih0pAhPnniQVIxV7bKOCmSOcRg5DiITN4i387F_TNtJaW6ogsITQ5GTTno38Hp1XPa2GPozF0K6Zt1k6geuca303Byb8jwropXPiLkqDGao8i28V43fvoOBX7PX4qEwWvuktnJXdVY_2JRmPiO_S8ck0poThmr1gI_RNEun7Ep79mNLBu1T0--l0cvnvxLmtUDitSbDx3cjKIKo4dl9MjRAJeVEVButATqMK2lH9_v5XdKxJRg'
-            fecha = datetime.datetime.today() - datetime.timedelta(days=1)
+            access_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBlQjZ4Znp2am53TVhoSkpJUlV0dCJ9.eyJodHRwczovL3NpdnJnLm1ldGhpenVsLmNvbS9yb2xlcyI6WyJlbXBsb3llZSJdLCJpc3MiOiJodHRwczovL21ldGhpenVsLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJpaU5zQ0JjWmNmT0lvMERMVnk2SXRuM1RFZnlQMlpPRUBjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9hcGkuc2l2cmcubWV0aGl6dWwuY29tIiwiaWF0IjoxNzEwMDE0ODM5LCJleHAiOjE3MTAyMDEyMzksImF6cCI6ImlpTnNDQmNaY2ZPSW8wRExWeTZJdG4zVEVmeVAyWk9FIiwic2NvcGUiOiJyZWFkOnRlc3QiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMiLCJwZXJtaXNzaW9ucyI6WyJyZWFkOnRlc3QiXX0.DolxtfwM-2XWcwlkE0lyps2Md4Vp8sRMAOuSarcjzNqbmIShg5rg2J2gdQq64nGCOCKossrv8v1lRu0PmCZjf2tjMWLfufnOXrYm1plc_Ldow63McAE-uROkfdc5p07QSmaiRMgkcrzvXUeBrjlBbtYf8mStHj4nqC6RTFATi5Aj_Zt3p3-c5fyLMOUMLmuKmVRPX_0xhG6Lxm9uHDL9gBod1PQhz8MJzonaMYXY_G4tjvpWVVuWMzI91LKQ8d-fT41B53-3gFlBwS5qmp_LTBHs2AJn90GCkNfFPBYBIFwEZeHaZcTHxwvo5f6Lco7LetQuquE8Y6rIIt8_cPg7bg'
+            fecha = datetime.datetime(2024,3,9)
             inp = input('Confirmar')
-            is_validated = test_ingreso_balanza(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)
-
+            # # BalanzaIN
+            turno_id = sivrg_send_validate(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)
+            sivrg_update_turno(access_token=access_token,id=turno_id, state=TURNO_STATE.BALANZA_IN)
+            sivrg_update_pesada(access_token=access_token, turno_id=turno_id, fecha_pesada=fecha, peso_pesada=7000, direction='in')
+            if turno_id:
+                is_validated = True
             ## PLC start sequence
             if is_validated:
                 print("Inicio de secuencia")

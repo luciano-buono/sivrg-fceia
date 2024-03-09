@@ -100,18 +100,18 @@ def sivrg_update_pesada(access_token: str, turno_id: str, fecha_pesada, peso_pes
 
 
 if __name__ == "__main__":
-    access_token = login_auth0()
-    print(access_token)
-    # access_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBlQjZ4Znp2am53TVhoSkpJUlV0dCJ9.eyJpc3MiOiJodHRwczovL21ldGhpenVsLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJpaU5zQ0JjWmNmT0lvMERMVnk2SXRuM1RFZnlQMlpPRUBjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9hcGkuc2l2cmcubWV0aGl6dWwuY29tIiwiaWF0IjoxNzA5NzYzMjMwLCJleHAiOjE3MDk5NDk2MzAsImF6cCI6ImlpTnNDQmNaY2ZPSW8wRExWeTZJdG4zVEVmeVAyWk9FIiwic2NvcGUiOiJyZWFkOnRlc3QiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMiLCJwZXJtaXNzaW9ucyI6WyJyZWFkOnRlc3QiXX0.wC_PciOVSZr1goemlk9SiEcj1MZFWJovxqd0hAoi33NCR3t84jwMSSO5Bs4j2krsGhuR_u5WuzL2akUKOWUf0gSOVdnUXR3Sx-v9lO6iZ3LqwUEfZwbvgRpEtsr8nunDyhWgVgGldeiGlsj7UaSmZTjMDqUTJYlKL7qG3hMWiYa291H7MBHhM8EnQCJ5syYYLbHIKGghp2API9N976MjD7KHghjzD6peCuSfiKvLkvMZHQOhpvAb8xzEnmBFRYSeNOl6gbU4GV0mPTJ6hmEGqLZPtmyHcUIHnF7ebwZMq9dLGwqh7VAk8ZPKMtSyHltcB7gu126fIPmxcM2G7euadQ'
-    # rfid_uid = 2222
-    # patente = 'ABC321'
-    # # fecha = datetime.datetime.today() - datetime.timedelta(days=1)
-    # fecha = datetime.datetime(2024,2,17)
+    # access_token = login_auth0()
+    # print(access_token)
+    access_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBlQjZ4Znp2am53TVhoSkpJUlV0dCJ9.eyJodHRwczovL3NpdnJnLm1ldGhpenVsLmNvbS9yb2xlcyI6WyJlbXBsb3llZSJdLCJpc3MiOiJodHRwczovL21ldGhpenVsLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJpaU5zQ0JjWmNmT0lvMERMVnk2SXRuM1RFZnlQMlpPRUBjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9hcGkuc2l2cmcubWV0aGl6dWwuY29tIiwiaWF0IjoxNzEwMDE0ODM5LCJleHAiOjE3MTAyMDEyMzksImF6cCI6ImlpTnNDQmNaY2ZPSW8wRExWeTZJdG4zVEVmeVAyWk9FIiwic2NvcGUiOiJyZWFkOnRlc3QiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMiLCJwZXJtaXNzaW9ucyI6WyJyZWFkOnRlc3QiXX0.DolxtfwM-2XWcwlkE0lyps2Md4Vp8sRMAOuSarcjzNqbmIShg5rg2J2gdQq64nGCOCKossrv8v1lRu0PmCZjf2tjMWLfufnOXrYm1plc_Ldow63McAE-uROkfdc5p07QSmaiRMgkcrzvXUeBrjlBbtYf8mStHj4nqC6RTFATi5Aj_Zt3p3-c5fyLMOUMLmuKmVRPX_0xhG6Lxm9uHDL9gBod1PQhz8MJzonaMYXY_G4tjvpWVVuWMzI91LKQ8d-fT41B53-3gFlBwS5qmp_LTBHs2AJn90GCkNfFPBYBIFwEZeHaZcTHxwvo5f6Lco7LetQuquE8Y6rIIt8_cPg7bg'
+    rfid_uid = 2222
+    patente = 'ABC321'
+    # fecha = datetime.datetime.today() - datetime.timedelta(days=1)
+    fecha = datetime.datetime(2024,3,9)
 
-    # # Playon
-    # turno_id = sivrg_send_validate(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)
-    # # This will create an empty pesada entry
-    # sivrg_update_turno(access_token=access_token,id=turno_id, state=TURNO_STATE.ENTRANCE)
+    # Playon
+    turno_id = sivrg_send_validate(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)
+    # This will create an empty pesada entry
+    sivrg_update_turno(access_token=access_token,id=turno_id, state=TURNO_STATE.ENTRANCE)
 
     # # BalanzaIN
     # turno_id = sivrg_send_validate(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)
