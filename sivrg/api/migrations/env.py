@@ -18,7 +18,8 @@ config = context.config
 
 # this will overwrite the ini-file sqlalchemy.url path
 # with the path given in the config of the main code
-config.set_main_option("sqlalchemy.url", os.environ["DATABASE_URL"])
+DATABSE_URL = f"postgresql+psycopg2://{os.environ["POSTGRES_USERNAME"]}:{os.environ["POSTGRES_PASSWORD"]}@{os.environ["POSTGRES_HOST"]}/{os.environ["POSTGRES_DATABASE"]}"
+config.set_main_option("sqlalchemy.url", DATABSE_URL)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
