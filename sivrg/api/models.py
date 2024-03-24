@@ -82,7 +82,6 @@ class Pesada(Base):
     peso_bruto_in = Column(DECIMAL(9, 2), nullable=True)
     peso_bruto_out = Column(DECIMAL(9, 2), nullable=True)
     turno_id = Column(Integer, ForeignKey("turnos.id"))
-    turno = relationship("Turno", backref="pesada_turno", foreign_keys=[turno_id])
 
 
 class Silo(Base):
@@ -92,7 +91,7 @@ class Silo(Base):
     producto_id = Column(Integer, ForeignKey("productos.id"))
     capacidad = Column(Integer, nullable=False)
     utilizado = Column(Integer, nullable=False)
-    estado = Column(Integer, nullable=False)
+    habilitado = Column(Boolean, nullable=False)
 
 
 class Turno(Base):

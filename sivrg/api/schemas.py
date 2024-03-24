@@ -98,7 +98,7 @@ class SiloBase(BaseModel):
     producto_id: int
     capacidad: int
     utilizado: int
-    estado: int
+    habilitado: bool
 
 
 class SiloCreate(SiloBase):

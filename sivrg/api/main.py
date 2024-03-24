@@ -86,13 +86,14 @@ def read_empresas(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if email:
-        return crud.get_empresa_by_email(db=db, email=email)
-    if nombre:
-        return crud.get_empresa_by_name(db=db, nombre=nombre)
-    if user.email:
-        return crud.get_empresa_by_email(db=db, email=user.email)
-    return crud.get_empresas(db=db, skip=skip, limit=limit)
+    # if employee get all empresas
+    if "employee" in user.roles:
+        if email:
+            return crud.get_empresa_by_email(db=db, email=email)
+        if nombre:
+            return crud.get_empresa_by_name(db=db, nombre=nombre)
+        return crud.get_empresas(db=db, skip=skip, limit=limit)
+    return crud.get_empresa_by_email(db=db, email=user.email)
 
 
 @app.get("/empresas/{id}", response_model=schemas.Empresa)
@@ -182,11 +183,11 @@ def read_choferes(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
+    if empresa_id:
+        return crud.get_choferes_by_empresa(db, id, skip=skip, limit=limit)
     if "employee" in user.roles:
         # Get all choferes
         return crud.get_choferes(db, skip=skip, limit=limit)
-    if empresa_id:
-        return crud.get_choferes_by_empresa(db, id, skip=skip, limit=limit)
     # Get only the resources from that empresa
     empresa = crud.get_empresa_by_email(db=db, email=user.email)
     return crud.get_choferes_by_empresa(

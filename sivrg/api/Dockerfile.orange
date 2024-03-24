@@ -1,9 +1,12 @@
-FROM python:3.11
+FROM python:3.12
 WORKDIR /code
 COPY ./requirements/development.txt /code/requirements.txt
 RUN pip install -r /code/requirements.txt
 # COPY ./api-sivrg.crt /code/
 # COPY ./api-sivrg.key /code/
 COPY . /code/
-# CMD ["uvicorn", "main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8443", "--ssl-keyfile", "api-sivrg.key", "--ssl-certfile", "api-sivrg.crt"]
+
+RUN adduser --system --no-create-home code
+RUN chmod -R 777 /code/migrations
+USER code
 CMD ["uvicorn", "main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8000"]

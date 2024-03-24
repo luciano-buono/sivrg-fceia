@@ -3,4 +3,8 @@ Generic single-database configuration.
 
 
 alembic revision --autogenerate -m "Init DB"
+alembic revision --autogenerate -m "Add pesada id to turnos table"
 alembic upgrade head
+
+Check if there are the latest migrations
+alembic check
