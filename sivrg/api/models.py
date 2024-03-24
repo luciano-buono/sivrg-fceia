@@ -82,7 +82,7 @@ class Pesada(Base):
     peso_bruto_in = Column(DECIMAL(9, 2), nullable=True)
     peso_bruto_out = Column(DECIMAL(9, 2), nullable=True)
     turno_id = Column(Integer, ForeignKey("turnos.id"))
-    turno = relationship("Turno", backref="pesada_turno")
+    turno = relationship("Turno", backref="pesada_turno", foreign_keys=[turno_id])
 
 
 class Silo(Base):
@@ -110,13 +110,16 @@ class Turno(Base):
     empresa_id = Column(Integer, ForeignKey("empresas.id"))
     producto_id = Column(Integer, ForeignKey("productos.id"))
     vehiculo_id = Column(Integer, ForeignKey("vehiculos.id"))
+    pesada_id = Column(Integer, ForeignKey("pesadas.id"), nullable=True)
     chofer = relationship("Chofer", backref="chofer_turno")
     empresa = relationship("Empresa", backref="empresa_turno")
     producto = relationship("Producto", backref="producto_turno")
     vehiculo = relationship(
         "Vehiculo", backref="vehiculo_turno", foreign_keys=[vehiculo_id]
     )
-
+    pesada = relationship(
+        "Pesada", backref="pesada_turno", foreign_keys=[pesada_id]
+    )
 
 class Vehiculo(Base):
     __tablename__ = "vehiculos"

@@ -343,13 +343,15 @@ def get_turnos_by_patente_rfid(
     )
 
 
-def update_turno(db: Session, id: int, state: str, checking_time: datetime | None):
+def update_turno(db: Session, id: int, state: str, checking_time: datetime | None, pesada_id: int | None):
     turno = db.query(models.Turno).filter(models.Turno.id == id).one_or_none()
     if not turno:
         raise HTTPException(status_code=404, detail="Turno not found")
     setattr(turno, "state", state)
     if checking_time:
         setattr(turno, "checking_time", checking_time)
+    if pesada_id:
+        setattr(turno, "pesada_id", pesada_id)
     db.add(turno)
     db.commit()
     db.refresh(turno)

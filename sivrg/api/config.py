@@ -22,7 +22,6 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DATABASE: str
     POSTGRES_HOST: str
-    DATABASE_URL: str
 
     # Local
     is_local: bool

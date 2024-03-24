@@ -448,9 +448,9 @@ def update_turno(
     checking_time = None
     if state == "in_progress_entrada":
         instance = schemas.PesadaCreate(turno_id=id)
-        crud.create_pesada(db=db, pesada=instance)
+        pesada = crud.create_pesada(db=db, pesada=instance)
         checking_time = datetime.now()
-    return crud.update_turno(db=db, id=id, state=state, checking_time=checking_time)
+    return crud.update_turno(db=db, id=id, state=state, checking_time=checking_time, pesada_id=pesada.id)
 
 
 ## ------------Vehiculos operations---------------------
