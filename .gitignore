@@ -12,6 +12,7 @@ api/venv/
 .config
 *.crt
 *.key
+sivrg/api/.env
 
 venv/
 .venv/

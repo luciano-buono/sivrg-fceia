@@ -5,7 +5,7 @@ RUN pip install -r /code/requirements.txt
 # COPY ./api-sivrg.crt /code/
 # COPY ./api-sivrg.key /code/
 COPY . /code/
-
+COPY .env.template /code/.env
 RUN adduser --system --no-create-home code
 RUN chmod -R 777 /code/migrations
 USER code

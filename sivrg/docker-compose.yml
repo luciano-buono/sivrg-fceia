@@ -1,7 +1,7 @@
 services:
   api:
     container_name: api
-    image: methizul/sivrg:backend-1.4
+    image: methizul/sivrg:backend-1.4.2
     build:
       context: ./api
       dockerfile: ./Dockerfile.orange
