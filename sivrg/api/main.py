@@ -541,9 +541,10 @@ def get_public():
     return {"message": "Anonymous user"}
 
 
-@app.get("/public/test_create")
+@app.get("/test_create")
 def test_create(
     db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
 ):
     test_empresa = schemas.EmpresaCreate(
         nombre="Empresin",

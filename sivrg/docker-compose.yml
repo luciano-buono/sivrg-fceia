@@ -1,7 +1,7 @@
 services:
   api:
     container_name: api
-    image: methizul/sivrg:backend-1.4.2
+    image: methizul/sivrg:backend-1.4.4
     build:
       context: ./api
       dockerfile: ./Dockerfile.orange
@@ -32,10 +32,10 @@ services:
 
   frontend:
     container_name: frontend
-    image: sivrg-nginx
+    image: methizul/sivrg:frontend-1.1
     build:
       context: .
-      dockerfile: ./nginx/Dockerfile
+      dockerfile: ./nginx/Dockerfile.k3s
     # volumes:
     #   - ./frontend:/usr/src/app
     # working_dir: /usr/src/app

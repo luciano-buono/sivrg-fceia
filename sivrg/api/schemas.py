@@ -156,7 +156,7 @@ class Turno(TurnoBase):
     chofer: Chofer
     producto: Producto
     vehiculo: Vehiculo
-    pesada: Pesada
+    pesada: Pesada | None
 
     @field_validator("state", mode="before")
     def serialize_state(cls, value: ChoiceType) -> str:
