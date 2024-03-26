@@ -17,7 +17,7 @@ const ClientPage = () => {
 
   const { data: empresa, isLoading: isLoadingEmpresa } = useQuery<Empresa[]>({
     queryKey: ['empresas', user?.email],
-    queryFn: async () => await api.get(`/empresas/?empresa_email=${user?.email}`).then((res) => res.data),
+    queryFn: async () => await api.get(`/empresas/?email=${user?.email}`).then((res) => res.data),
   });
 
   if (isLoadingEmpresa) {

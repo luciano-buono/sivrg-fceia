@@ -32,11 +32,11 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Ingrese un email válido'),
     },
   });
-
+  console.log(form)
   const handleCreateChofer = async (newChoferData: ChoferData) => {
     try {
       const chofer = await createChofer.mutateAsync(newChoferData);
-      bookingForm.setFieldValue('chofer_id', chofer.chofer_id.toString());
+      bookingForm.setFieldValue('id', chofer.id.toString());
       updateSearch(`${chofer.nombre} ${chofer.apellido}, ${chofer.dni.toString()}`);
       closeFn();
       notifications.show({

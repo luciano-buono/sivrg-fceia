@@ -42,7 +42,7 @@ const StepDetalles: FC = () => {
 
               return {};
             }}
-            {...form.getInputProps('turno_fecha')}
+            {...form.getInputProps('fecha')}
           />
           <NumberInput
             className="col-md-4 pb-2"

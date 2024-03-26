@@ -40,7 +40,7 @@ const ReservationsPage = () => {
       cell: (info) => info.renderValue(),
       header: () => <span>Patente</span>,
     }),
-    columnHelper.accessor('producto.producto_nombre', {
+    columnHelper.accessor('producto.nombre', {
       cell: (info) => info.renderValue(),
       header: () => <span>Producto</span>,
     }),
@@ -49,7 +49,7 @@ const ReservationsPage = () => {
       cell: (info) => <span>{info.renderValue()} kg</span>,
       header: () => <span>Cantidad estimada</span>,
     }),
-    columnHelper.accessor('turno_fecha', {
+    columnHelper.accessor('fecha', {
       id: 'turno_fecha',
       header: () => 'Fecha',
       cell: (info) => info.renderValue()?.slice(0, 10),
@@ -75,7 +75,7 @@ const ReservationsPage = () => {
       cell: (info) => <span>{`${info.row.original.chofer.dni}`}</span>,
       header: () => <span>Chofer</span>,
     }),
-    columnHelper.accessor('turno_fecha', {
+    columnHelper.accessor('fecha', {
       id: 'turno_fecha',
       header: () => 'Fecha',
       cell: (info) => info.renderValue()?.slice(0, 10),

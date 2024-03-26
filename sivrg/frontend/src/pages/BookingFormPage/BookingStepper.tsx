@@ -26,29 +26,29 @@ const BookingStepper = () => {
       empresa_id: empresa_id,
       producto_id: '',
       vehiculo_id: '',
-      turno_fecha: null,
+      fecha: null,
       cantidad_estimada: '',
     },
 
     validate: (values) => {
       if (active === 0) {
         return {
-          chofer_id: values.chofer_id === '' ? 'Busque o cree un chofer' : null,
+          chofer_id: values.chofer_id === null ? 'Busque o cree un chofer' : null,
         };
       }
       if (active === 1) {
         return {
-          vehiculo_id: values.vehiculo_id === '' ? 'Busque o cree un vehículo' : null,
+          vehiculo_id: values.vehiculo_id === null ? 'Busque o cree un vehículo' : null,
         };
       }
       if (active === 2) {
         return {
-          producto_id: values.producto_id === '' ? 'Busque o cree un producto' : null,
+          producto_id: values.producto_id === null ? 'Busque o cree un producto' : null,
         };
       }
       if (active === 3) {
         return {
-          turno_fecha: values.turno_fecha === null ? 'Seleccione una fecha' : null,
+          turno_fecha: values.fecha === null ? 'Seleccione una fecha' : null,
           cantidad_estimada: ['', '0'].includes(values.cantidad_estimada) ? 'Ingrese una cantidad válida' : null,
         };
       }
@@ -69,7 +69,7 @@ const BookingStepper = () => {
       notifications.show({
         title: 'Turno agendado!',
         color: 'green',
-        message: `Se ha agendado el turno para el ${turno.turno_fecha}`,
+        message: `Se ha agendado el turno para el ${turno.fecha}`,
       });
       form.reset();
     } catch (error) {
@@ -86,6 +86,7 @@ const BookingStepper = () => {
   const nextStep = () =>
     setActive((current) => {
       if (form.validate().hasErrors) {
+        console.log(form.validate())
         return current;
       }
       if (current === 3) {

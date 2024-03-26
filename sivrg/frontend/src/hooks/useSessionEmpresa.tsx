@@ -7,10 +7,10 @@ const useSessionEmpresa = () => {
   const { user } = useSession();
   const getEmpresaByUser = useQuery<Empresa[]>({
     queryKey: ['empresas', user?.email],
-    queryFn: async () => await api.get(`/empresas/?empresa_email=${user?.email}`).then((res) => res.data),
+    queryFn: async () => await api.get(`/empresas/?email=${user?.email}`).then((res) => res.data),
   });
 
-  const empresa_id = getEmpresaByUser.data?.[0]?.empresa_id || null;
+  const empresa_id = getEmpresaByUser.data?.[0]?.id || null;
 
   return { getEmpresaByUser, empresa_id };
 };

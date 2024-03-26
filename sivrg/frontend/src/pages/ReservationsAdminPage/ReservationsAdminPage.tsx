@@ -7,11 +7,22 @@ import { notifications } from '@mantine/notifications';
 import { useMediaQuery } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api';
+import useTurno from '../../hooks/useTurno';
 
 const columnHelper = createColumnHelper<Turno>();
 
 const ReservationsAdminPage = () => {
   const { isLoading } = useSession();
+  const {acceptTurno} = useTurno() 
+  const handleSubmitRow = async (info: any) => {
+    await acceptTurno.mutateAsync(info.row.original.id);
+    // acceptTurno(info.row.original.id)
+    notifications.show({
+      title: 'Turno editado!',
+      color: 'green',
+      message: `Se ha aceptado el turno`,
+    });
+  };
 
   const handleEditRow = () => {
     notifications.show({
@@ -40,7 +51,7 @@ const ReservationsAdminPage = () => {
       cell: (info) => info.renderValue(),
       header: () => <span>Patente</span>,
     }),
-    columnHelper.accessor('producto.producto_nombre', {
+    columnHelper.accessor('producto.nombre', {
       cell: (info) => info.renderValue(),
       header: () => <span>Producto</span>,
     }),
@@ -49,17 +60,22 @@ const ReservationsAdminPage = () => {
       cell: (info) => <span>{info.renderValue()} kg</span>,
       header: () => <span>Cantidad estimada</span>,
     }),
-    columnHelper.accessor('turno_fecha', {
-      id: 'turno_fecha',
+    columnHelper.accessor('state', {
+      id: 'state',
+      header: () => 'Estado',
+      cell: (info) => info.renderValue(),
+    }),
+    columnHelper.accessor('fecha', {
+      id: 'fecha',
       header: () => 'Fecha',
       cell: (info) => info.renderValue()?.slice(0, 10),
     }),
     columnHelper.display({
       id: 'actions',
       header: () => 'Acciones',
-      cell: () => (
+      cell: (info) => (
         <div className="d-flex justify-content-around">
-          <Button size="compact-sm" color="green" onClick={handleEditRow}>
+          <Button size="compact-sm" color="green" onClick={() => handleSubmitRow(info)}>
             <i className="fa-solid fa-check"></i>
           </Button>
           <Button size="compact-sm" color="yellow" onClick={handleEditRow}>
@@ -78,7 +94,7 @@ const ReservationsAdminPage = () => {
       cell: (info) => <span>{`${info.row.original.chofer.dni}`}</span>,
       header: () => <span>Chofer</span>,
     }),
-    columnHelper.accessor('turno_fecha', {
+    columnHelper.accessor('fecha', {
       id: 'turno_fecha',
       header: () => 'Fecha',
       cell: (info) => info.renderValue()?.slice(0, 10),
@@ -88,7 +104,7 @@ const ReservationsAdminPage = () => {
       header: () => 'Acciones',
       cell: () => (
         <div className="d-flex justify-content-around">
-          <Button size="compact-sm" color="green" onClick={handleEditRow}>
+          <Button size="compact-sm" color="green" onClick={handleSubmitRow}>
             <i className="fa-solid fa-check"></i>
           </Button>
           <Button size="compact-sm" color="yellow" onClick={handleEditRow}>

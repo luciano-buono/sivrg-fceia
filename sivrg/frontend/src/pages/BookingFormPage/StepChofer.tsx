@@ -17,12 +17,12 @@ const StepChofer: FC = () => {
   const updateSearch = (value: string) => {
     setSearchValue(value);
   };
+  const form = useBookingFormContext();
 
   const updateValue = (value: string) => {
     form.setFieldValue('chofer_id', value);
   };
 
-  const form = useBookingFormContext();
 
   const queryChofer = useQuery<Chofer[]>({
     queryKey: ['choferes'],
@@ -30,10 +30,12 @@ const StepChofer: FC = () => {
   });
   const { data: choferes } = queryChofer;
 
-  const selectData = choferes?.map((chofer) => ({
-    value: chofer.chofer_id.toString(),
+  const selectData = choferes?.map((chofer) => {
+  console.log(chofer);
+  return({
+    value: chofer.id.toString(),
     label: `${chofer.nombre} ${chofer.apellido}, ${chofer.dni.toString()}`,
-  }));
+  })});
 
   return (
     <Container>

@@ -35,7 +35,7 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const handleCreateVehiculo = async (newVehiculoData: VehiculoData) => {
     try {
       const vehiculo = await createVehiculo.mutateAsync(newVehiculoData);
-      bookingForm.setFieldValue('vehiculo_id', vehiculo.vehiculo_id.toString());
+      bookingForm.setFieldValue('id', vehiculo.id.toString());
       updateSearch(`${vehiculo.patente},  ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`);
       closeFn();
       notifications.show({

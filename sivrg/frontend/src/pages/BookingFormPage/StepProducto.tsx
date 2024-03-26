@@ -18,8 +18,8 @@ const StepProducto: FC = () => {
   const { data: productos } = queryProducto;
 
   const selectData = productos?.map((producto) => ({
-    value: `${producto.producto_id}`,
-    label: `${producto.producto_nombre}`,
+    value: `${producto.id}`,
+    label: `${producto.nombre}`,
   }));
 
   return (

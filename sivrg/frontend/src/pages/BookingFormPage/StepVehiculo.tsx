@@ -31,7 +31,7 @@ const StepVehiculo: FC = () => {
   const { data: vehiculos } = queryVehiculo;
 
   const selectData = vehiculos?.map((vehiculo) => ({
-    value: vehiculo.vehiculo_id.toString(),
+    value: vehiculo.id.toString(),
     label: `${vehiculo.patente},  ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`,
   }));
 

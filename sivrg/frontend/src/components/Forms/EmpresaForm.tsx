@@ -14,26 +14,26 @@ const EmpresaForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
 
   const form = useForm<EmpresaData>({
     initialValues: {
-      empresa_nombre: '',
-      empresa_RS: '',
-      empresa_CUIT: undefined,
-      empresa_direccion: 'Calle 123',
-      empresa_localidad: 'Rosario',
-      empresa_provincia: 'Santa Fe',
-      empresa_pais: 'Argentina',
-      empresa_telefono: '341872817',
-      empresa_email: user?.email,
+      nombre: '',
+      RS: '',
+      CUIT: undefined,
+      direccion: 'Calle 123',
+      localidad: 'Rosario',
+      provincia: 'Santa Fe',
+      pais: 'Argentina',
+      telefono: '341872817',
+      email: user?.email,
     },
     validate: {
-      empresa_nombre: (value) => (value !== '' ? null : 'Ingrese un nombre'),
-      empresa_RS: (value) => (value !== '' ? null : 'Ingrese un valor de RS'),
-      empresa_CUIT: (value) => (value ? null : 'Ingrese un CUIT'),
-      empresa_direccion: (value) => (value ? null : 'Ingrese una dirección'),
-      empresa_localidad: (value) => (value ? null : 'Ingrese una localidad'),
-      empresa_provincia: (value) => (value ? null : 'Ingrese una provincia'),
-      empresa_pais: (value) => (value ? null : 'Ingrese un país'),
-      empresa_telefono: (value) => (value !== '' ? null : 'Ingrese un teléfono'),
-      empresa_email: (value) => (value !== '' ? null : 'Ingrese un email'),
+      nombre: (value) => (value !== '' ? null : 'Ingrese un nombre'),
+      RS: (value) => (value !== '' ? null : 'Ingrese un valor de RS'),
+      CUIT: (value) => (value ? null : 'Ingrese un CUIT'),
+      direccion: (value) => (value ? null : 'Ingrese una dirección'),
+      localidad: (value) => (value ? null : 'Ingrese una localidad'),
+      provincia: (value) => (value ? null : 'Ingrese una provincia'),
+      pais: (value) => (value ? null : 'Ingrese un país'),
+      telefono: (value) => (value !== '' ? null : 'Ingrese un teléfono'),
+      email: (value) => (value !== '' ? null : 'Ingrese un email'),
     },
   });
 
@@ -44,7 +44,7 @@ const EmpresaForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
       notifications.show({
         title: 'Empresa creada!',
         color: 'green',
-        message: `Se ha registrado la empresa ${newEmpresaData.empresa_nombre}`,
+        message: `Se ha registrado la empresa ${newEmpresaData.nombre}`,
       });
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -62,15 +62,15 @@ const EmpresaForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
       onSubmit={form.onSubmit(() => {
         if (!isMutatingEmpresa) {
           handleCreateEmpresa({
-            empresa_nombre: form.values.empresa_nombre,
-            empresa_RS: form.values.empresa_RS,
-            empresa_CUIT: form.values.empresa_CUIT,
-            empresa_direccion: form.values.empresa_direccion,
-            empresa_localidad: form.values.empresa_localidad,
-            empresa_pais: form.values.empresa_pais,
-            empresa_provincia: form.values.empresa_provincia,
-            empresa_telefono: form.values.empresa_telefono,
-            empresa_email: form.values.empresa_email,
+            nombre: form.values.nombre,
+            RS: form.values.RS,
+            CUIT: form.values.CUIT,
+            direccion: form.values.direccion,
+            localidad: form.values.localidad,
+            pais: form.values.pais,
+            provincia: form.values.provincia,
+            telefono: form.values.telefono,
+            email: form.values.email,
           });
         }
       })}
@@ -81,7 +81,7 @@ const EmpresaForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
           withAsterisk
           label="Nombre"
           placeholder="Nombre"
-          {...form.getInputProps('empresa_nombre')}
+          {...form.getInputProps('nombre')}
         />
         <NumberInput
           hideControls
@@ -89,14 +89,14 @@ const EmpresaForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
           withAsterisk
           label="CUIT"
           placeholder="CUIT"
-          {...form.getInputProps('empresa_CUIT')}
+          {...form.getInputProps('CUIT')}
         />
         <TextInput
           className="col-md-4"
           withAsterisk
           label="RS"
           placeholder="Ingrese el RS"
-          {...form.getInputProps('empresa_RS')}
+          {...form.getInputProps('RS')}
         />
       </Row>
       <Row>
@@ -105,35 +105,35 @@ const EmpresaForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
           withAsterisk
           label="Localidad"
           placeholder="Localidad"
-          {...form.getInputProps('empresa_localidad')}
+          {...form.getInputProps('localidad')}
         />
         <TextInput
           className="col-md-4"
           withAsterisk
           label="País"
           placeholder="País"
-          {...form.getInputProps('empresa_pais')}
+          {...form.getInputProps('pais')}
         />
         <TextInput
           className="col-md-4"
           withAsterisk
           label="Provincia"
           placeholder="Provincia"
-          {...form.getInputProps('empresa_provincia')}
+          {...form.getInputProps('provincia')}
         />
         <TextInput
           className="col-md-4"
           withAsterisk
           label="Dirección"
           placeholder="Dirección de su empresa"
-          {...form.getInputProps('empresa_direccion')}
+          {...form.getInputProps('direccion')}
         />
         <TextInput
           className="col-md-4"
           withAsterisk
           label="Teléfono"
           placeholder="Teléfono"
-          {...form.getInputProps('empresa_telefono')}
+          {...form.getInputProps('telefono')}
         />
         <TextInput
           className="col-md-4"
@@ -142,7 +142,7 @@ const EmpresaForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
           disabled
           label="Email"
           placeholder="Email"
-          {...form.getInputProps('empresa_email')}
+          {...form.getInputProps('email')}
         />
       </Row>
       <Row className="d-flex justify-content-end pt-3 pe-3">
