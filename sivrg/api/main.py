@@ -30,6 +30,8 @@ from typing import Optional, Dict, List, Type
 
 from auth0_extended import Auth0User, Auth0
 
+import models, schemas
+
 @lru_cache()
 def get_settings():
     return config.Settings()
@@ -184,14 +186,14 @@ def read_choferes(
     user: Auth0User = Security(auth.get_user),
 ):
     if empresa_id:
-        return crud.get_choferes_by_empresa(db, id, skip=skip, limit=limit)
+        return crud.get_choferes_by_empresa(db, empresa_id=empresa_id, skip=skip, limit=limit)
     if "employee" in user.roles:
         # Get all choferes
         return crud.get_choferes(db, skip=skip, limit=limit)
     # Get only the resources from that empresa
     empresa = crud.get_empresa_by_email(db=db, email=user.email)
     return crud.get_choferes_by_empresa(
-        db=db, id=empresa.one().id, skip=skip, limit=limit
+        db=db, empresa_id=empresa.one().id, skip=skip, limit=limit
     )
 
 
@@ -473,24 +475,16 @@ def create_vehiculo(
 @app.get("/vehiculos/", response_model=list[schemas.Vehiculo])
 def read_vehiculos(
     patente: str | None = None,
-    skip: int = 0,
-    limit: int = 100,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if "employee" in user.roles:
-        # Get all turns
-        return crud.get_vehiculos(db, skip=skip, limit=limit)
+    q = db.query(models.Vehiculo)
+    if "client" in user.roles:
+        empresa = crud.get_empresa_by_email(db=db, email=user.email)
+        q = q.filter(models.Empresa.id==empresa.one().id)
     if patente:
-        vehiculo = crud.get_vehiculo_by_patente(db, patente)
-        if vehiculo is None:
-            raise HTTPException(status_code=404, detail="Vehiculo not found")
-        return vehiculo
-    # Get only the resources from that empresa
-    empresa = crud.get_empresa_by_email(db=db, email=user.email)
-    return crud.get_vehiculo_by_empresa(
-        db, empresa_id=empresa.one().id, skip=skip, limit=limit
-    )
+        return q.filter(models.Vehiculo.patente == patente).all()
+    return q.all()
 
 
 # Get a Vehiculo by ID
@@ -504,20 +498,6 @@ def read_vehiculo(
     if vehiculo is None:
         raise HTTPException(status_code=404, detail="Vehiculo not found")
     return vehiculo
-
-
-# Get a Vehiculo by ID SECURE
-@app.get("/vehiculos/secure/{id}", response_model=schemas.Vehiculo)
-def read_vehiculo(
-    id: int,
-    db: Session = Depends(get_db),
-    user: Auth0User = Security(auth.get_user),
-):
-    vehiculo = crud.get_vehiculo(db, id)
-    if vehiculo is None:
-        raise HTTPException(status_code=404, detail="Vehiculo not found")
-    return vehiculo
-
 
 @app.put("/vehiculos/{id}", response_model=schemas.Vehiculo)
 def update_vehiculo(

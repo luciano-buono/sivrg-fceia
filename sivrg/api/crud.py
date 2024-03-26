@@ -382,11 +382,11 @@ def get_vehiculo(db: Session, id: int):
 
 
 # Get a Vehiculo by empresa
-def get_vehiculo_by_empresa(db: Session, empresa_id: str):
+def get_vehiculos_by_empresa(db: Session, empresa_id: str, skip: int = 0, limit: int = 100):
     return (
         db.query(models.Vehiculo)
         .filter(models.Vehiculo.empresa_id == empresa_id)
-        .first()
+        .offset(skip).limit(limit).all()
     )
 
 

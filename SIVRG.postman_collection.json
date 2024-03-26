@@ -1,0 +1,748 @@
+{
+	"info": {
+		"_postman_id": "12c8291f-b41d-44c3-b358-5efbd59e550b",
+		"name": "SIVRG",
+		"description": "## Proceso de entrada a planta:\n\n### Virtual\n1. Cliente se registra por Auth0\n2. Cliente se logea en sivrg.methizul.com.ar y se registra, creando una entrada de empresas\n3. Cliente crea un vehiculo con patente definida\n4. Cliente crea un chofer (por simplicidad ya posee RFID_UID ya sabido de antemano)\n5. Cliente crea un turno, definiendo su vehiculo, su chofer, su dia y su producto\n### Entrada a planta\n1. Camion entra y presenta RFID y patente\n2. GET Request a http://localhost:5000/public/turnos/validate\n3. Si validate es ok, PUT request a http://localhost:5000/turnos/{id} (obtenido de paso anterior), donde se modifica el state a in_progress_entrada\n4. Esto provoca la creacion automatica de una pesada a http://localhost:5000/pesadas, donde no tiene pesos, solo el turno id.\n### Entrada a balanza ingreso\n1. GET Request a http://localhost:5000/public/turnos/validate\n2. Si validate es ok, PUT request a http://localhost:5000/turnos/{id} (obtenido de paso anterior), donde se modifica el state a in_progress_balanza_in\n3. GET request a http://localhost:5000/turnos/{turno_id}/pesada pasando turno ID, donde se obtiene la pesada ID\n4. Inicia proceso de pesado con PLC\n5. Se edita la pesada con un PUT request a http://localhost:5000/pesadas, donde se agrega fecha_hora_balanza_in, peso_bruto_in\n### Entrada a balanza egreso\n1. GET Request a http://localhost:5000/public/turnos/validate\n2. Si validate es ok, PUT request a http://localhost:5000/turnos/{id} (obtenido de paso anterior), donde se modifica el state a in_progress_balanza_out\n3. GET request a http://localhost:5000/turnos/{turno_id}/pesada pasando turno ID, donde se obtiene la pesada ID\n4. Inicia proceso de pesado con PLC\n5. Se edita la pesada con un PUT request a http://localhost:5000/pesadas, donde se agrega fecha_hora_balanza_out, peso_bruto_out",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth0?",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://methizul.us.auth0.com/authorize?response_type=code&client_id=vum6xRm32RbmlDjMEaQb84dAxGD0AbgV&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&redirect_uri=http://localhost:5173&audience=https://api.sivrg.methizul.com&state=xyzABC123&scope=offline_access",
+					"protocol": "https",
+					"host": [
+						"methizul",
+						"us",
+						"auth0",
+						"com"
+					],
+					"path": [
+						"authorize"
+					],
+					"query": [
+						{
+							"key": "response_type",
+							"value": "code"
+						},
+						{
+							"key": "client_id",
+							"value": "vum6xRm32RbmlDjMEaQb84dAxGD0AbgV"
+						},
+						{
+							"key": "code_challenge",
+							"value": "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM"
+						},
+						{
+							"key": "code_challenge_method",
+							"value": "S256"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "http://localhost:5173"
+						},
+						{
+							"key": "audience",
+							"value": "https://api.sivrg.methizul.com"
+						},
+						{
+							"key": "state",
+							"value": "xyzABC123"
+						},
+						{
+							"key": "scope",
+							"value": "offline_access"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create empresa",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nombre\": \"Papalia\",\n  \"RS\": \"RI\",\n  \"CUIT\": 3011038144,\n  \"direccion\": \"Fealte 123\",\n  \"localidad\": \"Rosario\",\n  \"provincia\": \"Santa Fe\",\n  \"pais\": \"Argentina\",\n  \"telefono\": \"+549124199127\",\n  \"email\": \"Papalia@external.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/empresas/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"empresas",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create vehiculo",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"patente\": \"ABC321\",\n  \"seguro\": \"La segunda\",\n  \"modelo\": \"Yaris\",\n  \"año\": 2020,\n  \"marca\": \"Toyota\",\n  \"habilitado\": true,\n  \"empresa_id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/vehiculos/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"vehiculos",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create chofer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"rfid_uid\": 2222,\n  \"nombre\": \"Juanca\",\n  \"apellido\": \"rlos\",\n  \"dni\": 30109181,\n  \"empresa_id\": 1,\n  \"habilitado\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/choferes/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"choferes",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create turno",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"fecha\": \"2024-03-09T21:03:10.728Z\",\n  \"cantidad_estimada\": 11100,\n  \"chofer_id\": 1,\n  \"empresa_id\": 1,\n  \"producto_id\": 1,\n  \"vehiculo_id\": 1,\n  \"state\": \"pending\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/turnos/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"turnos",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit chofer",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"rfid_uid\": 2222,\n  \"nombre\": \"Juanca\",\n  \"apellido\": \"rlos\",\n  \"dni\": 30109181,\n  \"empresa_id\": 1,\n  \"habilitado\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/choferes/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"choferes",
+						"1"
+					],
+					"query": [
+						{
+							"key": "state",
+							"value": "in_progress_entrada",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/turnos/validate/?rfid_uid=2222&patente=ABC321&fecha=2024-02-17T21:04:00",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"turnos",
+						"validate",
+						""
+					],
+					"query": [
+						{
+							"key": "rfid_uid",
+							"value": "2222"
+						},
+						{
+							"key": "patente",
+							"value": "ABC321"
+						},
+						{
+							"key": "fecha",
+							"value": "2024-02-17T21:04:00"
+						},
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit turno",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/turnos/2?state=in_progress_entrada",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"turnos",
+						"2"
+					],
+					"query": [
+						{
+							"key": "state",
+							"value": "in_progress_entrada"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate balanza ingreso",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/public/turnos/validate?rfid_uid=2222&patente=ABC321&fecha=2024-02-17T21:04:00",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"public",
+						"turnos",
+						"validate"
+					],
+					"query": [
+						{
+							"key": "rfid_uid",
+							"value": "2222"
+						},
+						{
+							"key": "patente",
+							"value": "ABC321"
+						},
+						{
+							"key": "fecha",
+							"value": "2024-02-17T21:04:00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit turno balanza ingreso",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/turnos/1?state=in_progress_balanza_in",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"turnos",
+						"1"
+					],
+					"query": [
+						{
+							"key": "state",
+							"value": "in_progress_balanza_in"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get pesada balanza ingreso",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/turnos/1/pesada",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"turnos",
+						"1",
+						"pesada"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit pesada balanza ingreso",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"fecha_hora_balanza_in\": \"2024-02-17T21:30:55.749Z\",\n  \"peso_bruto_in\": 10000,\n  \"turno_id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/pesadas/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"pesadas",
+						"1"
+					],
+					"query": [
+						{
+							"key": "state",
+							"value": "in_progress_entrada",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate balanza egreso",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/public/turnos/validate?rfid_uid=2222&patente=ABC321&fecha=2024-02-17T21:04:00",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"public",
+						"turnos",
+						"validate"
+					],
+					"query": [
+						{
+							"key": "rfid_uid",
+							"value": "2222"
+						},
+						{
+							"key": "patente",
+							"value": "ABC321"
+						},
+						{
+							"key": "fecha",
+							"value": "2024-02-17T21:04:00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit turno balanza egreso",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/turnos/1?state=in_progress_balanza_in",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"turnos",
+						"1"
+					],
+					"query": [
+						{
+							"key": "state",
+							"value": "in_progress_balanza_in"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get pesada balanza egreso",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/turnos/1/pesada",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"turnos",
+						"1",
+						"pesada"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit pesada balanza egreso",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"fecha_hora_balanza_in\": \"2024-02-17T21:30:55.749Z\",\n  \"peso_bruto_in\": 10000,\n  \"turno_id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/pesadas/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"pesadas",
+						"1"
+					],
+					"query": [
+						{
+							"key": "state",
+							"value": "in_progress_entrada",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit turno finished",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/turnos/1?state=finished",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"turnos",
+						"1"
+					],
+					"query": [
+						{
+							"key": "state",
+							"value": "finished"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET TURNO DATE RANGE",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/turnos/by-date-range/?start_date=2024-03-08T16%3A28%3A52&end_date=2024-03-10T16%3A28%3A52&skip=0&limit=100&is_employee=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"turnos",
+						"by-date-range",
+						""
+					],
+					"query": [
+						{
+							"key": "start_date",
+							"value": "2024-03-08T16%3A28%3A52"
+						},
+						{
+							"key": "end_date",
+							"value": "2024-03-10T16%3A28%3A52"
+						},
+						{
+							"key": "skip",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "100"
+						},
+						{
+							"key": "is_employee",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET AUTH0",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/get_auth0_user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"get_auth0_user"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "TOKEN",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBlQjZ4Znp2am53TVhoSkpJUlV0dCJ9.eyJodHRwczovL3NpdnJnLm1ldGhpenVsLmNvbS9yb2xlcyI6WyJlbXBsb3llZSJdLCJodHRwczovL3NpdnJnLm1ldGhpenVsLmNvbS9lbWFpbCI6InJpY2FyZGl0b2ZvcnRAbWV0aGl6dWwubGl2ZSIsImlzcyI6Imh0dHBzOi8vbWV0aGl6dWwudXMuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDYxNGNlODUxNjE3MThlMDA2OWUzZDI1NCIsImF1ZCI6Imh0dHBzOi8vYXBpLnNpdnJnLm1ldGhpenVsLmNvbSIsImlhdCI6MTcwODI4MjI3MywiZXhwIjoxNzA4Mjg5NDczLCJhenAiOiJ2dW02eFJtMzJSYm1sRGpNRWFRYjg0ZEF4R0QwQWJnViIsInNjb3BlIjoiIiwicGVybWlzc2lvbnMiOltdfQ.iqDMy9qhZjU-fabUBXK2aku-potXI20mom0CyuZA4W4jApCy0m9sTMYNDgkgjr9aVxu218p2uk2eA-m7huDtJapYqOl86-TDRrVx3YwC4Dfo_nzr_TWmXBjHL_sFTzjLHrJhOeKnL_xuZi9ZSDnyPfYv4H_AvJjgde5_BQx30ls_oXIBwdGUzL7Q_MzEZG6dyamGAyuLbMPqwtXhE4B6WJ8pxOZun11YQvrlqXPGRtLQWnQLynw4J0SyMz6Sx609cfuqWvig6JAg1zX8-iJeq20bi6xV2DGZJ-X2JovWHXcryrSXWadw44JK10Qdxb5ctyHJlCaGKoh_Y6Zijq0ZgA"
+		}
+	]
+}
