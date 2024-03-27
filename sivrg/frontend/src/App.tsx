@@ -177,7 +177,7 @@ const App = () => {
         <AppShell.Footer>
           <Container fluid>
             <Row className="d-flex flex-wrap align-items-center">
-              {isClient ? <Text className="w-auto">{empresa?.empresa_nombre}, powered by:</Text> : null}
+              {isClient ? <Text className="w-auto">{empresa?.nombre}, powered by:</Text> : null}
               <Image className="px-0 pt-1" w={70} h={40} src={'https://i.imgur.com/gB7134o.png'} />
             </Row>
           </Container>
