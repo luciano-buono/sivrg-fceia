@@ -110,7 +110,7 @@ if __name__ == "__main__":
 
     # Playon
     turno_id = sivrg_send_validate(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)
-    # This will create an empty pesada entry
+    # When state is changed to in_progress_entrada, that will trigger an empty pesada entry
     sivrg_update_turno(access_token=access_token,id=turno_id, state=TURNO_STATE.ENTRANCE)
 
     # # BalanzaIN

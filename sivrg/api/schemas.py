@@ -152,6 +152,7 @@ class TurnoCreate(TurnoBase):
 class Turno(TurnoBase):
     id: int
     created_on: datetime
+    checking_time: datetime | None
     empresa: Empresa
     chofer: Chofer
     producto: Producto

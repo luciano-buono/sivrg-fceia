@@ -244,6 +244,18 @@ def get_silos_by_producto(
 def get_silos(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Silo).offset(skip).limit(limit).all()
 
+# Update silos
+def update_silos(db: Session, id: int, data: schemas.SiloCreate):
+    silos = db.query(models.Silo).filter(models.Silo.id == id).one_or_none()
+    if not silos:
+        raise HTTPException(status_code=404, detail="Silo not found")
+    for var, value in vars(data).items():
+        setattr(silos, var, value) if value else None
+    db.add(silos)
+    db.commit()
+    db.refresh(silos)
+    return silos
+
 
 ## ------------Turnos operations---------------------
 # Create a Turno
@@ -343,7 +355,7 @@ def get_turnos_by_patente_rfid(
     )
 
 
-def update_turno(db: Session, id: int, state: str, checking_time: datetime | None, pesada_id: int | None):
+def update_turno(db: Session, id: int, state: str, checking_time: datetime | None = None, pesada_id: int | None = None):
     turno = db.query(models.Turno).filter(models.Turno.id == id).one_or_none()
     if not turno:
         raise HTTPException(status_code=404, detail="Turno not found")
