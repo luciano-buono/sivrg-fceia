@@ -299,10 +299,45 @@ def read_pesadas(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
+    turno_id: int | None = None,
+    fecha_hora_balanza_out_start_date: datetime | None = Query(datetime.now(), description="Fecha"),
+    fecha_hora_balanza_out_end_date: datetime | None = Query(datetime.now(), description="Fecha"),
     user: Auth0User = Security(auth.get_user),
 ):
+    q = db.query(models.Pesada)
+    if turno_id:
+        q = q.filter(models.Pesada.turno_id == turno_id)
+    if fecha_hora_balanza_out_start_date and fecha_hora_balanza_out_end_date:
+        q = q.filter(models.Turno.fecha.between(fecha_hora_balanza_out_start_date, fecha_hora_balanza_out_end_date))
+    return q.all()
+
+
     pesadas = crud.get_pesada(db, skip=skip, limit=limit)
     return pesadas
+
+
+# Get all Turnos
+@app.get("/turnos/", response_model=list[schemas.Turno])
+def read_turnos(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    empresa_id: int | None = None,
+    state: str | None = None,
+    start_date: str | None = None,
+    end_date: str | None = None,
+    user: Auth0User = Security(auth.get_user),
+):
+    q = db.query(models.Turno)
+    if "client" in user.roles:
+        empresa_id = crud.get_empresa_by_email(db=db, email=user.email).one().id
+    if empresa_id:
+        q = q.filter(models.Turno.empresa_id == empresa_id)
+    if state:
+        q = q.filter(models.Turno.state == state)
+    if start_date and end_date:
+        q = q.filter(models.Turno.fecha.between(start_date, end_date))
+    return q.all()
 
 
 # Get Pesada by ID
@@ -452,6 +487,8 @@ def read_turnos(
     db: Session = Depends(get_db),
     empresa_id: int | None = None,
     state: str | None = None,
+    start_date: datetime | None = Query(datetime.now(), description="Fecha"),
+    end_date: datetime | None = Query(datetime.now(), description="Fecha"),
     user: Auth0User = Security(auth.get_user),
 ):
     q = db.query(models.Turno)
@@ -461,6 +498,8 @@ def read_turnos(
         q = q.filter(models.Turno.empresa_id == empresa_id)
     if state:
         q = q.filter(models.Turno.state == state)
+    if start_date and end_date:
+        q = q.filter(models.Turno.fecha.between(start_date, end_date))
     return q.all()
 
 
@@ -491,31 +530,6 @@ def read_pesada_by_turno_id(
     if pesada is None:
         raise HTTPException(status_code=404, detail="Pesada not found")
     return pesada
-
-
-# Get Pesada records by date range
-@app.get("/turnos/by-date-range/", response_model=list[schemas.Turno])
-def read_turnos_by_date_range(
-    start_date: str = Query(..., description="Start date of the date range"),
-    end_date: str = Query(..., description="End date of the date range"),
-    skip: int = Query(0, description="Number of records to skip"),
-    limit: int = Query(100, description="Maximum number of records to retrieve"),
-    db: Session = Depends(get_db),
-    user: Auth0User = Security(auth.get_user),
-):
-    if "employee" in user.roles:
-        return crud.get_turnos_by_date_range(
-            db, start_date, end_date, skip=skip, limit=limit
-        )
-    empresa = crud.get_empresa_by_email(db=db, email=user.email)
-    if not empresa.one_or_none():
-        raise HTTPException(
-            status_code=404, detail="That empresa doesn't have any turnos!"
-        )
-    return crud.get_turnos_by_date_range_by_empresa(
-        db, start_date, end_date, id=empresa.one().id, skip=skip, limit=limit
-    )
-
 
 # Validate turnos for OrangePI client
 @app.get("/turnos/validate/", response_model=schemas.Turno)
