@@ -120,6 +120,21 @@ def update_empresa(
 ):
     return crud.update_empresa(db=db, id=id, data=data)
 
+@app.delete("/empresas/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_empresa(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if "client" in user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
+    empresa = crud.get_empresa(db, id)
+    if empresa is None:
+        raise HTTPException(status_code=404, detail="empresa not found")
+    db.delete(empresa)
+    db.commit()
 
 ## ------------Producto operations---------------------
 # Create a Producto
@@ -161,6 +176,21 @@ def read_producto(
         raise HTTPException(status_code=404, detail="Producto not found")
     return producto
 
+@app.delete("/productos/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_producto(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if "client" in user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
+    producto = crud.get_producto(db, id)
+    if producto is None:
+        raise HTTPException(status_code=404, detail="producto not found")
+    db.delete(producto)
+    db.commit()
 
 ## ------------Chofer operations---------------------
 # Create a Chofer
@@ -234,6 +264,21 @@ def update_chofer(
 ):
     return crud.update_chofer(db=db, id=id, data=data)
 
+@app.delete("/choferes/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_chofer(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if "client" in user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
+    chofer = crud.get_chofer(db, id)
+    if chofer is None:
+        raise HTTPException(status_code=404, detail="chofer not found")
+    db.delete(chofer)
+    db.commit()
 
 ## ------------Pesada operations---------------------
 # Create a Pesada
@@ -297,6 +342,21 @@ def update_pesada(
 ):
     return crud.update_pesada(db=db, id=id, data=data)
 
+@app.delete("/pesadas/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_pesada(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if "client" in user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
+    pesada = crud.get_pesada(db, id)
+    if pesada is None:
+        raise HTTPException(status_code=404, detail="pesada not found")
+    db.delete(pesada)
+    db.commit()
 
 ## ------------Silos operations---------------------
 # Create a Silo
@@ -347,6 +407,21 @@ def update_silo(
 ):
     return crud.update_silo(db=db, id=id, data=data)
 
+@app.delete("/silos/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_silo(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if "client" in user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
+    silo = crud.get_silo(db, id)
+    if silo is None:
+        raise HTTPException(status_code=404, detail="silo not found")
+    db.delete(silo)
+    db.commit()
 
 ## ------------Turnos operations---------------------
 # Create a Turno
