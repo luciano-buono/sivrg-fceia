@@ -27,13 +27,14 @@
 4. Inicia proceso de pesado con PLC
 5. Se edita la pesada con un PUT request a http://localhost:5000/pesadas, donde se agrega fecha_hora_balanza_in, peso_bruto_in
 ### Entrada a balanza egreso
-1. GET Request a http://localhost:5000/public/turnos/validate
+1. GET Request a http://localhost:5000/turnos/validate
 2. Si validate es ok, PUT request a http://localhost:5000/turnos/{id} (obtenido de paso anterior), donde se modifica el state a in_progress_balanza_out
 3. GET request a http://localhost:5000/turnos/{turno_id}/pesada pasando turno ID, donde se obtiene la pesada ID
 4. Inicia proceso de pesado con PLC
 5. Se edita la pesada con un PUT request a http://localhost:5000/pesadas, donde se agrega fecha_hora_balanza_out, peso_bruto_out
 6. Se edita el turno y su estado se pasa a finished
-
+7. GET Request a /silos/{producto_id} para obtener el silo a usar en base al producto obtenido del turno
+8. Se edita el silo con un PUT request a  /silos/{id} con la capacidad nueva (suma de actual + pesada(resta de out - in))
 
 ### Pantalla controlada solo por la orange de entrada a planta
 1. Desp del /validate, se crea un array local donde se van agregando cada turno que va llegando a la planta.

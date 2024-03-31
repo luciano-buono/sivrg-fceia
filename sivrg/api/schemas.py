@@ -142,7 +142,7 @@ class TurnoBase(BaseModel):
     empresa_id: int
     producto_id: int
     vehiculo_id: int
-    state: TURNO_STATE = 'pending'
+    state: TURNO_STATE = "pending"
 
 
 class TurnoCreate(TurnoBase):

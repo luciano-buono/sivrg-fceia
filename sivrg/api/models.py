@@ -81,7 +81,7 @@ class Pesada(Base):
     fecha_hora_balanza_out = Column(TIMESTAMP, nullable=True)
     peso_bruto_in = Column(DECIMAL(9, 2), nullable=True)
     peso_bruto_out = Column(DECIMAL(9, 2), nullable=True)
-    turno_id = Column(Integer, ForeignKey("turnos.id"))
+    turno_id = Column(Integer)
 
 
 class Silo(Base):
@@ -116,9 +116,8 @@ class Turno(Base):
     vehiculo = relationship(
         "Vehiculo", backref="vehiculo_turno", foreign_keys=[vehiculo_id]
     )
-    pesada = relationship(
-        "Pesada", backref="pesada_turno", foreign_keys=[pesada_id]
-    )
+    pesada = relationship("Pesada", backref="pesada_turno", foreign_keys=[pesada_id])
+
 
 class Vehiculo(Base):
     __tablename__ = "vehiculos"

@@ -16,5 +16,13 @@ class Settings(BaseSettings):
     AUTH0_DOMAIN: str
     CLIENT_TYPE: str
     FAST_API_SERVER: str
+    LOCAL: bool = False
+
+    MODBUS_HOST_PLAYON: str
+    MODBUS_PORT_PLAYON: int
+    MODBUS_HOST_INGRESO_BALANZA: str
+    MODBUS_PORT_INGRESO_BALANZA: int
+    MODBUS_HOST_EGRESO_BALANZA: str
+    MODBUS_PORT_EGRESO_BALANZA: int
 
     model_config = SettingsConfigDict(env_file=".env")

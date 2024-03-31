@@ -211,10 +211,10 @@ def update_pesada(db: Session, id: int, data: schemas.PesadaCreate):
 # Create a Silo
 def create_silo(db: Session, silo: schemas.SiloCreate):
     db_silo = models.Silo(
-        id=silo.id,
+        producto_id=silo.producto_id,
         capacidad=silo.capacidad,
         utilizado=silo.utilizado,
-        estado=silo.estado,
+        habilitado=silo.habilitado,
     )
     db.add(db_silo)
     db.commit()
@@ -244,8 +244,9 @@ def get_silos_by_producto(
 def get_silos(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Silo).offset(skip).limit(limit).all()
 
+
 # Update silos
-def update_silos(db: Session, id: int, data: schemas.SiloCreate):
+def update_silo(db: Session, id: int, data: schemas.SiloCreate):
     silos = db.query(models.Silo).filter(models.Silo.id == id).one_or_none()
     if not silos:
         raise HTTPException(status_code=404, detail="Silo not found")
@@ -355,7 +356,13 @@ def get_turnos_by_patente_rfid(
     )
 
 
-def update_turno(db: Session, id: int, state: str, checking_time: datetime | None = None, pesada_id: int | None = None):
+def update_turno(
+    db: Session,
+    id: int,
+    state: str,
+    checking_time: datetime | None = None,
+    pesada_id: int | None = None,
+):
     turno = db.query(models.Turno).filter(models.Turno.id == id).one_or_none()
     if not turno:
         raise HTTPException(status_code=404, detail="Turno not found")
@@ -394,11 +401,15 @@ def get_vehiculo(db: Session, id: int):
 
 
 # Get a Vehiculo by empresa
-def get_vehiculos_by_empresa(db: Session, empresa_id: str, skip: int = 0, limit: int = 100):
+def get_vehiculos_by_empresa(
+    db: Session, empresa_id: str, skip: int = 0, limit: int = 100
+):
     return (
         db.query(models.Vehiculo)
         .filter(models.Vehiculo.empresa_id == empresa_id)
-        .offset(skip).limit(limit).all()
+        .offset(skip)
+        .limit(limit)
+        .all()
     )
 
 

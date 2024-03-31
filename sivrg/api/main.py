@@ -32,6 +32,7 @@ from auth0_extended import Auth0User, Auth0
 
 import models, schemas
 
+
 @lru_cache()
 def get_settings():
     return config.Settings()
@@ -186,7 +187,9 @@ def read_choferes(
     user: Auth0User = Security(auth.get_user),
 ):
     if empresa_id:
-        return crud.get_choferes_by_empresa(db, empresa_id=empresa_id, skip=skip, limit=limit)
+        return crud.get_choferes_by_empresa(
+            db, empresa_id=empresa_id, skip=skip, limit=limit
+        )
     if "employee" in user.roles:
         # Get all choferes
         return crud.get_choferes(db, skip=skip, limit=limit)
@@ -283,6 +286,7 @@ def read_pesadas_by_date_range(
     pesadas = crud.get_pesadas_by_date_range(db, start_date, end_date, skip, limit)
     return pesadas
 
+
 # Edit a Pesada
 @app.put("/pesadas/{id}", response_model=schemas.Pesada)
 def update_pesada(
@@ -302,7 +306,7 @@ def create_silo(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if not crud.get_producto(db=db, id=silo.id):
+    if not crud.get_producto(db=db, id=silo.producto_id):
         raise HTTPException(status_code=404, detail="Producto ID not found!")
     return crud.create_silo(db, silo)
 
@@ -332,6 +336,16 @@ def read_silo(
     if silo is None:
         raise HTTPException(status_code=404, detail="Silo not found")
     return silo
+
+
+@app.put("/silos/{id}", response_model=schemas.Silo)
+def update_silo(
+    id: int,
+    data: schemas.SiloCreate,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    return crud.update_silo(db=db, id=id, data=data)
 
 
 ## ------------Turnos operations---------------------
@@ -369,11 +383,10 @@ def read_turnos(
     if "client" in user.roles:
         empresa_id = crud.get_empresa_by_email(db=db, email=user.email).one().id
     if empresa_id:
-        q = q.filter(models.Turno.empresa_id==empresa_id)
+        q = q.filter(models.Turno.empresa_id == empresa_id)
     if state:
-        q = q.filter(models.Turno.state==state)
+        q = q.filter(models.Turno.state == state)
     return q.all()
-
 
 
 # Get a Turno by ID
@@ -421,7 +434,9 @@ def read_turnos_by_date_range(
         )
     empresa = crud.get_empresa_by_email(db=db, email=user.email)
     if not empresa.one_or_none():
-        raise HTTPException(status_code=404, detail="That empresa doesn't have any turnos!")
+        raise HTTPException(
+            status_code=404, detail="That empresa doesn't have any turnos!"
+        )
     return crud.get_turnos_by_date_range_by_empresa(
         db, start_date, end_date, id=empresa.one().id, skip=skip, limit=limit
     )
@@ -457,8 +472,11 @@ def update_turno(
         instance = schemas.PesadaCreate(turno_id=id)
         pesada = crud.create_pesada(db=db, pesada=instance)
         checking_time = datetime.now()
-        return crud.update_turno(db=db, id=id, state=state, checking_time=checking_time, pesada_id=pesada.id)
+        return crud.update_turno(
+            db=db, id=id, state=state, checking_time=checking_time, pesada_id=pesada.id
+        )
     return crud.update_turno(db=db, id=id, state=state)
+
 
 @app.delete("/turnos/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_turno(
@@ -467,12 +485,15 @@ def delete_turno(
     user: Auth0User = Security(auth.get_user),
 ):
     if "client" in user.roles:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
     turno = crud.get_turno(db, id)
     if turno is None:
         raise HTTPException(status_code=404, detail="Turno not found")
     db.delete(turno)
     db.commit()
+
 
 ## ------------Vehiculos operations---------------------
 # Create a Vehiculo
@@ -499,7 +520,7 @@ def read_vehiculos(
     q = db.query(models.Vehiculo)
     if "client" in user.roles:
         empresa = crud.get_empresa_by_email(db=db, email=user.email)
-        q = q.filter(models.Empresa.id==empresa.one().id)
+        q = q.filter(models.Empresa.id == empresa.one().id)
     if patente:
         q = q.filter(models.Vehiculo.patente == patente)
     return q.all()
@@ -517,6 +538,7 @@ def read_vehiculo(
         raise HTTPException(status_code=404, detail="Vehiculo not found")
     return vehiculo
 
+
 @app.put("/vehiculos/{id}", response_model=schemas.Vehiculo)
 def update_vehiculo(
     id: int,
@@ -526,6 +548,7 @@ def update_vehiculo(
 ):
     return crud.update_vehiculo(db=db, id=id, data=data)
 
+
 @app.delete("/vehiculos/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_vehiculo(
     id: int,
@@ -533,12 +556,15 @@ def delete_vehiculo(
     user: Auth0User = Security(auth.get_user),
 ):
     if "client" in user.roles:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
     vehiculo = crud.get_vehiculo(db, id)
     if vehiculo is None:
         raise HTTPException(status_code=404, detail="Vehiculo not found")
     db.delete(vehiculo)
     db.commit()
+
 
 ######################
 # FastAPI auth AUTH0
