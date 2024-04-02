@@ -609,7 +609,7 @@ def read_vehiculos(
     q = db.query(models.Vehiculo)
     if "client" in user.roles:
         empresa = crud.get_empresa_by_email(db=db, email=user.email)
-        q = q.filter(models.Empresa.id == empresa.one().id)
+        q = q.filter(models.Vehiculo.empresa_id == empresa.one().id)
     if patente:
         q = q.filter(models.Vehiculo.patente == patente)
     return q.all()
