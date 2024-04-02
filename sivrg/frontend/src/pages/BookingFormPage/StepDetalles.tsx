@@ -10,8 +10,11 @@ const StepDetalles: FC = () => {
 
   const today = new Date();
   const tomorrow = new Date(today);
+  const yesterday = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const excludedDates = [today, tomorrow];
+  yesterday.setDate(tomorrow.getDate() - 1);
+
+  const excludedDates = [yesterday, tomorrow];
 
   return (
     <Card className="h-100">

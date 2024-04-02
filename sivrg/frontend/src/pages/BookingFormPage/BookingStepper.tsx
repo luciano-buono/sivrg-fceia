@@ -86,7 +86,7 @@ const BookingStepper = () => {
   const nextStep = () =>
     setActive((current) => {
       if (form.validate().hasErrors) {
-        console.log(form.validate())
+        console.log(form.validate());
         return current;
       }
       if (current === 3) {

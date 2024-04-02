@@ -5,8 +5,8 @@ import useSession from '../../hooks/useSession';
 const LoginPage = () => {
   const { loginWithRedirect, isLoading, isAuthenticated } = useSession();
 
-  if (isAuthenticated){
-    return null
+  if (isAuthenticated) {
+    return null;
   }
 
   return (

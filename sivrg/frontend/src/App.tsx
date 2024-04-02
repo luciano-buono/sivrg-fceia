@@ -118,6 +118,7 @@ const App = () => {
   const employeeHeader = [
     ...topNavbar,
     { icon: IconCalendar, label: 'Turnos', to: 'admin/reservations/' },
+    { icon: IconCalendar, label: 'Turnos de hoy', to: 'admin/reservations/current' },
     ...bottomNavbar,
   ];
 
@@ -125,6 +126,7 @@ const App = () => {
     ...topNavbar,
     { icon: IconCalendarCheck, label: 'Agendar turno', to: '/booking' },
     { icon: IconCalendar, label: 'Mis turnos', to: '/reservations' },
+    { icon: IconCalendar, label: 'Turnos de hoy', to: '/reservations/current' },
     ...bottomNavbar,
   ];
 

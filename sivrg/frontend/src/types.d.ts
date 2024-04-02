@@ -1,6 +1,6 @@
 export interface Turno {
   id: string;
-  empresa_id: number | null;
+  empresa_id: string | null;
   chofer_id: string;
   vehiculo_id: string;
   producto_id: string;
@@ -10,6 +10,7 @@ export interface Turno {
   chofer: Chofer;
   vehiculo: Vehiculo;
   producto: Producto;
+  empresa: Empresa;
 }
 
 export interface Empresa {

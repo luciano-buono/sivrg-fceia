@@ -107,13 +107,7 @@ const EmpresaForm: FC<{ onSubmit: () => void }> = ({ onSubmit }) => {
           placeholder="Localidad"
           {...form.getInputProps('localidad')}
         />
-        <TextInput
-          className="col-md-4"
-          withAsterisk
-          label="País"
-          placeholder="País"
-          {...form.getInputProps('pais')}
-        />
+        <TextInput className="col-md-4" withAsterisk label="País" placeholder="País" {...form.getInputProps('pais')} />
         <TextInput
           className="col-md-4"
           withAsterisk

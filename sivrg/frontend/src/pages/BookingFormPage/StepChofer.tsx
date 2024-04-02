@@ -23,7 +23,6 @@ const StepChofer: FC = () => {
     form.setFieldValue('chofer_id', value);
   };
 
-
   const queryChofer = useQuery<Chofer[]>({
     queryKey: ['choferes'],
     queryFn: () => api.get('/choferes/').then((res) => res.data),
@@ -31,11 +30,12 @@ const StepChofer: FC = () => {
   const { data: choferes } = queryChofer;
 
   const selectData = choferes?.map((chofer) => {
-  console.log(chofer);
-  return({
-    value: chofer.id.toString(),
-    label: `${chofer.nombre} ${chofer.apellido}, ${chofer.dni.toString()}`,
-  })});
+    console.log(chofer);
+    return {
+      value: chofer.id.toString(),
+      label: `${chofer.nombre} ${chofer.apellido}, ${chofer.dni.toString()}`,
+    };
+  });
 
   return (
     <Container>

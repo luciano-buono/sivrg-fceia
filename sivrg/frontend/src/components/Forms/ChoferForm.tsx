@@ -32,7 +32,7 @@ const ChoferForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
       email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Ingrese un email válido'),
     },
   });
-  console.log(form)
+  console.log(form);
   const handleCreateChofer = async (newChoferData: ChoferData) => {
     try {
       const chofer = await createChofer.mutateAsync(newChoferData);
