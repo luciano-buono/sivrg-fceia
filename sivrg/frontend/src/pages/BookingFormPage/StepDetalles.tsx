@@ -11,8 +11,8 @@ const StepDetalles: FC = () => {
   const today = new Date();
   const tomorrow = new Date(today);
   const yesterday = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  yesterday.setDate(tomorrow.getDate() - 1);
+  tomorrow.setDate(tomorrow.getDate() + 5);
+  yesterday.setDate(tomorrow.getDate() - 4);
 
   const excludedDates = [yesterday, tomorrow];
 

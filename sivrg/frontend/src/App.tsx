@@ -27,6 +27,7 @@ import useSessionEmpresa from './hooks/useSessionEmpresa';
 import { Empresa } from './types';
 import { Auth0ProviderWithNavigate } from './contexts/Auth0ProviderWithRedirect';
 import { NewsProvider } from './contexts/NewsContext';
+// import MonitorPage from './pages/MonitorPage';
 
 const queryClient = new QueryClient();
 
@@ -192,5 +193,7 @@ const App = () => {
 const ClientApp = () => <ClientPage />;
 
 const AdminApp = () => <AdminPage />;
+
+// const MonitorApp = () => <MonitorPage />;
 
 export default AppWrapper;
