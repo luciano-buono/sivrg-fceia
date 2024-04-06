@@ -1,4 +1,4 @@
-export interface Turno {
+export type Turno= {
   id: string;
   empresa_id: string | null;
   chofer_id: string;
@@ -7,13 +7,32 @@ export interface Turno {
   fecha: string | null;
   cantidad_estimada: string;
   state: string;
+  pesada: Pesada | null
   chofer: Chofer;
   vehiculo: Vehiculo;
   producto: Producto;
   empresa: Empresa;
 }
 
-export interface Empresa {
+export type Silo= {
+  producto_id: number,
+  capacidad: number,
+  utilizado: number,
+  habilitado: boolean,
+  id: number,
+  producto: Producto
+}
+
+export type Pesada= {
+  fecha_hora_balanza_in: string | null;
+  fecha_hora_balanza_out: string | null;
+  peso_bruto_in: number | null;
+  peso_bruto_out: number | null;
+  turno_id: number | null;
+  id: number | null;
+  fecha_hora_planta_in: string | null;
+}
+export type Empresa= {
   nombre: string;
   RS: string;
   CUIT: number | undefined;
@@ -26,7 +45,7 @@ export interface Empresa {
   email: string | undefined;
 }
 
-export interface TurnoData {
+export type TurnoData= {
   empresa_id: number | null;
   chofer_id: string;
   vehiculo_id: string;
@@ -35,12 +54,12 @@ export interface TurnoData {
   cantidad_estimada: string;
 }
 
-export interface Producto {
+export type Producto= {
   id: string;
   nombre: string;
 }
 
-export interface Chofer {
+export type Chofer= {
   id: string;
   empresa_id: number | null;
   rfid_uid: number;
@@ -50,7 +69,7 @@ export interface Chofer {
   habilitado: boolean;
 }
 
-export interface Vehiculo {
+export type Vehiculo= {
   id: string;
   empresa_id: number | null;
   patente: string;
@@ -61,7 +80,7 @@ export interface Vehiculo {
   habilitado: boolean;
 }
 
-export interface ModelForm {
+export type ModelForm= {
   updateSearch: (value: string) => void;
   updateValue: (value: string) => void;
   closeFn: () => void;

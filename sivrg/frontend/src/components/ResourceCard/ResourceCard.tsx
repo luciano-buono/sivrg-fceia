@@ -1,40 +1,40 @@
 import { Center, Progress, RingProgress, Tooltip, em } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { FC, useState } from 'react';
-import { Button, Row } from 'react-bootstrap';
 import { Card } from 'react-bootstrap';
+import { Silo } from '../../types';
 
-const ResourceCard: FC<{ initialQuantity: number; icon: string }> = ({ initialQuantity, icon }) => {
-  const [quantity, setQuantity] = useState(initialQuantity);
+const ResourceCard: FC<{ silo: Silo}> = ({ silo }) => {
+  const percentageUsed = silo.utilizado * 100 / silo.capacidad
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+  const [opened, setOpened] = useState(false);
 
   return isMobile ? (
     <>
-      <i className={icon} style={{ fontSize: '2em' }}></i>
-      <Progress color="orange" className="mt-2" value={quantity} />
+      <div className='fw-bold pb-2'>{silo.producto.nombre}</div>
+        <Center>
+      <i className='fa-solid fa-plant-wilt' style={{ fontSize: '2em' }}></i>
+        </Center>
+      <Tooltip label={`${silo.producto.nombre}: ${silo.utilizado}kg de ${silo.capacidad}kg (${percentageUsed}%)`} opened={opened} position="bottom">
+        <Progress color="orange" className="mt-2" value={percentageUsed} onClick={() => setOpened((o) => !o)}/>
+      </Tooltip>
     </>
   ) : (
     <Card style={{ width: 'auto' }}>
       <Card.Body>
-        <Tooltip label={quantity}>
+        <Card.Title className='fw-bold'>{`${silo.producto.nombre} (${percentageUsed}%)`}</Card.Title>
+        <Center>
           <RingProgress
             label={
               <Center>
-                <i className={icon} style={{ fontSize: '3em' }}></i>
+                <i className='fa-solid fa-plant-wilt' style={{ fontSize: '3em' }}></i>
               </Center>
             }
-            sections={[{ value: quantity, color: 'orange' }]}
+            sections={[{ value: percentageUsed, color: 'orange' }]}
           />
-        </Tooltip>
-        <Row style={{ width: 'auto' }} className="justify-content-center">
-          <Button style={{ width: '40px' }} className="me-2" onClick={() => setQuantity((prev) => prev + 1)}>
-            +
-          </Button>
-          <Button style={{ width: '40px' }} onClick={() => setQuantity((prev) => prev - 1)}>
-            -
-          </Button>
-        </Row>
+          </Center>
+        <div>{`${silo.utilizado}kg de ${silo.capacidad}kg`}</div>
       </Card.Body>
     </Card>
   );

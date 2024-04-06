@@ -63,7 +63,7 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
     });
   };
 
-  const columnsDesktop: ColumnDef<Turno, string>[] = [
+  const columnsDesktop: ColumnDef<Turno, any>[] = [
     columnHelper.accessor('chofer.nombre', {
       cell: (info) => (
         <span>{`${info.row.original.chofer.nombre} ${info.row.original.chofer.apellido}, ${info.row.original.chofer.dni}`}</span>
@@ -88,6 +88,19 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
       header: () => 'Estado',
       cell: (info) => info.renderValue(),
     }),
+    columnHelper.accessor('pesada', {
+      id: 'pesada',
+      header: () => 'Pesada',
+      cell: (info) => {
+        const peso_bruto_in = info.row.original.pesada?.peso_bruto_in
+        const peso_bruto_out = info.row.original.pesada?.peso_bruto_out
+        if(!peso_bruto_in || !peso_bruto_out){
+          return <span className='d-flex justify-content-center'>-</span>
+        }
+        const pesada = peso_bruto_in - peso_bruto_out
+        return <span className='d-flex justify-content-center'>{`${pesada}kg`}</span>
+      }
+    }),
     columnHelper.accessor('fecha', {
       id: 'fecha',
       header: () => 'Fecha',
@@ -103,7 +116,7 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
       header: () => 'Acciones',
       cell: (info) => (
         <div className="d-flex justify-content-around">
-          {info.cell.row.original.state !== 'accepted' && isEmployee ? (
+          {info.cell.row.original.state === 'pending' && isEmployee ? (
             <Button size="compact-sm" color="green" onClick={() => handleSubmitRow(info)}>
               <i className="fa-solid fa-check"></i>
             </Button>
@@ -131,7 +144,7 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
       header: () => 'Acciones',
       cell: (info) => (
         <div className="d-flex justify-content-around">
-          {info.cell.row.original.state !== 'accepted' && isEmployee ? (
+          {info.cell.row.original.state === 'pending' && isEmployee ? (
             <Button size="compact-sm" color="green" onClick={handleSubmitRow}>
               <i className="fa-solid fa-check"></i>
             </Button>
@@ -150,7 +163,7 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
     data: turnos ? turnos : [],
     columns: isMobile ? columnsMobile : columnsDesktop,
     getCoreRowModel: getCoreRowModel(),
-    initialState: { columnVisibility: { empresa: isEmployee } },
+    initialState: { columnVisibility: { empresa: isEmployee} },
   });
   return (
     <>
