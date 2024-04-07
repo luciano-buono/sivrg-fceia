@@ -11,14 +11,15 @@ from sivrg_http_requests import (
     sivrg_update_turno,
     sivrg_update_pesada,
     sivrg_update_silo,
+    sivrg_check_refresh_token,
 )
 
 from utils import *
 
 from threading import Thread
 from pick import pick
-
 import config
+
 
 settings = config.Settings()
 
@@ -309,6 +310,8 @@ def egreso_balanza():
 
 
 if __name__ == "__main__":
+    access_token = settings.ACCESS_TOKEN
+    sivrg_check_refresh_token(access_token)
     title = "Choose your mode: "
     options = ["Ingreso playon", "Ingreso balanza", "Egreso balanza"]
     option, index = pick(options, title)

@@ -3,8 +3,9 @@ import config
 import requests
 import json
 import datetime
+import time
 from strenum import StrEnum  # from enum import StrEnum in python 3.12
-
+import dotenv
 
 settings = config.Settings()
 DOMAIN = settings.FAST_API_SERVER
@@ -60,7 +61,7 @@ def sivrg_send_validate(access_token: str, rfid_uid, patente, fecha):
 
 def sivrg_update_turno(access_token: str, id: str, state: str):
     headers = {"Authorization": f"Bearer {access_token}"}
-    PATH = f"/turnos/{id}/"
+    PATH = f"/turnos/{id}"
     data = {
         "state": state,
     }
@@ -89,7 +90,7 @@ def sivrg_update_pesada(
 
     print(f"{response.status_code} -- PESADA ID:{pesada_id}")
     # PUT pesada time and value
-    PATH = f"/pesadas/{pesada_id}/"
+    PATH = f"/pesadas/{pesada_id}"
     data = {
         f"fecha_hora_balanza_{direction}": fecha_pesada,
         f"peso_bruto_{direction}": peso_pesada,
@@ -107,7 +108,7 @@ def sivrg_update_pesada(
 
 def sivrg_update_silo(access_token: str, producto_id: str, peso_agregado: int):
     headers = {"Authorization": f"Bearer {access_token}"}
-    PATH = f"/silos/{producto_id}/"
+    PATH = f"/silos/{producto_id}"
     response = requests.get(url=f"{DOMAIN}{PATH}", headers=headers)
     response_text = json.loads(response.text)
     silo_id = response_text.get("id")
@@ -129,48 +130,81 @@ def sivrg_update_silo(access_token: str, producto_id: str, peso_agregado: int):
     return True
 
 
+def sivrg_check_refresh_token(access_token: str):
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    # Validate endpoint
+    PATH = "/api/get_auth0_user"
+    response = requests.get(url=f"{DOMAIN}{PATH}", headers=headers)
+    response_text = json.loads(response.text)
+    print(response.status_code, response_text)
+    if response.status_code == 401:
+        access_token = login_auth0()
+        dotenv.set_key(dotenv_path='.env' ,key_to_set='ACCESS_TOKEN',value_to_set=access_token)
+        dotenv.load_dotenv()
+
+
 if __name__ == "__main__":
-    # access_token = login_auth0()
-    # print(access_token)
-    access_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBlQjZ4Znp2am53TVhoSkpJUlV0dCJ9.eyJodHRwczovL3NpdnJnLm1ldGhpenVsLmNvbS9yb2xlcyI6WyJlbXBsb3llZSJdLCJpc3MiOiJodHRwczovL21ldGhpenVsLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJpaU5zQ0JjWmNmT0lvMERMVnk2SXRuM1RFZnlQMlpPRUBjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9hcGkuc2l2cmcubWV0aGl6dWwuY29tIiwiaWF0IjoxNzExODk5ODQwLCJleHAiOjE3MTIwODYyNDAsInNjb3BlIjoicmVhZDp0ZXN0IiwiZ3R5IjoiY2xpZW50LWNyZWRlbnRpYWxzIiwiYXpwIjoiaWlOc0NCY1pjZk9JbzBETFZ5Nkl0bjNURWZ5UDJaT0UiLCJwZXJtaXNzaW9ucyI6WyJyZWFkOnRlc3QiXX0.Ovqvw7CGFbmJT7yDjOqjBgr06m-9DLMOhq4vxJwAgbBJK2jkyyqxHB9XSlxdUblIf_zCifW37k7UqjpzWbA3cekLrGO5T1adesGdrA3MZl0ntdp48meDO7TKb3S_2OK1-RcTygVm77AlLNMgaKqjouLmjD3CzPY-2jw0GMY3-wMVGOWye9qKd9qsZK6El8q1yanu_lorPmI87WxuKIX3qpRdoH-TWpn7ystnjWE1ND6orghq68n6TDm52Yr8qb64MK7aXbaFRYFUHoc7GoIb2k-E-EHvDKMbSpth8AD1BzvgC9oGoiys_OmUHB0GG0jWuvXNVJiOTyP_Yhw9wyzwFQ"
+    access_token = settings.ACCESS_TOKEN
+    sivrg_check_refresh_token(access_token)
+
+
+    # # Casimiro Reyes empresa2
+    # rfid_uid = 427772581204
+    # patente = "JJJ111"
+
+    # Julio Raikkonen empresa3
+    # rfid_uid = 287863187226
+    # patente = "AF070SA"
+
+    # Marcos Polo empresa1
     rfid_uid = 346826153725
-    patente = "ABC123"
+    patente = "KZK142"
+
+    # # Pedro Alpira empresa1
+    # rfid_uid = 912211182770
+    # patente = "KZK142"
+
     fecha = datetime.datetime.today()
     # fecha = datetime.datetime(2024,3,29)
 
-    ####### Playon
+    # ###### Playon
     # turno_id,producto_id = sivrg_send_validate(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)
-    # ##### When state is changed to in_progress_entrada, that will trigger an empty pesada entry
+    # #### When state is changed to in_progress_entrada, that will trigger an empty pesada entry
     # if turno_id:
     #     sivrg_update_turno(access_token=access_token,id=turno_id, state=TURNO_STATE.ENTRANCE)
+    # time.sleep(2)
 
-    ###### BalanzaIN
+    # #### BalanzaIN
     # turno_id, producto_id = sivrg_send_validate(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)
     # if turno_id:
     #     sivrg_update_turno(access_token=access_token,id=turno_id, state=TURNO_STATE.BALANZA_IN)
     #     sivrg_update_pesada(access_token=access_token, turno_id=turno_id, fecha_pesada=fecha, peso_pesada=7000, direction='in')
+    # time.sleep(2)
 
-    ###### BalanzaOUT
-    turno_id, producto_id = sivrg_send_validate(
-        access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha
-    )
-    if turno_id:
-        sivrg_update_turno(
-            access_token=access_token, id=turno_id, state=TURNO_STATE.BALANZA_OUT
-        )
-        pesada_object = sivrg_update_pesada(
-            access_token=access_token,
-            turno_id=turno_id,
-            fecha_pesada=datetime.datetime.today(),
-            peso_pesada=5000,
-            direction="out",
-        )
-        net_weight = pesada_object.get("peso_bruto_in") - pesada_object.get(
-            "peso_bruto_out"
-        )
-        sivrg_update_turno(
-            access_token=access_token, id=turno_id, state=TURNO_STATE.FINISHED
-        )
-        sivrg_update_silo(
-            access_token=access_token, producto_id=producto_id, peso_agregado=net_weight
-        )
+    # #### BalanzaOUT
+    # turno_id, producto_id = sivrg_send_validate(
+    #     access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha
+    # )
+    # if turno_id:
+    #     sivrg_update_turno(
+    #         access_token=access_token, id=turno_id, state=TURNO_STATE.BALANZA_OUT
+    #     )
+    #     pesada_object = sivrg_update_pesada(
+    #         access_token=access_token,
+    #         turno_id=turno_id,
+    #         fecha_pesada=datetime.datetime.today(),
+    #         peso_pesada=5000,
+    #         direction="out",
+    #     )
+    #     net_weight = pesada_object.get("peso_bruto_in") - pesada_object.get(
+    #         "peso_bruto_out"
+    #     )
+    #     print(net_weight)
+    #     time.sleep(1)
+    #     sivrg_update_turno(
+    #         access_token=access_token, id=turno_id, state=TURNO_STATE.FINISHED
+    #     )
+    #     sivrg_update_silo(
+    #         access_token=access_token, producto_id=producto_id, peso_agregado=net_weight
+    #     )

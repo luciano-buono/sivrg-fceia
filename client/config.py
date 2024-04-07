@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
-AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
-AUTH0_CLIENT_AUDIENCE = os.getenv("AUTH0_CLIENT_AUDIENCE")
+# AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
+# AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
+# AUTH0_CLIENT_AUDIENCE = os.getenv("AUTH0_CLIENT_AUDIENCE")
 
 
 class Settings(BaseSettings):
@@ -24,5 +24,7 @@ class Settings(BaseSettings):
     MODBUS_PORT_INGRESO_BALANZA: int
     MODBUS_HOST_EGRESO_BALANZA: str
     MODBUS_PORT_EGRESO_BALANZA: int
+
+    ACCESS_TOKEN: str
 
     model_config = SettingsConfigDict(env_file=".env")
