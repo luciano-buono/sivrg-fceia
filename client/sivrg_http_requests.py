@@ -126,7 +126,7 @@ def sivrg_update_silo(access_token: str, producto_id: str, peso_agregado: int):
     }
     response = requests.put(url=f"{DOMAIN}{PATH}", headers=headers, json=data)
     response_text = json.loads(response.text)
-    print(response_text)
+    print(response.status_code, response_text)
     return True
 
 
@@ -150,16 +150,16 @@ if __name__ == "__main__":
 
 
     # # Casimiro Reyes empresa2
-    # rfid_uid = 427772581204
-    # patente = "JJJ111"
+    rfid_uid = 427772581204
+    patente = "JJJ111"
 
     # Julio Raikkonen empresa3
     # rfid_uid = 287863187226
     # patente = "AF070SA"
 
     # Marcos Polo empresa1
-    rfid_uid = 346826153725
-    patente = "KZK142"
+    # rfid_uid = 346826153725
+    # patente = "KZK142"
 
     # # Pedro Alpira empresa1
     # rfid_uid = 912211182770
@@ -168,43 +168,43 @@ if __name__ == "__main__":
     fecha = datetime.datetime.today()
     # fecha = datetime.datetime(2024,3,29)
 
-    # ###### Playon
-    # turno_id,producto_id = sivrg_send_validate(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)
-    # #### When state is changed to in_progress_entrada, that will trigger an empty pesada entry
-    # if turno_id:
-    #     sivrg_update_turno(access_token=access_token,id=turno_id, state=TURNO_STATE.ENTRANCE)
-    # time.sleep(2)
+    ##### Playon
+    turno_id,producto_id = sivrg_send_validate(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)
+    #### When state is changed to in_progress_entrada, that will trigger an empty pesada entry
+    if turno_id:
+        sivrg_update_turno(access_token=access_token,id=turno_id, state=TURNO_STATE.ENTRANCE)
+    time.sleep(2)
 
-    # #### BalanzaIN
-    # turno_id, producto_id = sivrg_send_validate(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)
-    # if turno_id:
-    #     sivrg_update_turno(access_token=access_token,id=turno_id, state=TURNO_STATE.BALANZA_IN)
-    #     sivrg_update_pesada(access_token=access_token, turno_id=turno_id, fecha_pesada=fecha, peso_pesada=7000, direction='in')
-    # time.sleep(2)
+    ### BalanzaIN
+    turno_id, producto_id = sivrg_send_validate(access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha)
+    if turno_id:
+        sivrg_update_turno(access_token=access_token,id=turno_id, state=TURNO_STATE.BALANZA_IN)
+        sivrg_update_pesada(access_token=access_token, turno_id=turno_id, fecha_pesada=fecha, peso_pesada=230000, direction='in')
+    time.sleep(2)
 
-    # #### BalanzaOUT
-    # turno_id, producto_id = sivrg_send_validate(
-    #     access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha
-    # )
-    # if turno_id:
-    #     sivrg_update_turno(
-    #         access_token=access_token, id=turno_id, state=TURNO_STATE.BALANZA_OUT
-    #     )
-    #     pesada_object = sivrg_update_pesada(
-    #         access_token=access_token,
-    #         turno_id=turno_id,
-    #         fecha_pesada=datetime.datetime.today(),
-    #         peso_pesada=5000,
-    #         direction="out",
-    #     )
-    #     net_weight = pesada_object.get("peso_bruto_in") - pesada_object.get(
-    #         "peso_bruto_out"
-    #     )
-    #     print(net_weight)
-    #     time.sleep(1)
-    #     sivrg_update_turno(
-    #         access_token=access_token, id=turno_id, state=TURNO_STATE.FINISHED
-    #     )
-    #     sivrg_update_silo(
-    #         access_token=access_token, producto_id=producto_id, peso_agregado=net_weight
-    #     )
+    #### BalanzaOUT
+    turno_id, producto_id = sivrg_send_validate(
+        access_token=access_token, rfid_uid=rfid_uid, patente=patente, fecha=fecha
+    )
+    if turno_id:
+        sivrg_update_turno(
+            access_token=access_token, id=turno_id, state=TURNO_STATE.BALANZA_OUT
+        )
+        pesada_object = sivrg_update_pesada(
+            access_token=access_token,
+            turno_id=turno_id,
+            fecha_pesada=datetime.datetime.today(),
+            peso_pesada=200000,
+            direction="out",
+        )
+        net_weight = pesada_object.get("peso_bruto_in") - pesada_object.get(
+            "peso_bruto_out"
+        )
+        print(net_weight)
+        time.sleep(1)
+        sivrg_update_turno(
+            access_token=access_token, id=turno_id, state=TURNO_STATE.FINISHED
+        )
+        sivrg_update_silo(
+            access_token=access_token, producto_id=producto_id, peso_agregado=net_weight
+        )

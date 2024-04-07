@@ -420,14 +420,14 @@ def read_silos(
     return crud.get_silos(db, skip=skip, limit=limit)
 
 
-# Get Silo by ID
-@app.get("/silos/{id}", response_model=schemas.Silo)
+# Get Silo by Producto ID
+@app.get("/silos/{producto_id}", response_model=schemas.Silo)
 def read_silo(
-    id: int,
+    producto_id: int,
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    silo = crud.get_silo(db, id)
+    silo = crud.get_silo(db, producto_id)
     if silo is None:
         raise HTTPException(status_code=404, detail="Silo not found")
     return silo

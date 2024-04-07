@@ -222,9 +222,9 @@ def create_silo(db: Session, silo: schemas.SiloCreate):
     return db_silo
 
 
-# Get a Silo by ID
-def get_silo(db: Session, id: int):
-    return db.query(models.Silo).filter(models.Silo.id == id).first()
+# Get a Silo by Producto ID
+def get_silo(db: Session, producto_id: int):
+    return db.query(models.Silo).filter(models.Silo.producto_id == producto_id).first()
 
 
 # Get Silos by producto_id
@@ -347,14 +347,15 @@ def get_turnos_by_date_range_by_empresa(
 def get_turnos_by_patente_rfid(
     db: Session, patente: str, rfid_uid: int, fecha: datetime
 ):
+    accepted_states = ['accepted', 'in_progress_entrada', 'in_progress_balanza_in', 'in_progress_balanza_out']
     return (
         db.query(models.Turno)
         .filter(func.date(models.Turno.fecha) == fecha.date())
         .filter(models.Turno.vehiculo.has(patente=patente))
         .filter(models.Turno.chofer.has(rfid_uid=rfid_uid))
+        .filter(models.Turno.state.in_(accepted_states))
         .first()
     )
-
 
 def update_turno(
     db: Session,
