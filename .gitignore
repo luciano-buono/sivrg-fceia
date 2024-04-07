@@ -26,6 +26,7 @@ lpr/ConvALPR/alpr/__pycache__/
 client/rfid/MFRC522_python/build
 client/rfid/MFRC522_python/dist
 client/rfid/MFRC522_python/mfrc522.egg-info
+client/.env
 
 #db
 *.db

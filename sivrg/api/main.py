@@ -32,6 +32,7 @@ from auth0_extended import Auth0User, Auth0
 
 import models, schemas
 
+
 @lru_cache()
 def get_settings():
     return config.Settings()
@@ -119,6 +120,21 @@ def update_empresa(
 ):
     return crud.update_empresa(db=db, id=id, data=data)
 
+@app.delete("/empresas/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_empresa(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if "client" in user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
+    empresa = crud.get_empresa(db, id)
+    if empresa is None:
+        raise HTTPException(status_code=404, detail="empresa not found")
+    db.delete(empresa)
+    db.commit()
 
 ## ------------Producto operations---------------------
 # Create a Producto
@@ -160,6 +176,21 @@ def read_producto(
         raise HTTPException(status_code=404, detail="Producto not found")
     return producto
 
+@app.delete("/productos/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_producto(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if "client" in user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
+    producto = crud.get_producto(db, id)
+    if producto is None:
+        raise HTTPException(status_code=404, detail="producto not found")
+    db.delete(producto)
+    db.commit()
 
 ## ------------Chofer operations---------------------
 # Create a Chofer
@@ -186,7 +217,9 @@ def read_choferes(
     user: Auth0User = Security(auth.get_user),
 ):
     if empresa_id:
-        return crud.get_choferes_by_empresa(db, empresa_id=empresa_id, skip=skip, limit=limit)
+        return crud.get_choferes_by_empresa(
+            db, empresa_id=empresa_id, skip=skip, limit=limit
+        )
     if "employee" in user.roles:
         # Get all choferes
         return crud.get_choferes(db, skip=skip, limit=limit)
@@ -231,6 +264,21 @@ def update_chofer(
 ):
     return crud.update_chofer(db=db, id=id, data=data)
 
+@app.delete("/choferes/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_chofer(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if "client" in user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
+    chofer = crud.get_chofer(db, id)
+    if chofer is None:
+        raise HTTPException(status_code=404, detail="chofer not found")
+    db.delete(chofer)
+    db.commit()
 
 ## ------------Pesada operations---------------------
 # Create a Pesada
@@ -251,10 +299,45 @@ def read_pesadas(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
+    turno_id: int | None = None,
+    fecha_hora_balanza_out_start_date: datetime | None = Query(datetime.now(), description="Fecha"),
+    fecha_hora_balanza_out_end_date: datetime | None = Query(datetime.now(), description="Fecha"),
     user: Auth0User = Security(auth.get_user),
 ):
+    q = db.query(models.Pesada)
+    if turno_id:
+        q = q.filter(models.Pesada.turno_id == turno_id)
+    if fecha_hora_balanza_out_start_date and fecha_hora_balanza_out_end_date:
+        q = q.filter(models.Turno.fecha.between(fecha_hora_balanza_out_start_date, fecha_hora_balanza_out_end_date))
+    return q.all()
+
+
     pesadas = crud.get_pesada(db, skip=skip, limit=limit)
     return pesadas
+
+
+# Get all Turnos
+@app.get("/turnos/", response_model=list[schemas.Turno])
+def read_turnos(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    empresa_id: int | None = None,
+    state: str | None = None,
+    start_date: str | None = None,
+    end_date: str | None = None,
+    user: Auth0User = Security(auth.get_user),
+):
+    q = db.query(models.Turno)
+    if "client" in user.roles:
+        empresa_id = crud.get_empresa_by_email(db=db, email=user.email).one().id
+    if empresa_id:
+        q = q.filter(models.Turno.empresa_id == empresa_id)
+    if state:
+        q = q.filter(models.Turno.state == state)
+    if start_date and end_date:
+        q = q.filter(models.Turno.fecha.between(start_date, end_date))
+    return q.all()
 
 
 # Get Pesada by ID
@@ -283,6 +366,7 @@ def read_pesadas_by_date_range(
     pesadas = crud.get_pesadas_by_date_range(db, start_date, end_date, skip, limit)
     return pesadas
 
+
 # Edit a Pesada
 @app.put("/pesadas/{id}", response_model=schemas.Pesada)
 def update_pesada(
@@ -293,6 +377,21 @@ def update_pesada(
 ):
     return crud.update_pesada(db=db, id=id, data=data)
 
+@app.delete("/pesadas/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_pesada(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if "client" in user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
+    pesada = crud.get_pesada(db, id)
+    if pesada is None:
+        raise HTTPException(status_code=404, detail="pesada not found")
+    db.delete(pesada)
+    db.commit()
 
 ## ------------Silos operations---------------------
 # Create a Silo
@@ -302,7 +401,7 @@ def create_silo(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    if not crud.get_producto(db=db, id=silo.id):
+    if not crud.get_producto(db=db, id=silo.producto_id):
         raise HTTPException(status_code=404, detail="Producto ID not found!")
     return crud.create_silo(db, silo)
 
@@ -334,6 +433,31 @@ def read_silo(
     return silo
 
 
+@app.put("/silos/{id}", response_model=schemas.Silo)
+def update_silo(
+    id: int,
+    data: schemas.SiloCreate,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    return crud.update_silo(db=db, id=id, data=data)
+
+@app.delete("/silos/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_silo(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if "client" in user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
+    silo = crud.get_silo(db, id)
+    if silo is None:
+        raise HTTPException(status_code=404, detail="silo not found")
+    db.delete(silo)
+    db.commit()
+
 ## ------------Turnos operations---------------------
 # Create a Turno
 @app.post("/turnos/", response_model=schemas.Turno)
@@ -361,14 +485,22 @@ def read_turnos(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db),
+    empresa_id: int | None = None,
+    state: str | None = None,
+    start_date: datetime | None = Query(datetime.now(), description="Fecha"),
+    end_date: datetime | None = Query(datetime.now(), description="Fecha"),
     user: Auth0User = Security(auth.get_user),
 ):
-    if "employee" in user.roles:
-        # Get all turns
-        return crud.get_turnos(db, skip=skip, limit=limit)
-    # Get only the resources from that empresa
-    empresa = crud.get_empresa_by_email(db=db, email=user.email)
-    return crud.get_turnos_by_empresa(db, id=empresa.one().id, skip=skip, limit=limit)
+    q = db.query(models.Turno)
+    if "client" in user.roles:
+        empresa_id = crud.get_empresa_by_email(db=db, email=user.email).one().id
+    if empresa_id:
+        q = q.filter(models.Turno.empresa_id == empresa_id)
+    if state:
+        q = q.filter(models.Turno.state == state)
+    if start_date and end_date:
+        q = q.filter(models.Turno.fecha.between(start_date, end_date))
+    return q.all()
 
 
 # Get a Turno by ID
@@ -399,29 +531,6 @@ def read_pesada_by_turno_id(
         raise HTTPException(status_code=404, detail="Pesada not found")
     return pesada
 
-
-# Get Pesada records by date range
-@app.get("/turnos/by-date-range/", response_model=list[schemas.Turno])
-def read_turnos_by_date_range(
-    start_date: str = Query(..., description="Start date of the date range"),
-    end_date: str = Query(..., description="End date of the date range"),
-    skip: int = Query(0, description="Number of records to skip"),
-    limit: int = Query(100, description="Maximum number of records to retrieve"),
-    db: Session = Depends(get_db),
-    user: Auth0User = Security(auth.get_user),
-):
-    if "employee" in user.roles:
-        return crud.get_turnos_by_date_range(
-            db, start_date, end_date, skip=skip, limit=limit
-        )
-    empresa = crud.get_empresa_by_email(db=db, email=user.email)
-    if not empresa.one_or_none():
-        raise HTTPException(status_code=404, detail="That empresa doesn't have any turnos!")
-    return crud.get_turnos_by_date_range_by_empresa(
-        db, start_date, end_date, id=empresa.one().id, skip=skip, limit=limit
-    )
-
-
 # Validate turnos for OrangePI client
 @app.get("/turnos/validate/", response_model=schemas.Turno)
 def read_turno_by_patente_rfid(
@@ -448,12 +557,31 @@ def update_turno(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
-    checking_time = None
     if state == "in_progress_entrada":
         instance = schemas.PesadaCreate(turno_id=id)
         pesada = crud.create_pesada(db=db, pesada=instance)
         checking_time = datetime.now()
-    return crud.update_turno(db=db, id=id, state=state, checking_time=checking_time, pesada_id=pesada.id)
+        return crud.update_turno(
+            db=db, id=id, state=state, checking_time=checking_time, pesada_id=pesada.id
+        )
+    return crud.update_turno(db=db, id=id, state=state)
+
+
+@app.delete("/turnos/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_turno(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if "client" in user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
+    turno = crud.get_turno(db, id)
+    if turno is None:
+        raise HTTPException(status_code=404, detail="Turno not found")
+    db.delete(turno)
+    db.commit()
 
 
 ## ------------Vehiculos operations---------------------
@@ -481,9 +609,9 @@ def read_vehiculos(
     q = db.query(models.Vehiculo)
     if "client" in user.roles:
         empresa = crud.get_empresa_by_email(db=db, email=user.email)
-        q = q.filter(models.Empresa.id==empresa.one().id)
+        q = q.filter(models.Vehiculo.empresa_id == empresa.one().id)
     if patente:
-        return q.filter(models.Vehiculo.patente == patente).all()
+        q = q.filter(models.Vehiculo.patente == patente)
     return q.all()
 
 
@@ -499,6 +627,7 @@ def read_vehiculo(
         raise HTTPException(status_code=404, detail="Vehiculo not found")
     return vehiculo
 
+
 @app.put("/vehiculos/{id}", response_model=schemas.Vehiculo)
 def update_vehiculo(
     id: int,
@@ -507,6 +636,23 @@ def update_vehiculo(
     user: Auth0User = Security(auth.get_user),
 ):
     return crud.update_vehiculo(db=db, id=id, data=data)
+
+
+@app.delete("/vehiculos/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_vehiculo(
+    id: int,
+    db: Session = Depends(get_db),
+    user: Auth0User = Security(auth.get_user),
+):
+    if "client" in user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="No autorizado"
+        )
+    vehiculo = crud.get_vehiculo(db, id)
+    if vehiculo is None:
+        raise HTTPException(status_code=404, detail="Vehiculo not found")
+    db.delete(vehiculo)
+    db.commit()
 
 
 ######################
