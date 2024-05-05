@@ -17,7 +17,6 @@ const MonitorPage = () => {
   });
 
   const { data: turnos } = queryTurno;
-  console.log(turnos)
   return (
     <>
     <div className="d-flex bg-primary vh-100">
