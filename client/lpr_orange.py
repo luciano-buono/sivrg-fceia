@@ -44,7 +44,7 @@ def get_LPR():
         print(
             "Hay mas de una patente reconozida\nRevisar cuantas imagenes de entrada hay\Exitting.."
         )
-        exit(1)
+        return -1
 
 
 def get_RFID():

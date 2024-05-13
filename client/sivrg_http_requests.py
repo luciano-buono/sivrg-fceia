@@ -1,4 +1,4 @@
-from utils import DateTimeEncoder
+from utils import *
 import config
 import requests
 import json
@@ -49,12 +49,12 @@ def sivrg_send_validate(access_token: str, rfid_uid, patente, fecha):
     response_text = json.loads(response.text)
     # print(response_text)
     if response.status_code == 401:
-        print(response_text)
+        prYellow(response_text)
         return False, -1
     turno_id = response_text.get("id")
     producto_id = response_text.get("producto_id")
     if not turno_id:
-        print("turno not found")
+        prYellow("turno not found")
         return False, False
     return turno_id, producto_id
 
@@ -68,14 +68,14 @@ def sivrg_update_turno(access_token: str, id: str, state: str):
     response = requests.put(url=f"{DOMAIN}{PATH}", headers=headers, params=data)
     response_text = json.loads(response.text)
     if response.status_code == 401:
-        print(response_text)
+        prYellow(response_text)
         return False
     turno_id = response_text.get("id")
     if not turno_id:
-        print("turno not found")
+        prYellow("turno not found")
         return False
     turno_state = response_text.get("state")
-    print(f"{response.status_code} -- TURNO ID:{turno_id} | {turno_state}")
+    prYellow(f"{response.status_code} -- TURNO ID:{turno_id} | {turno_state}")
     return True
 
 
@@ -88,7 +88,7 @@ def sivrg_update_pesada(
     response_text = json.loads(response.text)
     pesada_id = response_text.get("id")
 
-    print(f"{response.status_code} -- PESADA ID:{pesada_id}")
+    prYellow(f"{response.status_code} -- PESADA ID:{pesada_id}")
     # PUT pesada time and value
     PATH = f"/pesadas/{pesada_id}"
     data = {
@@ -99,8 +99,8 @@ def sivrg_update_pesada(
     data = json.dumps(data, cls=DateTimeEncoder)
     response = requests.put(url=f"{DOMAIN}{PATH}", headers=headers, data=data)
     response_text = json.loads(response.text)
-    print(f"{response.status_code} -- PESADA ID:{pesada_id}")
-    print(response_text)
+    prYellow(f"{response.status_code} -- PESADA ID:{pesada_id}")
+    prYellow(response_text)
     print(f"Turno validado y en in_progress_balanza_{direction}")
 
     return response_text
@@ -126,7 +126,7 @@ def sivrg_update_silo(access_token: str, producto_id: str, peso_agregado: int):
     }
     response = requests.put(url=f"{DOMAIN}{PATH}", headers=headers, json=data)
     response_text = json.loads(response.text)
-    print(response.status_code, response_text)
+    prYellow(response.status_code, response_text)
     return True
 
 
@@ -142,6 +142,7 @@ def sivrg_check_refresh_token(access_token: str):
         access_token = login_auth0()
         dotenv.set_key(dotenv_path='.env' ,key_to_set='ACCESS_TOKEN',value_to_set=access_token)
         dotenv.load_dotenv()
+        prYellow("Rewrite JWT no expired")
 
 
 if __name__ == "__main__":
