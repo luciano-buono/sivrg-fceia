@@ -37,3 +37,4 @@ OLD/
 
 # Frontend
 node_modules/
+.vite/
