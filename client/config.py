@@ -1,13 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
-
-# AUTH0_CLIENT_ID = os.getenv("AUTH0_CLIENT_ID")
-# AUTH0_CLIENT_SECRET = os.getenv("AUTH0_CLIENT_SECRET")
-# AUTH0_CLIENT_AUDIENCE = os.getenv("AUTH0_CLIENT_AUDIENCE")
-
 
 class Settings(BaseSettings):
     AUTH0_CLIENT_ID: str
@@ -17,6 +11,13 @@ class Settings(BaseSettings):
     CLIENT_TYPE: str
     FAST_API_SERVER: str
     LOCAL: bool = False
+    DISABLE_PLC: bool = False
+    DISABLE_LPR: bool = False
+    DISABLE_RFID: bool = False
+    EXAMPLE_RFID_UID: int
+    EXAMPLE_PATENTE: str
+    EXAMPLE_PESO_IN: int
+    EXAMPLE_PESO_OUT: int
 
     MODBUS_HOST_PLAYON: str
     MODBUS_PORT_PLAYON: int

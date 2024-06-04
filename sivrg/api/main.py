@@ -440,6 +440,9 @@ def update_silo(
     db: Session = Depends(get_db),
     user: Auth0User = Security(auth.get_user),
 ):
+    silo = crud.get_silo(db, data.producto_id)
+    if data.utilizado > silo.capacidad:
+        data.utilizado = silo.capacidad
     return crud.update_silo(db=db, id=id, data=data)
 
 @app.delete("/silos/{id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -476,6 +479,9 @@ def create_turno(
         raise HTTPException(status_code=404, detail="Producto ID not found")
     if not crud.get_vehiculo(db=db, id=turno.vehiculo_id):
         raise HTTPException(status_code=404, detail="Vehiculo ID not found")
+    silo = crud.get_silo(db, turno.producto_id)
+    if silo.utilizado+turno.cantidad_estimada > silo.capacidad:
+        raise HTTPException(status_code=405, detail="Silo will overflow with this amount!")
     return crud.create_turno(db=db, turno=turno)
 
 

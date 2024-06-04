@@ -76,19 +76,18 @@ def sivrg_update_turno(access_token: str, id: str, state: str):
         return False
     turno_state = response_text.get("state")
     prYellow(f"{response.status_code} -- TURNO ID:{turno_id} | {turno_state}")
-    return True
+    return response_text.get("pesada").get("id")
 
 
 def sivrg_update_pesada(
-    access_token: str, turno_id: str, fecha_pesada, peso_pesada, direction: str = "in"
+    access_token: str, turno_id: str, pesada_id, fecha_pesada, peso_pesada, direction: str = "in"
 ):
     headers = {"Authorization": f"Bearer {access_token}"}
-    PATH = f"/turnos/{turno_id}/pesada"
-    response = requests.get(url=f"{DOMAIN}{PATH}", headers=headers)
-    response_text = json.loads(response.text)
-    pesada_id = response_text.get("id")
+    # PATH = f"/turnos/{turno_id}/pesada"
+    # response = requests.get(url=f"{DOMAIN}{PATH}", headers=headers)
+    # response_text = json.loads(response.text)
+    # pesada_id = response_text.get("id")
 
-    prYellow(f"{response.status_code} -- PESADA ID:{pesada_id}")
     # PUT pesada time and value
     PATH = f"/pesadas/{pesada_id}"
     data = {
@@ -126,7 +125,7 @@ def sivrg_update_silo(access_token: str, producto_id: str, peso_agregado: int):
     }
     response = requests.put(url=f"{DOMAIN}{PATH}", headers=headers, json=data)
     response_text = json.loads(response.text)
-    prYellow(response.status_code, response_text)
+    prYellow(f"{response.status_code} {response_text}")
     return True
 
 

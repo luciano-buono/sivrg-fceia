@@ -67,12 +67,11 @@ def send_bit_de_vida(client, interval_sec):
         client.write_registers(10, 25, unit=1)  # reset bit comunicación
         time.sleep(interval_sec)
 
-
-def ingreso_playon():
-    MODBUS_HOST = settings.MODBUS_HOST_PLAYON
-    MODBUS_PORT = settings.MODBUS_PORT_PLAYON
+def setup_startup(MODBUS_HOST: str, MODBUS_PORT:int):
+    """
+    Setup PLC connection and RFID reader
+    """
     client = ModbusClient(MODBUS_HOST, port=MODBUS_PORT)
-    reader = SimpleMFRC522()
     client.connect()
 
     print("Starting background task...")
@@ -86,35 +85,48 @@ def ingreso_playon():
         name="Background",
     )
     daemon.start()
+    return client
+
+def read_rfid(reader):
+    prCyan("Press Enter to start tag reading...")
+    input("")
+    prGreen("Hold a tag near the reader")
+    rfid_uid, text = reader.read()
+    print(f"ID: {rfid_uid}\nText: {text}")
+    return rfid_uid
+
+def ingreso_playon():
+    if not settings.DISABLE_PLC:
+        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_PLAYON,MODBUS_PORT = settings.MODBUS_PORT_PLAYON)
+    if not settings.DISABLE_RFID:
+        reader = SimpleMFRC522()
     try:
         while True:
+            if not settings.DISABLE_PLC:
             ## PLC wait until ready
-            while True:
-                if is_plc_ready(client):
-                    break
-                time.sleep(5)
+                while True:
+                    if is_plc_ready(client):
+                        break
+                    time.sleep(5)
 
-            ## RFID LPR
-            # prGreen("Hold a tag near the reader")
-            # rfid_uid = input("RFID_UID")
-            # rfid_uid = 2222
-            # print(f"ID: {rfid_uid}")
-            # print(f"Reading lisence from image..")
-            # patente = 'ABC321'
-            # print({"LICENSE_PLATE":patente})
+            if not settings.DISABLE_RFID:
+                rfid_uid = read_rfid(reader=reader)
+                time.sleep(2)
+            else:
+                rfid_uid = settings.EXAMPLE_RFID_UID
+                print(rfid_uid)
 
-            prCyan("Press Enter to start tag reading...")
-            input("")
-            prGreen("Hold a tag near the reader")
-            rfid_uid, text = reader.read()
-            print(f"ID: {rfid_uid}\nText: {text}")
-            time.sleep(2)
-            print(f"Reading lisence from image or photo..")
-            take_photo()
-            prediccion = get_LPR()
-            print({"LICENSE_PLATE": prediccion})
-            patente = prediccion
-    
+            if not settings.DISABLE_LPR:
+                print(f"Reading lisence from image or photo..")
+                take_photo()
+                prediccion = get_LPR()
+                print({"LICENSE_PLATE": prediccion})
+                patente = prediccion
+            else:
+                patente = settings.EXAMPLE_PATENTE
+                print(patente)
+                input("Press to continue")
+
             if patente != -1:
                 ## FastAPI
                 fecha = datetime.today()
@@ -131,53 +143,49 @@ def ingreso_playon():
                     sivrg_update_turno(
                         access_token=access_token, id=turno_id, state=TURNO_STATE.ENTRANCE
                     )
-                    plc_start_seq(client)
+                    if not settings.DISABLE_PLC:
+                        plc_start_seq(client)
                 else:
                     print("Turno no validado")
 
     finally:
-        prLightPurple("Closing connection..")
-        client.close()
+        if not settings.DISABLE_PLC:
+            prLightPurple("Closing connection..")
+            client.close()
 
 
 def ingreso_balanza():
-    MODBUS_HOST = settings.MODBUS_HOST_INGRESO_BALANZA
-    MODBUS_PORT = settings.MODBUS_PORT_INGRESO_BALANZA
-    client = ModbusClient(MODBUS_HOST, port=MODBUS_PORT)
-    reader = SimpleMFRC522()
-    client.connect()
-    print("Starting background task...")
-    daemon = Thread(target=send_bit_de_vida, args=(client,5,), daemon=True, name="Background")
-    daemon.start()
+    if not settings.DISABLE_PLC:
+        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_INGRESO_BALANZA,MODBUS_PORT = settings.MODBUS_PORT_INGRESO_BALANZA)
+    if not settings.DISABLE_RFID:
+        reader = SimpleMFRC522()
     try:
         while True:
 
+            if not settings.DISABLE_PLC:
             ## PLC wait until ready
-            while True:
-                if is_plc_ready(client):
-                    break
-                time.sleep(10)
+                while True:
+                    if is_plc_ready(client):
+                        break
+                    time.sleep(5)
 
-            # ## RFID LPR
-            # prGreen("Hold a tag near the reader")
-            # rfid_uid = input("RFID_UID")
-            # rfid_uid = 2222
-            # print(f"ID: {rfid_uid}")
-            # print(f"Reading lisence from image..")
-            # patente = 'ABC321'
-            # print({"LICENSE_PLATE":patente})
+            if not settings.DISABLE_RFID:
+                rfid_uid = read_rfid(reader=reader)
+                time.sleep(2)
+            else:
+                rfid_uid = settings.EXAMPLE_RFID_UID
+                print(rfid_uid)
 
-            prCyan("Press Enter to start tag reading...")
-            input("d")
-            prGreen("Hold a tag near the reader")
-            rfid_uid, text = reader.read()
-            print(f"ID: {rfid_uid}\nText: {text}")
-            time.sleep(2)
-            print(f"Reading lisence from image or photo..")
-            take_photo()
-            prediccion = get_LPR()
-            print({"LICENSE_PLATE": prediccion})
-            patente = prediccion
+            if not settings.DISABLE_LPR:
+                print(f"Reading lisence from image or photo..")
+                take_photo()
+                prediccion = get_LPR()
+                print({"LICENSE_PLATE": prediccion})
+                patente = prediccion
+            else:
+                patente = settings.EXAMPLE_PATENTE
+                print(patente)
+                input("Press to continue")
 
             if patente != -1:
                 ## FastAPI
@@ -191,76 +199,76 @@ def ingreso_balanza():
                 )
                 if turno_id:
                     # This will create an empty pesada entry
-                    sivrg_update_turno(
+                    pesada_id = sivrg_update_turno(
                         access_token=access_token, id=turno_id, state=TURNO_STATE.BALANZA_IN
                     )
-                    plc_start_seq(client)
+                    if not settings.DISABLE_PLC:
+                        plc_start_seq(client)
                 else:
                     print("Turno no validado")
 
-                ## PLC wait until weight is ready
-                while True:
-                    if is_plc_weight_rdy(client):
-                        break
-                    time.sleep(10)
-                re_plc_weight = client.read_holding_registers(address=2)
-                peso_pesada = re_plc_weight.registers[0]
-                prLightPurple(f"Register 2 value:{peso_pesada}")
-                prLightPurple("set register 1 to value 25")
-                time.sleep(2)
-                client.write_registers(1, 25, unit=1)  # reset to PLC knows that i read it
+                if not settings.DISABLE_PLC:
+                    ## PLC wait until weight is ready
+                    while True:
+                        if is_plc_weight_rdy(client):
+                            break
+                        time.sleep(10)
+                    re_plc_weight = client.read_holding_registers(address=2)
+                    peso_pesada = re_plc_weight.registers[0]
+                    prLightPurple(f"Register 2 value:{peso_pesada}")
+                    prLightPurple("set register 1 to value 25")
+                    time.sleep(2)
+                    client.write_registers(1, 25, unit=1)  # reset to PLC knows that i read it
+                else:
+                    peso_pesada = settings.EXAMPLE_PESO_IN
 
                 sivrg_update_pesada(
                     access_token=access_token,
                     turno_id=turno_id,
+                    pesada_id=pesada_id,
                     fecha_pesada=fecha,
                     peso_pesada=peso_pesada,
                     direction="in",
                 )
 
     finally:
-        print("Closing connection..")
-        client.close()
+        if not settings.DISABLE_PLC:
+            prLightPurple("Closing connection..")
+            client.close()
 
 
 def egreso_balanza():
-    MODBUS_HOST = settings.MODBUS_HOST_EGRESO_BALANZA
-    MODBUS_PORT = settings.MODBUS_PORT_EGRESO_BALANZA
-    client = ModbusClient(MODBUS_HOST, port=MODBUS_PORT)
-    reader = SimpleMFRC522()
-    client.connect()
-    print("Starting background task...")
-    daemon = Thread(target=send_bit_de_vida, args=(client, 5,), daemon=True, name="Background")
-    daemon.start()
+    if not settings.DISABLE_PLC:
+        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_EGRESO_BALANZA,MODBUS_PORT = settings.MODBUS_PORT_EGRESO_BALANZA)
+    if not settings.DISABLE_RFID:
+        reader = SimpleMFRC522()
     try:
         while True:
 
+            if not settings.DISABLE_PLC:
             ## PLC wait until ready
-            while True:
-                if is_plc_ready(client):
-                    break
-                time.sleep(10)
+                while True:
+                    if is_plc_ready(client):
+                        break
+                    time.sleep(5)
 
-            # ## RFID LPR
-            # prGreen("Hold a tag near the reader")
-            # rfid_uid = input("RFID_UID")
-            # rfid_uid = 2222
-            # print(f"ID: {rfid_uid}")
-            # print(f"Reading lisence from image..")
-            # patente = 'ABC321'
-            # print({"LICENSE_PLATE":patente})
+            if not settings.DISABLE_RFID:
+                rfid_uid = read_rfid(reader=reader)
+                time.sleep(2)
+            else:
+                rfid_uid = settings.EXAMPLE_RFID_UID
+                print(rfid_uid)
 
-            prCyan("Press Enter to start tag reading...")
-            input("")
-            prGreen("Hold a tag near the reader")
-            rfid_uid, text = reader.read()
-            print(f"ID: {rfid_uid}\nText: {text}")
-            time.sleep(2)
-            print(f"Reading lisence from image or photo..")
-            take_photo()
-            prediccion = get_LPR()
-            print({"LICENSE_PLATE": prediccion})
-            patente = prediccion
+            if not settings.DISABLE_LPR:
+                print(f"Reading lisence from image or photo..")
+                take_photo()
+                prediccion = get_LPR()
+                print({"LICENSE_PLATE": prediccion})
+                patente = prediccion
+            else:
+                patente = settings.EXAMPLE_PATENTE
+                print(patente)
+                input("Press to continue")
 
             if patente != -1:
                 ## FastAPI
@@ -274,28 +282,33 @@ def egreso_balanza():
                 )
                 if turno_id:
                     # This will create an empty pesada entry
-                    sivrg_update_turno(
+                    pesada_id = sivrg_update_turno(
                         access_token=access_token,
                         id=turno_id,
                         state=TURNO_STATE.BALANZA_OUT,
                     )
-                    plc_start_seq(client)
+                    if not settings.DISABLE_PLC:
+                        plc_start_seq(client)
                 else:
                     prYellow("Turno no validado")
 
-                ## PLC wait until weight is ready
-                while True:
-                    if is_plc_weight_rdy(client):
-                        break
-                    time.sleep(10)
-                re_plc_weight = client.read_holding_registers(address=2)
-                peso_pesada = re_plc_weight.registers[0]
-                prLightPurple(f"Register 2 value:{peso_pesada}")
-                client.write_registers(1, 25, unit=1)  # reset to PLC knows that i read it
+                if not settings.DISABLE_PLC:
+                    ## PLC wait until weight is ready
+                    while True:
+                        if is_plc_weight_rdy(client):
+                            break
+                        time.sleep(10)
+                    re_plc_weight = client.read_holding_registers(address=2)
+                    peso_pesada = re_plc_weight.registers[0]
+                    prLightPurple(f"Register 2 value:{peso_pesada}")
+                    client.write_registers(1, 25, unit=1)  # reset to PLC knows that i read it
+                else:
+                    peso_pesada = settings.EXAMPLE_PESO_OUT
 
                 pesada_object = sivrg_update_pesada(
                     access_token=access_token,
                     turno_id=turno_id,
+                    pesada_id=pesada_id,
                     fecha_pesada=fecha,
                     peso_pesada=peso_pesada,
                     direction="out",
@@ -313,8 +326,9 @@ def egreso_balanza():
                 )
 
     finally:
-        print("Closing connection..")
-        client.close()
+        if not settings.DISABLE_PLC:
+            prLightPurple("Closing connection..")
+            client.close()
 
 
 if __name__ == "__main__":
