@@ -8,17 +8,31 @@ import StepDetalles from './StepDetalles';
 import { BookingFormProvider, useBookingForm } from '../../contexts/BookingFormContext';
 import StepProducto from './StepProducto';
 import useTurno from '../../hooks/useTurno';
-import { TurnoData } from '../../types';
+import { Silo, TurnoData } from '../../types';
 import StepCompleted from './StepCompleted';
 import useChofer from '../../hooks/useChofer';
 import useVehiculo from '../../hooks/useVehiculo';
 import useProducto from '../../hooks/useProducto';
 import useSessionEmpresa from '../../hooks/useSessionEmpresa';
 import { AxiosError } from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../api';
 
 const BookingStepper = () => {
   const [active, setActive] = useState(0);
   const { empresa_id } = useSessionEmpresa();
+
+  const querySilo = useQuery<Silo[]>({
+    queryKey: ['silos'],
+    queryFn: () => api.get(`/silos/`).then((res) => res.data),
+  });
+
+  const getCapacity = (producto_id: string) =>
+    querySilo.data?.reduce(
+      (acc, current) => ({ ...acc, [current.producto_id]: current.capacidad - current.utilizado }),
+      {} as { [key: string]: number },
+    )[producto_id] || Infinity;
+
 
   const form = useBookingForm({
     initialValues: {
@@ -49,7 +63,11 @@ const BookingStepper = () => {
       if (active === 3) {
         return {
           turno_fecha: values.fecha === null ? 'Seleccione una fecha' : null,
-          cantidad_estimada: ['', '0'].includes(values.cantidad_estimada) ? 'Ingrese una cantidad válida' : null,
+          cantidad_estimada: ['', '0'].includes(values.cantidad_estimada)
+            ? 'Ingrese una cantidad válida'
+            : Number(values.cantidad_estimada) > getCapacity(values.producto_id)
+            ? `Ingrese una cantidad estimada menor a ${getCapacity(values.producto_id)}kg.`
+            : null,
         };
       }
       return {};
@@ -72,6 +90,8 @@ const BookingStepper = () => {
         message: `Se ha agendado el turno para el ${turno.fecha}`,
       });
       form.reset();
+      // @TODO: TRY BELOW, INVALIDATE SILOS QUERY TO UPDATE VALIDATOR
+      querySilo.refetch()
     } catch (error) {
       if (error instanceof AxiosError) {
         notifications.show({
@@ -132,10 +152,10 @@ const BookingStepper = () => {
                   description="Detalles"
                   label="Paso 4"
                 >
-                  <StepDetalles />
+                  <StepDetalles getCapacity={getCapacity} />
                 </Stepper.Step>
                 <Stepper.Completed>
-                  <StepCompleted>
+                  <StepCompleted error={createTurno.isError}>
                     <LoadingOverlay
                       visible={isMutatingTurno}
                       zIndex={1000}

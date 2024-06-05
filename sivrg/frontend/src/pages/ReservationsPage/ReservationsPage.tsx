@@ -30,7 +30,11 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
     queryFn: () =>
       api
         .get(
-          filterByDay ? `/turnos/?start_date=${yesterday.toISOString()}&end_date=${today.toISOString()}${isEmployee ? '' : '&state=accepted'}` : '/turnos/',
+          filterByDay
+            ? `/turnos/?start_date=${yesterday.toISOString()}&end_date=${today.toISOString()}${
+                isEmployee ? '' : '&state=accepted'
+              }`
+            : '/turnos/',
         )
         .then((res) => res.data),
   });
@@ -92,14 +96,14 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
       id: 'pesada',
       header: () => 'Pesada',
       cell: (info) => {
-        const peso_bruto_in = info.row.original.pesada?.peso_bruto_in
-        const peso_bruto_out = info.row.original.pesada?.peso_bruto_out
-        if(!peso_bruto_in || !peso_bruto_out){
-          return <span className='d-flex justify-content-center'>-</span>
+        const peso_bruto_in = info.row.original.pesada?.peso_bruto_in;
+        const peso_bruto_out = info.row.original.pesada?.peso_bruto_out;
+        if (!peso_bruto_in || !peso_bruto_out) {
+          return <span className="d-flex justify-content-center">-</span>;
         }
-        const pesada = peso_bruto_in - peso_bruto_out
-        return <span className='d-flex justify-content-center'>{`${pesada}kg`}</span>
-      }
+        const pesada = peso_bruto_in - peso_bruto_out;
+        return <span className="d-flex justify-content-center">{`${pesada}kg`}</span>;
+      },
     }),
     columnHelper.accessor('fecha', {
       id: 'fecha',
@@ -163,7 +167,7 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
     data: turnos ? turnos : [],
     columns: isMobile ? columnsMobile : columnsDesktop,
     getCoreRowModel: getCoreRowModel(),
-    initialState: { columnVisibility: { empresa: isEmployee} },
+    initialState: { columnVisibility: { empresa: isEmployee } },
   });
   return (
     <>

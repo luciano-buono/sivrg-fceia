@@ -8,14 +8,11 @@ import { Silo } from '../../types';
 import api from '../../api';
 
 const HomeAdmin = () => {
-
   const queryTurno = useQuery<Silo[]>({
     queryKey: ['silos'],
-    queryFn: () =>
-      api.get('/silos/').then((res) => res.data),
+    queryFn: () => api.get('/silos/').then((res) => res.data),
   });
   const { data: silos } = queryTurno;
-
 
   const { isLoading } = useSession();
   const state = useNewsContext();
