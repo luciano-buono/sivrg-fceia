@@ -5,14 +5,14 @@ import { ModelForm, VehiculoData } from '../../types';
 import { useForm } from '@mantine/form';
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 import { FC } from 'react';
-import useMutateVehiculos from '../../hooks/useVehiculo';
+import useVehiculo from '../../hooks/useVehiculo';
 import useSessionEmpresa from '../../hooks/useSessionEmpresa';
 import { AxiosError } from 'axios';
 
 const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
-  const { createVehiculo, isMutatingVehiculo } = useMutateVehiculos();
-
   const bookingForm = useBookingFormContext();
+
+  const { createVehiculo, isMutatingVehiculo } = useVehiculo();
   const { empresa_id } = useSessionEmpresa();
 
   const form = useForm({
@@ -35,7 +35,7 @@ const VehiculoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
   const handleCreateVehiculo = async (newVehiculoData: VehiculoData) => {
     try {
       const vehiculo = await createVehiculo.mutateAsync(newVehiculoData);
-      bookingForm.setFieldValue('vehiculo_id', vehiculo.vehiculo_id.toString());
+      bookingForm.setFieldValue('vehiculo_id', vehiculo.id.toString());
       updateSearch(`${vehiculo.patente},  ${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.año}`);
       closeFn();
       notifications.show({

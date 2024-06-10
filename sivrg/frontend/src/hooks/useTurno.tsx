@@ -7,6 +7,16 @@ const createTurnoFn = async (newTurnoData: TurnoData) => {
   return response.data;
 };
 
+const deleteTurnoFn = async (turnoId: string) => {
+  const response = await api.delete(`/turnos/${turnoId}`);
+  return response.data;
+};
+
+const acceptTurnoFn = async (turnoId: string) => {
+  const response = await api.put(`/turnos/${turnoId}?state=accepted`);
+  return response.data;
+};
+
 const useTurno = () => {
   const queryClient = useQueryClient();
 
@@ -21,13 +31,32 @@ const useTurno = () => {
     },
   });
 
+  const deleteTurno = useMutation({
+    mutationKey: ['delete_turno'],
+    mutationFn: deleteTurnoFn,
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ['turnos'] });
+    },
+  });
+
+  const acceptTurno = useMutation(
+    {
+      mutationKey: ['accept_turno'],
+      mutationFn: acceptTurnoFn,
+      onSuccess: () => {
+        return queryClient.invalidateQueries({ queryKey: ['turnos'] });
+      },
+    },
+    // }
+  );
+
   const isMutatingTurno =
     useMutationState({
       filters: { status: 'pending', mutationKey: ['turno'] },
       select: (mutation) => mutation.state.variables,
     }).length > 0;
 
-  return { createTurno, isMutatingTurno };
+  return { createTurno, acceptTurno, isMutatingTurno, deleteTurno };
 };
 
 export default useTurno;

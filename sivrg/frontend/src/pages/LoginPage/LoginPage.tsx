@@ -3,7 +3,11 @@ import { Card, Container } from 'react-bootstrap';
 import useSession from '../../hooks/useSession';
 
 const LoginPage = () => {
-  const { loginWithRedirect, isLoading } = useSession();
+  const { loginWithRedirect, isLoading, isAuthenticated } = useSession();
+
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <Container className="d-flex flex-column justify-content-center align-content-center pt-2 h-50">

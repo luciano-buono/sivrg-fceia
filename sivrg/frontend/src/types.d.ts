@@ -1,55 +1,76 @@
-export interface Turno {
-  turno_id: string;
-  empresa_id: number | null;
+export type Turno = {
+  id: string;
+  empresa_id: string | null;
   chofer_id: string;
   vehiculo_id: string;
   producto_id: string;
-  turno_fecha: string | null;
+  fecha: string | null;
   cantidad_estimada: string;
+  state: string;
+  pesada: Pesada | null;
   chofer: Chofer;
   vehiculo: Vehiculo;
   producto: Producto;
-}
+  empresa: Empresa;
+};
 
-export interface Empresa {
-  empresa_nombre: string;
-  empresa_RS: string;
-  empresa_CUIT: number | undefined;
-  empresa_direccion: string;
-  empresa_localidad: string;
-  empresa_provincia: string;
-  empresa_pais: string;
-  empresa_telefono: string;
-  empresa_id: number | null;
-  empresa_email: string | undefined;
-}
+export type Silo = {
+  producto_id: number;
+  capacidad: number;
+  utilizado: number;
+  habilitado: boolean;
+  id: number;
+  producto: Producto;
+};
 
-export interface TurnoData {
+export type Pesada = {
+  fecha_hora_balanza_in: string | null;
+  fecha_hora_balanza_out: string | null;
+  peso_bruto_in: number | null;
+  peso_bruto_out: number | null;
+  turno_id: number | null;
+  id: number | null;
+  fecha_hora_planta_in: string | null;
+};
+export type Empresa = {
+  nombre: string;
+  RS: string;
+  CUIT: number | undefined;
+  direccion: string;
+  localidad: string;
+  provincia: string;
+  pais: string;
+  telefono: string;
+  id: number | null;
+  email: string | undefined;
+};
+
+export type TurnoData = {
   empresa_id: number | null;
   chofer_id: string;
   vehiculo_id: string;
   producto_id: string;
-  turno_fecha: string | null;
+  fecha: string | null;
   cantidad_estimada: string;
-}
+};
 
-export interface Producto {
-  producto_id: string;
-  producto_nombre: string;
-}
+export type Producto = {
+  id: string;
+  nombre: string;
+};
 
-export interface Chofer {
-  chofer_id: string;
+export type Chofer = {
+  id: string;
   empresa_id: number | null;
   rfid_uid: number;
   nombre: string;
   apellido: string;
   dni: number;
   habilitado: boolean;
-}
+};
 
-export interface Vehiculo {
-  vehiculo_id: string;
+export type Vehiculo = {
+  id: string;
   empresa_id: number | null;
   patente: string;
   seguro: string;
@@ -57,15 +78,15 @@ export interface Vehiculo {
   año: number | undefined;
   marca: string;
   habilitado: boolean;
-}
+};
 
-export interface ModelForm {
+export type ModelForm = {
   updateSearch: (value: string) => void;
   updateValue: (value: string) => void;
   closeFn: () => void;
-}
+};
 
-export type EmpresaData = Omit<Empresa, 'empresa_id'>;
-export type ChoferData = Omit<Chofer, 'chofer_id'>;
-export type VehiculoData = Omit<Vehiculo, 'vehiculo_id'>;
-export type ProductoData = Omit<Prodcuto, 'producto_id'>;
+export type EmpresaData = Omit<Empresa, 'id'>;
+export type ChoferData = Omit<Chofer, 'id'>;
+export type VehiculoData = Omit<Vehiculo, 'id'>;
+export type ProductoData = Omit<Prodcuto, 'id'>;

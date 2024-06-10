@@ -27,6 +27,7 @@ import useSessionEmpresa from './hooks/useSessionEmpresa';
 import { Empresa } from './types';
 import { Auth0ProviderWithNavigate } from './contexts/Auth0ProviderWithRedirect';
 import { NewsProvider } from './contexts/NewsContext';
+// import MonitorPage from './pages/MonitorPage';
 
 const queryClient = new QueryClient();
 
@@ -118,6 +119,7 @@ const App = () => {
   const employeeHeader = [
     ...topNavbar,
     { icon: IconCalendar, label: 'Turnos', to: 'admin/reservations/' },
+    { icon: IconCalendar, label: 'Turnos de hoy', to: 'admin/reservations/current' },
     ...bottomNavbar,
   ];
 
@@ -125,6 +127,7 @@ const App = () => {
     ...topNavbar,
     { icon: IconCalendarCheck, label: 'Agendar turno', to: '/booking' },
     { icon: IconCalendar, label: 'Mis turnos', to: '/reservations' },
+    { icon: IconCalendar, label: 'Turnos de hoy', to: '/reservations/current' },
     ...bottomNavbar,
   ];
 
@@ -177,7 +180,7 @@ const App = () => {
         <AppShell.Footer>
           <Container fluid>
             <Row className="d-flex flex-wrap align-items-center">
-              {isClient ? <Text className="w-auto">{empresa?.empresa_nombre}, powered by:</Text> : null}
+              {isClient ? <Text className="w-auto">{empresa?.nombre}, powered by:</Text> : null}
               <Image className="px-0 pt-1" w={70} h={40} src={'https://i.imgur.com/gB7134o.png'} />
             </Row>
           </Container>
@@ -190,5 +193,7 @@ const App = () => {
 const ClientApp = () => <ClientPage />;
 
 const AdminApp = () => <AdminPage />;
+
+// const MonitorApp = () => <MonitorPage />;
 
 export default AppWrapper;

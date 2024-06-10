@@ -5,13 +5,17 @@ import { NumberInput } from '@mantine/core';
 
 import { useBookingFormContext } from '../../contexts/BookingFormContext';
 
-const StepDetalles: FC = () => {
+const StepDetalles: FC<{getCapacity: (producto_id: string) => number}> = ({getCapacity}) => {
   const form = useBookingFormContext();
 
   const today = new Date();
   const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const excludedDates = [today, tomorrow];
+  const yesterday = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 5);
+  yesterday.setDate(tomorrow.getDate() - 4);
+
+  const excludedDates = [yesterday, tomorrow];
+
 
   return (
     <Card className="h-100">
@@ -42,7 +46,7 @@ const StepDetalles: FC = () => {
 
               return {};
             }}
-            {...form.getInputProps('turno_fecha')}
+            {...form.getInputProps('fecha')}
           />
           <NumberInput
             className="col-md-4 pb-2"
@@ -50,6 +54,7 @@ const StepDetalles: FC = () => {
             suffix="kg"
             placeholder="kg..."
             label="Cantidad estimada"
+            description={`(${getCapacity(form.getInputProps('producto_id').value)}kg. disponible)`}
             {...form.getInputProps('cantidad_estimada')}
           />
         </Row>

@@ -3,25 +3,27 @@ import ResourceCard from '../../components/ResourceCard';
 import useSession from '../../hooks/useSession';
 import { Skeleton, Text } from '@mantine/core';
 import { useNewsContext } from '../../contexts/NewsContext';
+import { useQuery } from '@tanstack/react-query';
+import { Silo } from '../../types';
+import api from '../../api';
 
 const HomeAdmin = () => {
-  const mockResources = [
-    { icon: 'fa-solid fa-wheat-awn', initialQuantity: 70 },
-    { icon: 'fa-solid fa-tree', initialQuantity: 20 },
-    { icon: 'fa-solid fa-plant-wilt', initialQuantity: 40 },
-  ];
+  const queryTurno = useQuery<Silo[]>({
+    queryKey: ['silos'],
+    queryFn: () => api.get('/silos/').then((res) => res.data),
+  });
+  const { data: silos } = queryTurno;
 
   const { isLoading } = useSession();
   const state = useNewsContext();
-
   return (
     <>
       <Card className="d-flex w-100 justify-content-between my-3">
         <Card.Body>
           <Row className="justify-content-center px-3">
-            {mockResources.map((r, index) => (
+            {silos?.map((silo, index) => (
               <Skeleton visible={isLoading} className="w-auto py-1" key={index}>
-                <ResourceCard {...r} />
+                <ResourceCard silo={silo} />
               </Skeleton>
             ))}
           </Row>

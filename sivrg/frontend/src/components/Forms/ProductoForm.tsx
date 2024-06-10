@@ -15,23 +15,23 @@ const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
 
   const form = useForm({
     initialValues: {
-      producto_nombre: '',
+      nombre: '',
     },
     validate: {
-      producto_nombre: (value) => (value !== '' ? null : 'Ingrese el nombre del producto'),
+      nombre: (value) => (value !== '' ? null : 'Ingrese el nombre del producto'),
     },
   });
 
   const handleCreateProducto = async (newProductoData: ProductoData) => {
     try {
       const producto = await createProducto.mutateAsync(newProductoData);
-      bookingForm.setFieldValue('producto_id', producto.producto_id.toString());
-      updateSearch(`${producto.producto_nombre}`);
+      bookingForm.setFieldValue('producto_id', producto.id.toString());
+      updateSearch(`${producto.nombre}`);
       closeFn();
       notifications.show({
         title: 'Producto creado!',
         color: 'green',
-        message: `Se ha creado el producto ${newProductoData.producto_nombre}`,
+        message: `Se ha creado el producto ${newProductoData.nombre}`,
       });
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -49,7 +49,7 @@ const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
       onSubmit={form.onSubmit(() => {
         if (!isMutatingProducto) {
           handleCreateProducto({
-            producto_nombre: form.values.producto_nombre,
+            nombre: form.values.nombre,
           });
         }
       })}
@@ -60,7 +60,7 @@ const ProductoForm: FC<ModelForm> = ({ updateSearch, closeFn }) => {
           withAsterisk
           label="Nombre"
           placeholder="Nombre del producto"
-          {...form.getInputProps('producto_nombre')}
+          {...form.getInputProps('nombre')}
         />
       </Row>
       <Row className="d-flex justify-content-end pt-3 pe-3">
