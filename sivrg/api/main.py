@@ -480,8 +480,12 @@ def create_turno(
     if not crud.get_vehiculo(db=db, id=turno.vehiculo_id):
         raise HTTPException(status_code=404, detail="Vehiculo ID not found")
     silo = crud.get_silo(db, turno.producto_id)
-    if silo.utilizado+turno.cantidad_estimada > silo.capacidad:
+    if silo.utilizado+silo.reservado+turno.cantidad_estimada > silo.capacidad:
         raise HTTPException(status_code=405, detail="Silo will overflow with this amount!")
+    # Add the new reserved capicity to the silo
+    silo.reservado += turno.cantidad_estimada
+    crud.update_silo(db=db, id=silo.id, data=silo)
+
     return crud.create_turno(db=db, turno=turno)
 
 
@@ -506,6 +510,7 @@ def read_turnos(
         q = q.filter(models.Turno.state == state)
     if start_date and end_date:
         q = q.filter(models.Turno.fecha.between(start_date, end_date))
+    ## TODO Return turnos in order date
     return q.all()
 
 
@@ -691,7 +696,7 @@ def test_create(
     )
     test_producto = schemas.ProductoCreate(nombre="Soja")
     test_chofer = schemas.ChoferCreate(
-        rfid_uid=None,
+        rfid_uid=427772581204,
         nombre="Gustavo",
         apellido="Figs",
         dni=40112012,
@@ -699,13 +704,20 @@ def test_create(
         habilitado=True,
     )
     test_vehiculo = schemas.VehiculoCreate(
-        patente="ABC123",
+        patente="PEZ001",
         seguro="La segunda",
         modelo="Vento",
         año=2006,
         marca="Vento",
         habilitado=True,
         empresa_id=1,
+    )
+    test_silo = schemas.SiloCreate(
+        producto_id=1,
+        capacidad=100000,
+        utilizado=10000,
+        habilitado=True,
+        reservado=10000
     )
     test_turno = schemas.TurnoCreate(
         fecha=datetime.now(),
@@ -716,14 +728,12 @@ def test_create(
         vehiculo_id=1,
         state="pending",
     )
-    print(test_producto)
-    print(test_vehiculo)
-
     crud.create_empresa(db=db, empresa=test_empresa)
     crud.create_producto(db=db, producto=test_producto)
     crud.create_chofer(db=db, chofer=test_chofer)
     crud.create_vehiculo(db=db, vehiculo=test_vehiculo)
     crud.create_turno(db=db, turno=test_turno)
+    crud.create_silo(db=db, silo=test_silo)
     return {"message": "DONE"}
 
 

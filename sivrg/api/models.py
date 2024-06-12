@@ -92,7 +92,7 @@ class Silo(Base):
     capacidad = Column(Integer, nullable=False)
     utilizado = Column(Integer, nullable=False)
     habilitado = Column(Boolean, nullable=False)
-
+    reservado  = Column(Integer, nullable=True)
 
 class Turno(Base):
     __tablename__ = "turnos"
