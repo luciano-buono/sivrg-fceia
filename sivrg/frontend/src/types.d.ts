@@ -18,6 +18,7 @@ export type Silo = {
   producto_id: number;
   capacidad: number;
   utilizado: number;
+  reservado: number;
   habilitado: boolean;
   id: number;
   producto: Producto;

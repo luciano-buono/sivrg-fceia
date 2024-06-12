@@ -29,10 +29,12 @@ const BookingStepper = () => {
 
   const getCapacity = (producto_id: string) =>
     querySilo.data?.reduce(
-      (acc, current) => ({ ...acc, [current.producto_id]: current.capacidad - current.utilizado }),
+      (acc, current) => ({
+        ...acc,
+        [current.producto_id]: current.capacidad - (current.utilizado + current.reservado),
+      }),
       {} as { [key: string]: number },
     )[producto_id] || Infinity;
-
 
   const form = useBookingForm({
     initialValues: {
@@ -91,7 +93,7 @@ const BookingStepper = () => {
       });
       form.reset();
       // @TODO: TRY BELOW, INVALIDATE SILOS QUERY TO UPDATE VALIDATOR
-      querySilo.refetch()
+      querySilo.refetch();
     } catch (error) {
       if (error instanceof AxiosError) {
         notifications.show({

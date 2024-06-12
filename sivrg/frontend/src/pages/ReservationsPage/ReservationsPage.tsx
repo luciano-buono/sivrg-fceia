@@ -30,11 +30,7 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
     queryFn: () =>
       api
         .get(
-          filterByDay
-            ? `/turnos/?start_date=${yesterday.toISOString()}&end_date=${today.toISOString()}${
-                isEmployee ? '' : '&state=accepted'
-              }`
-            : '/turnos/',
+          filterByDay ? `/turnos/?start_date=${yesterday.toISOString()}&end_date=${today.toISOString()}` : '/turnos/',
         )
         .then((res) => res.data),
   });
