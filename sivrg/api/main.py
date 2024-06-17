@@ -315,31 +315,6 @@ def read_pesadas(
     pesadas = crud.get_pesada(db, skip=skip, limit=limit)
     return pesadas
 
-
-# Get all Turnos
-@app.get("/turnos/", response_model=list[schemas.Turno])
-def read_turnos(
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(get_db),
-    empresa_id: int | None = None,
-    state: str | None = None,
-    start_date: str | None = None,
-    end_date: str | None = None,
-    user: Auth0User = Security(auth.get_user),
-):
-    q = db.query(models.Turno)
-    if "client" in user.roles:
-        empresa_id = crud.get_empresa_by_email(db=db, email=user.email).one().id
-    if empresa_id:
-        q = q.filter(models.Turno.empresa_id == empresa_id)
-    if state:
-        q = q.filter(models.Turno.state == state)
-    if start_date and end_date:
-        q = q.filter(models.Turno.fecha.between(start_date, end_date))
-    return q.all()
-
-
 # Get Pesada by ID
 @app.get("/pesadas/{id}", response_model=schemas.Pesada)
 def read_pesada(
@@ -497,10 +472,15 @@ def read_turnos(
     db: Session = Depends(get_db),
     empresa_id: int | None = None,
     state: str | None = None,
-    start_date: datetime | None = Query(datetime.now(), description="Fecha"),
-    end_date: datetime | None = Query(datetime.now(), description="Fecha"),
+    start_date: str | None = None,
+    end_date: str | None = None,
+    sort: str | None = None,
     user: Auth0User = Security(auth.get_user),
 ):
+    ## TODO: Check if useful
+    all_keys = dir(models.Turno)
+    attribute_keys = [key for key in all_keys if not (key.startswith('_') or callable(getattr(models.Turno, key)))]
+    ##
     q = db.query(models.Turno)
     if "client" in user.roles:
         empresa_id = crud.get_empresa_by_email(db=db, email=user.email).one().id
@@ -510,9 +490,49 @@ def read_turnos(
         q = q.filter(models.Turno.state == state)
     if start_date and end_date:
         q = q.filter(models.Turno.fecha.between(start_date, end_date))
-    ## TODO Return turnos in order date
+    if sort:
+        if sort == "fecha":
+            q = q.order_by(models.Turno.fecha)
+        if sort == "-fecha":
+            q = q.order_by(models.Turno.fecha.desc())
+        if sort == "state":
+            q = q.order_by(models.Turno.state)
+        if sort == "-state":
+            q = q.order_by(models.Turno.state.desc())
+        if sort == "empresa_id":
+            q = q.order_by(models.Turno.empresa_id)
+        if sort == "-empresa_id":
+            q = q.order_by(models.Turno.empresa_id.desc())
     return q.all()
 
+# # Get all Turnos
+# @app.get("/turnos/", response_model=list[schemas.Turno])
+# def read_turnos(
+#     skip: int = 0,
+#     limit: int = 100,
+#     db: Session = Depends(get_db),
+#     empresa_id: int | None = None,
+#     state: str | None = None,
+#     start_date: str | None = None,
+#     end_date: str | None = None,
+#     sort: str | None = None,
+#     user: Auth0User = Security(auth.get_user),
+# ):
+#     q = db.query(models.Turno)
+#     if "client" in user.roles:
+#         empresa_id = crud.get_empresa_by_email(db=db, email=user.email).one().id
+#     if empresa_id:
+#         q = q.filter(models.Turno.empresa_id == empresa_id)
+#     if state:
+#         q = q.filter(models.Turno.state == state)
+#     if start_date and end_date:
+#         q = q.filter(models.Turno.fecha.between(start_date, end_date))
+#     if sort:
+#         if sort == "fecha":
+#             q = q.order_by(models.Turno.fecha)
+#         if sort == "-fecha":
+#             q = q.order_by(models.Turno.fecha.desc())
+#     return q.all()
 
 # Get a Turno by ID
 @app.get("/turnos/{id}", response_model=schemas.Turno)
