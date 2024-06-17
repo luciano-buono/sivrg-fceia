@@ -1,6 +1,13 @@
 import { Turno } from '../../types';
 import { Card } from 'react-bootstrap';
-import { ColumnDef, createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import {
+  ColumnDef,
+  SortingState,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 import useSession from '../../hooks/useSession';
 import { Button, Skeleton, em } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
@@ -8,8 +15,9 @@ import { useMediaQuery } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api';
 import useTurno from '../../hooks/useTurno';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
+import { IconCaretDown, IconCaretUp, IconCaretUpDown } from '@tabler/icons-react';
 
 const columnHelper = createColumnHelper<Turno>();
 
@@ -25,14 +33,23 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
 
+  const [sorting, setSorting] = useState<SortingState>([]);
+  console.log(sorting);
+
+  let url = '/turnos/';
+
+  const queryParams = {
+    date: filterByDay ? `start_date=${yesterday.toISOString()}&end_date=${today.toISOString()}` : null,
+    sort: sorting.length > 0 ? `?&sort=${sorting[0].desc ? '-' : ''}${sorting[0].id}` : null,
+  };
+
+  const hasQueryParams = queryParams.date || queryParams.sort;
+
+  url = hasQueryParams ? `${url}?${queryParams.date}&${queryParams.sort}` : url;
+
   const queryTurno = useQuery<Turno[]>({
     queryKey: ['turnos'],
-    queryFn: () =>
-      api
-        .get(
-          filterByDay ? `/turnos/?start_date=${yesterday.toISOString()}&end_date=${today.toISOString()}` : '/turnos/',
-        )
-        .then((res) => res.data),
+    queryFn: () => api.get(url).then((res) => res.data),
   });
   const location = useLocation();
 
@@ -66,22 +83,26 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
   const columnsDesktop: ColumnDef<Turno, any>[] = [
     columnHelper.accessor('chofer.nombre', {
       cell: (info) => (
-        <span>{`${info.row.original.chofer.nombre} ${info.row.original.chofer.apellido}, ${info.row.original.chofer.dni}`}</span>
+        <span>{`${info.row.original.chofer.nombre} ${info.row.original.chofer.apellido}, DNI: ${info.row.original.chofer.dni}, Patente: ${info.row.original.vehiculo.patente}`}</span>
       ),
       header: () => <span>Chofer</span>,
+      enableSorting: false,
     }),
-    columnHelper.accessor('vehiculo.patente', {
-      cell: (info) => info.renderValue(),
-      header: () => <span>Patente</span>,
-    }),
+    // columnHelper.accessor('vehiculo.patente', {
+    //   cell: (info) => info.renderValue(),
+    //   header: () => <span>Patente</span>,
+    //   enableSorting: false,
+    // }),
     columnHelper.accessor('producto.nombre', {
       cell: (info) => info.renderValue(),
       header: () => <span>Producto</span>,
+      enableSorting: false,
     }),
     columnHelper.accessor('cantidad_estimada', {
       id: 'cantidad_estimada',
       cell: (info) => <span>{info.renderValue()} kg</span>,
       header: () => <span>Cantidad estimada</span>,
+      enableSorting: false,
     }),
     columnHelper.accessor('state', {
       id: 'state',
@@ -90,6 +111,7 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
     }),
     columnHelper.accessor('pesada', {
       id: 'pesada',
+      enableSorting: false,
       header: () => 'Pesada',
       cell: (info) => {
         const peso_bruto_in = info.row.original.pesada?.peso_bruto_in;
@@ -164,12 +186,14 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
     columns: isMobile ? columnsMobile : columnsDesktop,
     getCoreRowModel: getCoreRowModel(),
     initialState: { columnVisibility: { empresa: isEmployee } },
+    state: { sorting },
+    onSortingChange: setSorting, //optionally control sorting state in your own scope for easy access
   });
   return (
     <>
       <Card className="d-flex w-100 my-3">
+        <div className="fs-1"> Turnos </div>
         <Card.Body>
-          <div className="fs-1"> Turnos </div>
           <Skeleton visible={isLoading || isLoadingTurnos}>
             <table className="table table-bordered">
               <thead>
@@ -177,7 +201,31 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <th key={header.id}>
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                        {header.isPlaceholder ? null : (
+                          <div
+                            className={header.column.getCanSort() ? 'cursor-pointer select-none' : ''}
+                            onClick={header.column.getToggleSortingHandler()}
+                            title={
+                              header.column.getCanSort()
+                                ? header.column.getNextSortingOrder() === 'asc'
+                                  ? 'Sort ascending'
+                                  : header.column.getNextSortingOrder() === 'desc'
+                                  ? 'Sort descending'
+                                  : 'Clear sort'
+                                : undefined
+                            }
+                          >
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {header.column.getCanSort() && !header.column.getIsSorted() ? (
+                              <IconCaretUpDown />
+                            ) : (
+                              {
+                                asc: <IconCaretUp />,
+                                desc: <IconCaretDown />,
+                              }[header.column.getIsSorted() as string] ?? null
+                            )}
+                          </div>
+                        )}
                       </th>
                     ))}
                   </tr>

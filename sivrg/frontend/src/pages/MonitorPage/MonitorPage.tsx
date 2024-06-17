@@ -39,9 +39,6 @@ const MonitorPage = () => {
     <>
       <div className="d-flex vh-100 vw-100 flex-column" style={{ backgroundColor: '#228be6' }} ref={ref}>
         <div>
-        <Button onClick={toggle} color={'blue'} hidden={fullscreen}>
-          Pantalla completa
-      </Button>
           <div className="fw-bold fs-1 d-flex text-black ps-2">TURNOS EN CURSO</div>
           <Divider my={6} />
           <ol className="d-flex flex-column" style={{ listStyle: 'none' }}>
@@ -52,6 +49,9 @@ const MonitorPage = () => {
             ))}
           </ol>
         </div>
+        <Button onClick={toggle} color={'blue'} hidden={fullscreen}>
+          Pantalla completa
+        </Button>
       </div>
     </>
   );
