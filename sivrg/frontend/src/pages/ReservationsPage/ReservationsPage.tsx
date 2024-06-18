@@ -21,6 +21,15 @@ import { IconCaretDown, IconCaretUp, IconCaretUpDown } from '@tabler/icons-react
 
 const columnHelper = createColumnHelper<Turno>();
 
+const stateLabels: { [key: string]: string } = {
+  accepted: 'Aceptado',
+  finished: 'Finalizado',
+  canceled: 'Cancelado',
+  pending: 'Pendiente',
+  in_progress_balanza_in: 'En progreso IN',
+  in_progress_balanza_out: 'En progreso OUT',
+};
+
 type ReservationsAdminPageProps = {
   filterByDay: boolean;
 };
@@ -87,27 +96,27 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
       ),
       header: () => <span>Chofer</span>,
       enableSorting: false,
+      minSize: 500,
     }),
-    // columnHelper.accessor('vehiculo.patente', {
-    //   cell: (info) => info.renderValue(),
-    //   header: () => <span>Patente</span>,
-    //   enableSorting: false,
-    // }),
     columnHelper.accessor('producto.nombre', {
-      cell: (info) => info.renderValue(),
+      cell: (info) => <div className="d-flex justify-content-center">{info.renderValue()}</div>,
       header: () => <span>Producto</span>,
       enableSorting: false,
     }),
     columnHelper.accessor('cantidad_estimada', {
       id: 'cantidad_estimada',
       cell: (info) => <span>{info.renderValue()} kg</span>,
-      header: () => <span>Cantidad estimada</span>,
+      header: () => 'Cantidad',
       enableSorting: false,
     }),
     columnHelper.accessor('state', {
       id: 'state',
       header: () => 'Estado',
-      cell: (info) => info.renderValue(),
+      cell: (info) => (
+        <div className="d-flex justify-content-center align-items-center">
+          {stateLabels[info.renderValue()] ?? info.renderValue()}{' '}
+        </div>
+      ),
     }),
     columnHelper.accessor('pesada', {
       id: 'pesada',
@@ -126,7 +135,8 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
     columnHelper.accessor('fecha', {
       id: 'fecha',
       header: () => 'Fecha',
-      cell: (info) => info.renderValue()?.slice(0, 10),
+      cell: (info) => <div className="d-flex justify-content-center">{info.renderValue()?.slice(0, 10)}</div>,
+      minSize: 150,
     }),
     columnHelper.accessor('empresa.nombre', {
       id: 'empresa',
@@ -187,12 +197,14 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
     getCoreRowModel: getCoreRowModel(),
     initialState: { columnVisibility: { empresa: isEmployee } },
     state: { sorting },
-    onSortingChange: setSorting, //optionally control sorting state in your own scope for easy access
+    onSortingChange: setSorting,
   });
   return (
     <>
       <Card className="d-flex w-100 my-3">
-        <div className="fs-1"> Turnos </div>
+        <Card.Header>
+          <div className="fs-1"> Turnos </div>
+        </Card.Header>
         <Card.Body>
           <Skeleton visible={isLoading || isLoadingTurnos}>
             <table className="table table-bordered">
@@ -215,15 +227,17 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
                                 : undefined
                             }
                           >
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {header.column.getCanSort() && !header.column.getIsSorted() ? (
-                              <IconCaretUpDown />
-                            ) : (
-                              {
-                                asc: <IconCaretUp />,
-                                desc: <IconCaretDown />,
-                              }[header.column.getIsSorted() as string] ?? null
-                            )}
+                            <div className="d-flex justify-content-center">
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                              {header.column.getCanSort() && !header.column.getIsSorted() ? (
+                                <IconCaretUpDown />
+                              ) : (
+                                {
+                                  asc: <IconCaretUp />,
+                                  desc: <IconCaretDown />,
+                                }[header.column.getIsSorted() as string] ?? null
+                              )}
+                            </div>
                           </div>
                         )}
                       </th>
@@ -235,7 +249,15 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
                 {table.getRowModel().rows.map((row) => (
                   <tr key={row.id}>
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                      <td
+                        style={{
+                          width: cell.column.getSize(),
+                          alignContent: 'center',
+                        }}
+                        key={cell.id}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
                     ))}
                   </tr>
                 ))}
