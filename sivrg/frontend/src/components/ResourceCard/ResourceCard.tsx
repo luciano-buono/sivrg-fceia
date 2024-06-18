@@ -7,7 +7,6 @@ import { Silo } from '../../types';
 const ResourceCard: FC<{ silo: Silo }> = ({ silo }) => {
   const percentageUsed = (silo.utilizado * 100) / silo.capacidad;
   const percentReserved = (silo.reservado * 100) / silo.capacidad;
-  console.log(percentReserved, percentageUsed);
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
   const [opened, setOpened] = useState(false);

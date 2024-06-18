@@ -43,7 +43,6 @@ const ReservationsAdminPage: FC<ReservationsAdminPageProps> = ({ filterByDay }) 
   yesterday.setDate(today.getDate() - 1);
 
   const [sorting, setSorting] = useState<SortingState>([]);
-  console.log(sorting);
 
   let url = '/turnos/';
 
