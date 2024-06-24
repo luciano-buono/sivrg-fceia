@@ -215,6 +215,7 @@ def create_silo(db: Session, silo: schemas.SiloCreate):
         capacidad=silo.capacidad,
         utilizado=silo.utilizado,
         habilitado=silo.habilitado,
+        reservado=silo.reservado
     )
     db.add(db_silo)
     db.commit()
@@ -251,7 +252,7 @@ def update_silo(db: Session, id: int, data: schemas.SiloCreate):
     if not silos:
         raise HTTPException(status_code=404, detail="Silo not found")
     for var, value in vars(data).items():
-        setattr(silos, var, value) if value else None
+        setattr(silos, var, value)
     db.add(silos)
     db.commit()
     db.refresh(silos)

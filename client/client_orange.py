@@ -132,7 +132,7 @@ def ingreso_playon():
                 fecha = datetime.today()
                 # fecha = datetime.datetime.today() - datetime.timedelta(days=1)
                 # fecha = datetime(2024,3,9)
-                turno_id, producto_id = sivrg_send_validate(
+                turno_id, producto_id, cantidad_estimada = sivrg_send_validate(
                     access_token=access_token,
                     rfid_uid=rfid_uid,
                     patente=patente,
@@ -191,7 +191,7 @@ def ingreso_balanza():
                 ## FastAPI
                 fecha = datetime.today()
                 # fecha = datetime(2024,3,9)
-                turno_id, producto_id = sivrg_send_validate(
+                turno_id, producto_id, cantidad_estimada = sivrg_send_validate(
                     access_token=access_token,
                     rfid_uid=rfid_uid,
                     patente=patente,
@@ -274,7 +274,7 @@ def egreso_balanza():
                 ## FastAPI
                 fecha = datetime.today()
                 # fecha = datetime(2024,3,9)
-                turno_id, producto_id = sivrg_send_validate(
+                turno_id, producto_id, cantidad_estimada = sivrg_send_validate(
                     access_token=access_token,
                     rfid_uid=rfid_uid,
                     patente=patente,
@@ -323,6 +323,7 @@ def egreso_balanza():
                     access_token=access_token,
                     producto_id=producto_id,
                     peso_agregado=net_weight,
+                    cantidad_estimada=cantidad_estimada
                 )
 
     finally:

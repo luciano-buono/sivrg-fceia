@@ -53,10 +53,11 @@ def sivrg_send_validate(access_token: str, rfid_uid, patente, fecha):
         return False, -1
     turno_id = response_text.get("id")
     producto_id = response_text.get("producto_id")
+    cantidad_estimada = response_text.get("cantidad_estimada")
     if not turno_id:
         prYellow("turno not found")
-        return False, False
-    return turno_id, producto_id
+        return False, False, False
+    return turno_id, producto_id, cantidad_estimada
 
 
 def sivrg_update_turno(access_token: str, id: str, state: str):
@@ -105,7 +106,7 @@ def sivrg_update_pesada(
     return response_text
 
 
-def sivrg_update_silo(access_token: str, producto_id: str, peso_agregado: int):
+def sivrg_update_silo(access_token: str, producto_id: str, peso_agregado: int, cantidad_estimada: int):
     headers = {"Authorization": f"Bearer {access_token}"}
     PATH = f"/silos/{producto_id}"
     response = requests.get(url=f"{DOMAIN}{PATH}", headers=headers)
@@ -114,15 +115,21 @@ def sivrg_update_silo(access_token: str, producto_id: str, peso_agregado: int):
     capacidad = response_text.get("capacidad")
     utilizado = response_text.get("utilizado")
     habilitado = response_text.get("habilitado")
+    reservado = response_text.get("reservado")
     if not habilitado:
         return False
+
+    print(f"cantidad_estimada {cantidad_estimada} type {type(cantidad_estimada)}, reservado: {reservado} type {type(reservado)}")
+
     PATH = f"/silos/{silo_id}"
     data = {
         "producto_id": producto_id,
         "capacidad": capacidad,
         "utilizado": utilizado + peso_agregado,
         "habilitado": "true",
+        "reservado": int(reservado-cantidad_estimada),
     }
+    print(data)
     response = requests.put(url=f"{DOMAIN}{PATH}", headers=headers, json=data)
     response_text = json.loads(response.text)
     prYellow(f"{response.status_code} {response_text}")

@@ -99,6 +99,7 @@ class SiloBase(BaseModel):
     capacidad: int
     utilizado: int
     habilitado: bool
+    reservado: int
 
 
 class SiloCreate(SiloBase):

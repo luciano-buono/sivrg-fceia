@@ -1,7 +1,7 @@
 services:
   api:
     container_name: api
-    image: methizul/sivrg:backend-1.7.0
+    image: methizul/sivrg:backend-1.9.1
     build:
       context: ./api
       dockerfile: ./Dockerfile.orange
@@ -29,6 +29,7 @@ services:
     entrypoint: /bin/sh -c
     command:
       - "pip install -r requirements/migrations.txt && pwd && sleep infinity"
+    network_mode: host
 
   frontend:
     container_name: frontend
