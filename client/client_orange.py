@@ -56,7 +56,7 @@ def is_plc_weight_rdy(client):
     re_plc_weight_rdy = client.read_holding_registers(address=1)
     prLightPurple(f"Register 1 value:{re_plc_weight_rdy.registers}")
     if re_plc_weight_rdy.registers[0] == 100:
-        print("PLC Weight ready")
+        prGreen("PLC Weight ready")
         return True
     return False
 
@@ -125,7 +125,8 @@ def ingreso_playon():
             else:
                 patente = settings.EXAMPLE_PATENTE
                 print(patente)
-                input("Press to continue")
+                prCyan("Press to continue")
+                input("")
 
             if patente != -1:
                 ## FastAPI
@@ -185,7 +186,8 @@ def ingreso_balanza():
             else:
                 patente = settings.EXAMPLE_PATENTE
                 print(patente)
-                input("Press to continue")
+                prCyan("Press to continue")
+                input("")
 
             if patente != -1:
                 ## FastAPI
@@ -204,32 +206,31 @@ def ingreso_balanza():
                     )
                     if not settings.DISABLE_PLC:
                         plc_start_seq(client)
+                        ## PLC wait until weight is ready
+                        while True:
+                            if is_plc_weight_rdy(client):
+                                break
+                            time.sleep(10)
+                        re_plc_weight = client.read_holding_registers(address=2)
+                        peso_pesada = re_plc_weight.registers[0]
+                        prLightPurple(f"Register 2 value:{peso_pesada}")
+                        prLightPurple("set register 1 to value 25")
+                        time.sleep(7)
+                        client.write_registers(1, 25, unit=1)  # reset to PLC knows that i read it
+                    else:
+                        peso_pesada = settings.EXAMPLE_PESO_IN
+
+                    sivrg_update_pesada(
+                        access_token=access_token,
+                        turno_id=turno_id,
+                        pesada_id=pesada_id,
+                        fecha_pesada=fecha,
+                        peso_pesada=peso_pesada,
+                        direction="in",
+                    )
+
                 else:
                     print("Turno no validado")
-
-                if not settings.DISABLE_PLC:
-                    ## PLC wait until weight is ready
-                    while True:
-                        if is_plc_weight_rdy(client):
-                            break
-                        time.sleep(10)
-                    re_plc_weight = client.read_holding_registers(address=2)
-                    peso_pesada = re_plc_weight.registers[0]
-                    prLightPurple(f"Register 2 value:{peso_pesada}")
-                    prLightPurple("set register 1 to value 25")
-                    time.sleep(2)
-                    client.write_registers(1, 25, unit=1)  # reset to PLC knows that i read it
-                else:
-                    peso_pesada = settings.EXAMPLE_PESO_IN
-
-                sivrg_update_pesada(
-                    access_token=access_token,
-                    turno_id=turno_id,
-                    pesada_id=pesada_id,
-                    fecha_pesada=fecha,
-                    peso_pesada=peso_pesada,
-                    direction="in",
-                )
 
     finally:
         if not settings.DISABLE_PLC:
@@ -268,7 +269,8 @@ def egreso_balanza():
             else:
                 patente = settings.EXAMPLE_PATENTE
                 print(patente)
-                input("Press to continue")
+                prCyan("Press to continue")
+                input("")
 
             if patente != -1:
                 ## FastAPI
@@ -289,42 +291,43 @@ def egreso_balanza():
                     )
                     if not settings.DISABLE_PLC:
                         plc_start_seq(client)
+                        ## PLC wait until weight is ready
+                        while True:
+                            if is_plc_weight_rdy(client):
+                                break
+                            time.sleep(10)
+                        re_plc_weight = client.read_holding_registers(address=2)
+                        peso_pesada = re_plc_weight.registers[0]
+                        prLightPurple(f"Register 2 value:{peso_pesada}")
+                        prLightPurple("set register 1 to value 25")
+                        time.sleep(7)
+                        client.write_registers(1, 25, unit=1)  # reset to PLC knows that i read it
+                    else:
+                        peso_pesada = settings.EXAMPLE_PESO_OUT
+
+                    pesada_object = sivrg_update_pesada(
+                        access_token=access_token,
+                        turno_id=turno_id,
+                        pesada_id=pesada_id,
+                        fecha_pesada=fecha,
+                        peso_pesada=peso_pesada,
+                        direction="out",
+                    )
+                    net_weight = pesada_object.get("peso_bruto_in") - pesada_object.get(
+                        "peso_bruto_out"
+                    )
+                    sivrg_update_turno(
+                        access_token=access_token, id=turno_id, state=TURNO_STATE.FINISHED
+                    )
+                    sivrg_update_silo(
+                        access_token=access_token,
+                        producto_id=producto_id,
+                        peso_agregado=net_weight,
+                        cantidad_estimada=cantidad_estimada
+                    )
+
                 else:
                     prYellow("Turno no validado")
-
-                if not settings.DISABLE_PLC:
-                    ## PLC wait until weight is ready
-                    while True:
-                        if is_plc_weight_rdy(client):
-                            break
-                        time.sleep(10)
-                    re_plc_weight = client.read_holding_registers(address=2)
-                    peso_pesada = re_plc_weight.registers[0]
-                    prLightPurple(f"Register 2 value:{peso_pesada}")
-                    client.write_registers(1, 25, unit=1)  # reset to PLC knows that i read it
-                else:
-                    peso_pesada = settings.EXAMPLE_PESO_OUT
-
-                pesada_object = sivrg_update_pesada(
-                    access_token=access_token,
-                    turno_id=turno_id,
-                    pesada_id=pesada_id,
-                    fecha_pesada=fecha,
-                    peso_pesada=peso_pesada,
-                    direction="out",
-                )
-                net_weight = pesada_object.get("peso_bruto_in") - pesada_object.get(
-                    "peso_bruto_out"
-                )
-                sivrg_update_turno(
-                    access_token=access_token, id=turno_id, state=TURNO_STATE.FINISHED
-                )
-                sivrg_update_silo(
-                    access_token=access_token,
-                    producto_id=producto_id,
-                    peso_agregado=net_weight,
-                    cantidad_estimada=cantidad_estimada
-                )
 
     finally:
         if not settings.DISABLE_PLC:
@@ -340,11 +343,11 @@ if __name__ == "__main__":
     option, index = pick(options, title)
     match option:
         case "Ingreso playon":
+            prLightPurple("|-----Ingreso playon-----|")
             ingreso_playon()
-            # pass
         case "Ingreso balanza":
+            prLightPurple("|-----Ingreso balanza-----|")
             ingreso_balanza()
-            # pass
         case "Egreso balanza":
+            prLightPurple("|-----Egreso balanza-----|")
             egreso_balanza()
-            # pass
