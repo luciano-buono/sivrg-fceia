@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_
 import crud, models
 import datetime
+import schemas
 
 
 def read_turnos_expired(
@@ -19,10 +20,13 @@ def read_turnos_expired(
 
 
 def update_turnos_expired(
-    id: int,
+    turno: schemas.Turno,
     db: Session = next(get_db()),
 ):
-    return crud.update_turno(db=db, id=id, state="canceled")
+    silo = crud.get_silo(db, turno.producto_id)
+    silo.reservado = silo.reservado - turno.cantidad_estimada
+    crud.update_silo(db=db, id=silo.id, data=silo)
+    return crud.update_turno(db=db, id=turno.id, state="canceled")
 
 
 def main():
@@ -37,7 +41,7 @@ def main():
     for turno in expired_turnos:
         print("Turnos to be canceled:")
         print(f"TURNO ID: {turno.id} | TURNO state: {turno.state}")
-        update_turnos_expired(id=turno.id)
+        update_turnos_expired(turno=turno)
         print("DONE")
 
 
