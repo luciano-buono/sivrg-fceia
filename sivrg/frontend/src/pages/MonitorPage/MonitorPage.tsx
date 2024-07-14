@@ -1,9 +1,9 @@
-// import { useQuery } from '@tanstack/react-query';
-// import { Turno } from '../../types';
-// import api from '../../api';
-import { Button, Divider } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+import { Turno } from '../../types';
+import api from '../../api';
+import { Button } from '@mantine/core';
 import { useFullscreen } from '@mantine/hooks';
-import { Row } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 
 const MonitorPage = () => {
   const today = new Date();
@@ -12,42 +12,37 @@ const MonitorPage = () => {
 
   const { ref, toggle, fullscreen } = useFullscreen();
 
-  // @TODO: FILTRAR CON status=in_progress_entrada       accepted, 10 turnos
-  // sorted by checking_time
+  const queryTurno = useQuery<Turno[]>({
+    queryKey: ['turnos'],
+    queryFn: () =>
+      api
+        .get(
+          `/turnos/?start_date=${yesterday.toISOString()}&end_date=${today.toISOString()}&state=in_progress_entrada&sort=checking_time`,
+        )
+        .then((res) => res.data),
+    refetchInterval: 10000,
+  });
 
-  // const queryTurno = useQuery<Turno[]>({
-  //   queryKey: ['turnos'],
-  //   queryFn: () =>
-  //     api.get(`/turnos/?start_date=${yesterday.toISOString()}&end_date=${today.toISOString()}`).then((res) => res.data),
-  // });
-
-  const mockedTurnos = [
-    { vehiculo: { patente: 'AB523K1' }, chofer: { nombre: 'juan', apellido: 'perez' }, empresa: { nombre: 'empresa' } },
-    { vehiculo: { patente: 'AB223K2' }, chofer: { nombre: 'juan', apellido: 'perez' }, empresa: { nombre: 'empresa' } },
-    { vehiculo: { patente: 'AB525K1' }, chofer: { nombre: 'juan', apellido: 'perez' }, empresa: { nombre: 'empresa' } },
-    { vehiculo: { patente: 'A5523K1' }, chofer: { nombre: 'juan', apellido: 'perez' }, empresa: { nombre: 'empresa' } },
-    { vehiculo: { patente: 'AB523K1' }, chofer: { nombre: 'juan', apellido: 'perez' }, empresa: { nombre: 'empresa' } },
-    { vehiculo: { patente: 'AB223K2' }, chofer: { nombre: 'juan', apellido: 'perez' }, empresa: { nombre: 'empresa' } },
-    { vehiculo: { patente: 'AB525K1' }, chofer: { nombre: 'juan', apellido: 'perez' }, empresa: { nombre: 'empresa' } },
-    { vehiculo: { patente: 'A5523K1' }, chofer: { nombre: 'juan', apellido: 'perez' }, empresa: { nombre: 'empresa' } },
-    { vehiculo: { patente: 'AB523K1' }, chofer: { nombre: 'juan', apellido: 'perez' }, empresa: { nombre: 'empresa' } },
-    { vehiculo: { patente: 'AB223K2' }, chofer: { nombre: 'juan', apellido: 'perez' }, empresa: { nombre: 'empresa' } },
-  ];
-
-  // const { data: turnos } = queryTurno;
+  const turnos = queryTurno.data?.map(x => ({"patente": x.vehiculo.patente}))
   return (
     <>
-      <div className="d-flex vh-100 vw-100 flex-column" style={{ backgroundColor: '#228be6' }} ref={ref}>
-        <div>
-          <div className="fw-bold fs-1 d-flex text-black ps-2">TURNOS EN CURSO</div>
-          <Divider my={6} />
-          <ol className="d-flex flex-column" style={{ listStyle: 'none' }}>
-            {mockedTurnos?.map((x) => (
-              <Row className="h3 d-flex text-black">
-                <li>{`${x.vehiculo.patente} - ${x.chofer.apellido} ${x.chofer.nombre} - ${x.empresa.nombre}`}</li>
-              </Row>
-            ))}
-          </ol>
+      <div className="d-flex vw-100 flex-column">
+        <div style={{ backgroundColor: '#228be6' }} ref={ref}>
+          <div className="fw-bold fs-1 text-black ps-2 text-center">TURNOS</div>
+          {fullscreen ? (
+            <Table bordered striped className="text-center" style={{ fontSize: 45,backgroundColor: '#228be6 !important' }}>
+                <tr>
+                  <th className="fw-bold">Posición</th>
+                  <th className="fw-bold">Patente</th>
+                </tr>
+                {turnos?.map((x, index) => (
+                  <tr className={`${index === 0 ? 'bg-info' : ''}`} key={index}>
+                    <td>{`${index + 1}`}</td>
+                    <td>{`${x.patente}`}</td>
+                  </tr>
+                ))}
+            </Table>
+          ) : null}
         </div>
         <Button onClick={toggle} color={'blue'} hidden={fullscreen}>
           Pantalla completa
