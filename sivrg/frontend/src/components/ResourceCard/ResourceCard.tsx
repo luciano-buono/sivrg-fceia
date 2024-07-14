@@ -5,7 +5,7 @@ import { Card } from 'react-bootstrap';
 import { Silo } from '../../types';
 
 const ResourceCard: FC<{ silo: Silo }> = ({ silo }) => {
-  const percentageUsed = (silo.utilizado * 100) / silo.capacidad;
+  const percentUsed = (silo.utilizado * 100) / silo.capacidad;
   const percentReserved = (silo.reservado * 100) / silo.capacidad;
 
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
@@ -18,14 +18,14 @@ const ResourceCard: FC<{ silo: Silo }> = ({ silo }) => {
         <i className="fa-solid fa-plant-wilt" style={{ fontSize: '2em' }}></i>
       </Center>
       <Tooltip
-        label={`${silo.producto.nombre}: ${silo.utilizado + silo.reservado}kg de ${silo.capacidad}kg (${
-          percentageUsed + percentReserved
-        }%)`}
+        label={`${silo.producto.nombre}: ${silo.utilizado + silo.reservado}kg de ${silo.capacidad}kg (${(
+          percentUsed + percentReserved
+        ).toFixed(2)}%)`}
         opened={opened}
         position="bottom"
       >
         <Progress.Root className="mt-2" onClick={() => setOpened((o) => !o)}>
-          <Progress.Section value={percentageUsed} color="orange" />
+          <Progress.Section value={percentUsed} color="orange" />
           <Progress.Section value={percentReserved} color="purple" />
         </Progress.Root>
       </Tooltip>
@@ -33,7 +33,9 @@ const ResourceCard: FC<{ silo: Silo }> = ({ silo }) => {
   ) : (
     <Card style={{ width: 'auto' }}>
       <Card.Body>
-        <Card.Title className="fw-bold">{`${silo.producto.nombre} (${percentageUsed + percentReserved}%)`}</Card.Title>
+        <Card.Title className="fw-bold">{`${silo.producto.nombre} (${(percentUsed + percentReserved).toFixed(
+          2,
+        )}%)`}</Card.Title>
         <Center>
           <RingProgress
             label={
@@ -42,7 +44,7 @@ const ResourceCard: FC<{ silo: Silo }> = ({ silo }) => {
               </Center>
             }
             sections={[
-              { value: percentageUsed, color: 'orange' },
+              { value: percentUsed, color: 'orange' },
               { value: percentReserved, color: 'purple' },
             ]}
           />
