@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { Turno } from '../../types';
+import { Silo, Turno } from '../../types';
 import api from '../../api';
 import { Button } from '@mantine/core';
 import { useFullscreen } from '@mantine/hooks';
 import { Table } from 'react-bootstrap';
 
-const MonitorPage = () => {
+const CurrentBookingPage = () => {
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
@@ -17,13 +17,34 @@ const MonitorPage = () => {
     queryFn: () =>
       api
         .get(
-          `/turnos/?start_date=${yesterday.toISOString()}&end_date=${today.toISOString()}&state=in_progress_entrada&sort=checking_time`,
+          `/turnos/?start_date=${yesterday.toISOString()}&end_date=${today.toISOString()}&state=in_progress_balanza_out&sort=checking_time`,
         )
         .then((res) => res.data),
     refetchInterval: 10000,
   });
 
-  const turnos = queryTurno.data?.map((x) => ({ patente: x.vehiculo.patente }));
+  const querySilo = useQuery<Silo[]>({
+    queryKey: ['silos'],
+    queryFn: () => api.get(`/silo/`).then((res) => res.data),
+
+    refetchInterval: 10000,
+  });
+
+  const turnos: { patente: string; productId: string }[] =
+    queryTurno.data?.map((x) => ({
+      patente: x.vehiculo.patente,
+      productId: x.producto_id,
+    })) ?? [];
+
+  // TODO: could be moved to select function on the useQuery hook
+  const silos: { [key: string]: number } | undefined = querySilo.data?.reduce(
+    (acc, current) => ({
+      ...acc,
+      [current.producto_id]: current.id,
+    }),
+    {},
+  );
+
   return (
     <>
       <div className="d-flex vw-100 flex-column">
@@ -36,13 +57,13 @@ const MonitorPage = () => {
             style={{ fontSize: 45, backgroundColor: '#228be6 !important' }}
           >
             <tr>
-              <th className="fw-bold">Posición</th>
               <th className="fw-bold">Patente</th>
+              <th className="fw-bold">Dirigirse a:</th>
             </tr>
             {turnos?.map((x, index) => (
               <tr className={`${index === 0 ? 'bg-info' : ''}`} key={index}>
-                <td>{`${index + 1}`}</td>
                 <td>{`${x.patente}`}</td>
+                <td>{`${silos?.[x.productId]}`}</td>
               </tr>
             ))}
           </Table>
@@ -55,4 +76,4 @@ const MonitorPage = () => {
   );
 };
 
-export default MonitorPage;
+export default CurrentBookingPage;

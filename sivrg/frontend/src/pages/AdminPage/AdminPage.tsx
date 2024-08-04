@@ -4,6 +4,7 @@ import { ProtectedRoutes } from '../../App';
 import HomeAdmin from '../HomeAdmin';
 import ReservationsAdminPage from '../ReservationsPage';
 import MonitorPage from '../MonitorPage';
+import CurrentBookingPage from '../CurrentBookingPage';
 
 const AdminPage = () => {
   return (
@@ -15,6 +16,7 @@ const AdminPage = () => {
             <Route path="/reservations" element={<ReservationsAdminPage filterByDay={false} />} />
             <Route path="/reservations/current" element={<ReservationsAdminPage filterByDay />} />
             <Route path="/monitor" element={<MonitorPage />} />
+            <Route path="/current-booking" element={<CurrentBookingPage />} />
           </Route>
         </Routes>
       </Container>
