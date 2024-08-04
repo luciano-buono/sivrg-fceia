@@ -19,7 +19,6 @@ def get_LPR():
     CONFIGFILE = "config.yaml"
     with open(CONFIGFILE, "r") as stream:
         cfg = yaml.safe_load(stream)
-    SOURCE_DIR = glob.glob("../../../FOTOS/img8.jpg")
     SOURCE_DIR = glob.glob("../../../FOTOS/opencv_frame_0.png")
     # Get all images in directory
     print(f"Source dir:{SOURCE_DIR}")

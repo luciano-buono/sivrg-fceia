@@ -63,7 +63,7 @@ const CurrentBookingPage = () => {
             {turnos?.map((x, index) => (
               <tr className={`${index === 0 ? 'bg-info' : ''}`} key={index}>
                 <td>{`${x.patente}`}</td>
-                <td>{`${silos?.[x.productId]}`}</td>
+                <td>{`Silo ${silos?.[x.productId]}`}</td>
               </tr>
             ))}
           </Table>
