@@ -6,10 +6,10 @@ type NewsContextState = {
 
 const initialState: NewsContextState = {
   news: [
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-    'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    'Incremento en la producción de soja: En el último ciclo agrícola, Argentina ha registrado un aumento del 10% en la producción de soja, consolidándose como uno de los principales exportadores a nivel global, gracias a las mejoras en las técnicas de cultivo y la adaptación a las condiciones climáticas.',
+    'Desafíos por la sequía: La sequía prolongada ha afectado gravemente a varias regiones productoras de maíz y trigo en Argentina, con pérdidas estimadas en más del 15% de la cosecha, lo que podría impactar negativamente en la balanza comercial del país.',
+    'Nuevo acuerdo de exportación con China: Argentina ha firmado un nuevo acuerdo de exportación con China que permitirá el acceso preferencial de productos agrícolas argentinos, como carne bovina y granos, al mercado chino, con el objetivo de diversificar y fortalecer los ingresos del sector.',
+    'Políticas de subsidios y apoyo al campo: El gobierno argentino ha anunciado una serie de nuevas políticas de subsidios y apoyo financiero para los pequeños y medianos productores agrícolas, buscando mejorar la competitividad y sostenibilidad del sector en medio de las fluctuaciones económicas globales.',
   ],
 };
 
