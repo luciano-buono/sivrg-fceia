@@ -17,7 +17,7 @@ const CurrentBookingPage = () => {
     queryFn: () =>
       api
         .get(
-          `/turnos/?start_date=${yesterday.toISOString()}&end_date=${today.toISOString()}&state=in_progress_balanza_out&sort=checking_time`,
+          `/turnos/?start_date=${yesterday.toISOString()}&end_date=${today.toISOString()}&state=in_progress_balanza_in&sort=checking_time`,
         )
         .then((res) => res.data),
     refetchInterval: 10000,
@@ -25,7 +25,7 @@ const CurrentBookingPage = () => {
 
   const querySilo = useQuery<Silo[]>({
     queryKey: ['silos'],
-    queryFn: () => api.get(`/silo/`).then((res) => res.data),
+    queryFn: () => api.get(`/silos/`).then((res) => res.data),
 
     refetchInterval: 10000,
   });

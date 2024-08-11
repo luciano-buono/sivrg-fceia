@@ -33,7 +33,7 @@ services:
 
   frontend:
     container_name: frontend
-    image: methizul/sivrg:frontend-2.0.0
+    image: methizul/sivrg:frontend-2.2.3
     build:
       context: .
       dockerfile: ./nginx/Dockerfile.k3s
