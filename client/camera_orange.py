@@ -6,6 +6,7 @@ def take_photo():
     # Check which /dev/video* you need to use!
     cam = cv2.VideoCapture(1)
 
+    img_directory = "../FOTOS/"
     ret, frame = cam.read()
     if not ret:
         print("failed to grab frame")
@@ -18,5 +19,4 @@ def take_photo():
     cam.release()
 
 if __name__ == "__main__":
-    img_directory = "../FOTOS/"
     take_photo()
