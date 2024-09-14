@@ -120,6 +120,7 @@ def update_empresa(
 ):
     return crud.update_empresa(db=db, id=id, data=data)
 
+
 @app.delete("/empresas/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_empresa(
     id: int,
@@ -135,6 +136,7 @@ def delete_empresa(
         raise HTTPException(status_code=404, detail="empresa not found")
     db.delete(empresa)
     db.commit()
+
 
 ## ------------Producto operations---------------------
 # Create a Producto
@@ -176,6 +178,7 @@ def read_producto(
         raise HTTPException(status_code=404, detail="Producto not found")
     return producto
 
+
 @app.delete("/productos/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_producto(
     id: int,
@@ -191,6 +194,7 @@ def delete_producto(
         raise HTTPException(status_code=404, detail="producto not found")
     db.delete(producto)
     db.commit()
+
 
 ## ------------Chofer operations---------------------
 # Create a Chofer
@@ -264,6 +268,7 @@ def update_chofer(
 ):
     return crud.update_chofer(db=db, id=id, data=data)
 
+
 @app.delete("/choferes/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_chofer(
     id: int,
@@ -279,6 +284,7 @@ def delete_chofer(
         raise HTTPException(status_code=404, detail="chofer not found")
     db.delete(chofer)
     db.commit()
+
 
 ## ------------Pesada operations---------------------
 # Create a Pesada
@@ -300,20 +306,28 @@ def read_pesadas(
     limit: int = 100,
     db: Session = Depends(get_db),
     turno_id: int | None = None,
-    fecha_hora_balanza_out_start_date: datetime | None = Query(datetime.now(), description="Fecha"),
-    fecha_hora_balanza_out_end_date: datetime | None = Query(datetime.now(), description="Fecha"),
+    fecha_hora_balanza_out_start_date: datetime | None = Query(
+        datetime.now(), description="Fecha"
+    ),
+    fecha_hora_balanza_out_end_date: datetime | None = Query(
+        datetime.now(), description="Fecha"
+    ),
     user: Auth0User = Security(auth.get_user),
 ):
     q = db.query(models.Pesada)
     if turno_id:
         q = q.filter(models.Pesada.turno_id == turno_id)
     if fecha_hora_balanza_out_start_date and fecha_hora_balanza_out_end_date:
-        q = q.filter(models.Turno.fecha.between(fecha_hora_balanza_out_start_date, fecha_hora_balanza_out_end_date))
+        q = q.filter(
+            models.Turno.fecha.between(
+                fecha_hora_balanza_out_start_date, fecha_hora_balanza_out_end_date
+            )
+        )
     return q.all()
-
 
     pesadas = crud.get_pesada(db, skip=skip, limit=limit)
     return pesadas
+
 
 # Get Pesada by ID
 @app.get("/pesadas/{id}", response_model=schemas.Pesada)
@@ -352,6 +366,7 @@ def update_pesada(
 ):
     return crud.update_pesada(db=db, id=id, data=data)
 
+
 @app.delete("/pesadas/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_pesada(
     id: int,
@@ -367,6 +382,7 @@ def delete_pesada(
         raise HTTPException(status_code=404, detail="pesada not found")
     db.delete(pesada)
     db.commit()
+
 
 ## ------------Silos operations---------------------
 # Create a Silo
@@ -420,6 +436,7 @@ def update_silo(
         data.utilizado = silo.capacidad
     return crud.update_silo(db=db, id=id, data=data)
 
+
 @app.delete("/silos/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_silo(
     id: int,
@@ -435,6 +452,7 @@ def delete_silo(
         raise HTTPException(status_code=404, detail="silo not found")
     db.delete(silo)
     db.commit()
+
 
 ## ------------Turnos operations---------------------
 # Create a Turno
@@ -455,8 +473,10 @@ def create_turno(
     if not crud.get_vehiculo(db=db, id=turno.vehiculo_id):
         raise HTTPException(status_code=404, detail="Vehiculo ID not found")
     silo = crud.get_silo(db, turno.producto_id)
-    if silo.utilizado+silo.reservado+turno.cantidad_estimada > silo.capacidad:
-        raise HTTPException(status_code=405, detail="Silo will overflow with this amount!")
+    if silo.utilizado + silo.reservado + turno.cantidad_estimada > silo.capacidad:
+        raise HTTPException(
+            status_code=405, detail="Silo will overflow with this amount!"
+        )
     # Add the new reserved capicity to the silo
     silo.reservado += turno.cantidad_estimada
     crud.update_silo(db=db, id=silo.id, data=silo)
@@ -479,7 +499,11 @@ def read_turnos(
 ):
     ## TODO: Check if useful for sorting
     all_keys = dir(models.Turno)
-    attribute_keys = [key for key in all_keys if not (key.startswith('_') or callable(getattr(models.Turno, key)))]
+    attribute_keys = [
+        key
+        for key in all_keys
+        if not (key.startswith("_") or callable(getattr(models.Turno, key)))
+    ]
     ##
     q = db.query(models.Turno)
     if "client" in user.roles:
@@ -504,6 +528,7 @@ def read_turnos(
         if sort == "-empresa_id":
             q = q.order_by(models.Turno.empresa_id.desc())
     return q.all()
+
 
 # Get a Turno by ID
 @app.get("/turnos/{id}", response_model=schemas.Turno)
@@ -532,6 +557,7 @@ def read_pesada_by_turno_id(
     if pesada is None:
         raise HTTPException(status_code=404, detail="Pesada not found")
     return pesada
+
 
 # Validate turnos for OrangePI client
 @app.get("/turnos/validate/", response_model=schemas.Turno)
@@ -708,7 +734,7 @@ def test_create(
         capacidad=100000,
         utilizado=10000,
         habilitado=True,
-        reservado=10000
+        reservado=10000,
     )
     test_turno = schemas.TurnoCreate(
         fecha=datetime.now(),

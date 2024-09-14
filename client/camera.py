@@ -1,10 +1,12 @@
 import cv2
+from datetime import datetime
+import os
 
 cam = cv2.VideoCapture(0)
 
 cv2.namedWindow("test")
 
-img_counter = 0
+img_directory = "../FOTOS/"
 
 while True:
     ret, frame = cam.read()
@@ -20,11 +22,10 @@ while True:
         break
     elif k%256 == 32:
         # SPACE pressed
-        img_path = "../FOTOS/"
-        img_name = "../FOTOS/opencv_frame_{}.png".format(img_counter)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        img_name = os.path.join(img_directory, f"{timestamp}.png")
         cv2.imwrite(img_name, frame)
         print("{} written!".format(img_name))
-        img_counter += 1
 
 cam.release()
 

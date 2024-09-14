@@ -23,10 +23,10 @@ import config
 
 settings = config.Settings()
 
-if not settings.LOCAL:
+if not settings.DISABLE_LPR:
     from lpr_orange import get_LPR
+if not settings.DISABLE_RFID:
     from rfid.MFRC522_python.mfrc522 import SimpleMFRC522
-
 
 def is_plc_ready(client):
     """

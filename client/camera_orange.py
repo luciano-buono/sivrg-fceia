@@ -1,4 +1,6 @@
-import cv2, time
+import cv2
+from datetime import datetime
+import os
 
 def take_photo():
     # Check which /dev/video* you need to use!
@@ -8,12 +10,13 @@ def take_photo():
     if not ret:
         print("failed to grab frame")
 
-    img_name = "../FOTOS/opencv_frame_{}.png".format(0)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    img_name = os.path.join(img_directory, f"{timestamp}.png")
     cv2.imwrite(img_name, frame)
     print("{} written!".format(img_name))
 
     cam.release()
 
-
 if __name__ == "__main__":
+    img_directory = "../FOTOS/"
     take_photo()
