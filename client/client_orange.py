@@ -118,8 +118,8 @@ def ingreso_playon():
 
             if not settings.DISABLE_LPR:
                 print(f"Reading lisence from image or photo..")
-                take_photo()
-                prediccion = get_LPR()
+                img_name = take_photo()
+                prediccion = get_LPR(img_name=img_name)
                 print({"LICENSE_PLATE": prediccion})
                 patente = prediccion
             else:

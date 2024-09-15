@@ -17,6 +17,7 @@ def take_photo():
     print("{} written!".format(img_name))
 
     cam.release()
+    return f"{timestamp}.png"
 
 if __name__ == "__main__":
     take_photo()

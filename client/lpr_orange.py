@@ -13,13 +13,13 @@ from utils import *
 import os
 
 
-def get_LPR():
+def get_LPR(img_name:str):
     # Get into the module directory. Avoid errors in relative paths used there
     os.chdir("lpr/ConvALPR")
     CONFIGFILE = "config.yaml"
     with open(CONFIGFILE, "r") as stream:
         cfg = yaml.safe_load(stream)
-    SOURCE_DIR = glob.glob("../../../FOTOS/opencv_frame_0.png")
+    SOURCE_DIR = glob.glob(f"../../../FOTOS/{img_name}")
     # Get all images in directory
     print(f"Source dir:{SOURCE_DIR}")
     cv2_images = []
