@@ -8,7 +8,7 @@ import requests, json, datetime
 from camera_orange import take_photo
 
 from time import sleep
-from rfid.MFRC522_python.mfrc522 import SimpleMFRC522
+# from rfid.MFRC522_python.mfrc522 import SimpleMFRC522
 from utils import *
 import os
 
@@ -67,4 +67,9 @@ def get_RFID():
 
 
 if __name__ == "__main__":
-    get_RFID()
+    # get_RFID()
+    get_LPR(img_name="truck1.jpeg")
+    get_LPR(img_name="truck2.jpeg")
+    get_LPR(img_name="truck3.jpeg")
+    get_LPR(img_name="truck4.jpeg")
+    get_LPR(img_name="truck5.jpg")
