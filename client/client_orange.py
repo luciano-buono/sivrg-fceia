@@ -61,13 +61,13 @@ def is_plc_weight_rdy(client):
     return False
 
 
-def send_bit_de_vida(client, interval_sec):
+def send_bit_de_vida(client, interval_sec, MODBUS_TYPE):
     while True:
-        print("-----Send bit de vida-----")
+        print(f"-----Send bit de vida-----{MODBUS_TYPE}--")
         client.write_registers(10, 25, unit=1)  # reset bit comunicación
         time.sleep(interval_sec)
 
-def setup_startup(MODBUS_HOST: str, MODBUS_PORT:int):
+def setup_startup(MODBUS_HOST: str, MODBUS_PORT:int, MODBUS_TYPE):
     """
     Setup PLC connection and RFID reader
     """
@@ -80,6 +80,7 @@ def setup_startup(MODBUS_HOST: str, MODBUS_PORT:int):
         args=(
             client,
             5,
+            MODBUS_TYPE
         ),
         daemon=True,
         name="Background",
@@ -95,7 +96,7 @@ def read_rfid(reader):
 
 def ingreso_playon():
     if not settings.DISABLE_PLC:
-        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_PLAYON,MODBUS_PORT = settings.MODBUS_PORT_PLAYON)
+        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_PLAYON,MODBUS_PORT = settings.MODBUS_PORT_PLAYON, MODBUS_TYPE='ingreso playon')
     if not settings.DISABLE_RFID:
         reader = SimpleMFRC522()
     try:
@@ -155,7 +156,7 @@ def ingreso_playon():
 
 def ingreso_balanza():
     if not settings.DISABLE_PLC:
-        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_INGRESO_BALANZA,MODBUS_PORT = settings.MODBUS_PORT_INGRESO_BALANZA)
+        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_INGRESO_BALANZA,MODBUS_PORT = settings.MODBUS_PORT_INGRESO_BALANZA, MODBUS_TYPE='ingreso balanza')
     if not settings.DISABLE_RFID:
         reader = SimpleMFRC522()
     try:
@@ -238,7 +239,7 @@ def ingreso_balanza():
 
 def egreso_balanza():
     if not settings.DISABLE_PLC:
-        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_EGRESO_BALANZA,MODBUS_PORT = settings.MODBUS_PORT_EGRESO_BALANZA)
+        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_EGRESO_BALANZA,MODBUS_PORT = settings.MODBUS_PORT_EGRESO_BALANZA, MODBUS_TYPE='egreso balanza')
     if not settings.DISABLE_RFID:
         reader = SimpleMFRC522()
     try:
