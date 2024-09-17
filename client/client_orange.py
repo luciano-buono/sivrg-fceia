@@ -88,8 +88,6 @@ def setup_startup(MODBUS_HOST: str, MODBUS_PORT:int):
     return client
 
 def read_rfid(reader):
-    prCyan("Press Enter to start tag reading...")
-    input("")
     prGreen("Hold a tag near the reader")
     rfid_uid, text = reader.read()
     print(f"ID: {rfid_uid}\nText: {text}")
