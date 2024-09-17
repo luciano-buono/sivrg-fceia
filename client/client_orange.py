@@ -120,7 +120,7 @@ def ingreso_playon():
                 print(f"Reading lisence from image or photo..")
                 img_name = take_photo()
                 prediccion = get_LPR(img_name=img_name)
-                print({"LICENSE_PLATE": prediccion})
+                prRed({"LICENSE_PLATE": prediccion})
                 patente = prediccion
             else:
                 patente = settings.EXAMPLE_PATENTE
@@ -181,7 +181,7 @@ def ingreso_balanza():
                 print(f"Reading lisence from image or photo..")
                 img_name = take_photo()
                 prediccion = get_LPR(img_name=img_name)
-                print({"LICENSE_PLATE": prediccion})
+                prRed({"LICENSE_PLATE": prediccion})
                 patente = prediccion
             else:
                 patente = settings.EXAMPLE_PATENTE
@@ -262,9 +262,9 @@ def egreso_balanza():
 
             if not settings.DISABLE_LPR:
                 print(f"Reading lisence from image or photo..")
-                take_photo()
+                img_name = take_photo()
                 prediccion = get_LPR(img_name=img_name)
-                print({"LICENSE_PLATE": prediccion})
+                prRed({"LICENSE_PLATE": prediccion})
                 patente = prediccion
             else:
                 patente = settings.EXAMPLE_PATENTE
