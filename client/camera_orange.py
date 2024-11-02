@@ -14,7 +14,6 @@ def take_photo():
         print("failed to grab frame")
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    timestamp = '1'
     img_name = os.path.join(img_directory, f"{timestamp}.png")
     cv2.imwrite(img_name, frame)
     print("{} written!".format(img_name))

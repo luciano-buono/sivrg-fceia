@@ -21,7 +21,7 @@ def get_LPR(img_name:str):
         cfg = yaml.safe_load(stream)
     SOURCE_DIR = glob.glob(f"../../../FOTOS/{img_name}")
     # Get all images in directory
-    print(f"Source dir:{SOURCE_DIR}")
+    # print(f"Source dir:{SOURCE_DIR}")
     cv2_images = []
     for file in SOURCE_DIR:
         print("Loading source files..")
