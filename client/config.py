@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     EXAMPLE_PATENTE: str
     EXAMPLE_PESO_IN: int
     EXAMPLE_PESO_OUT: int
+    ORANGE_NAME: str
 
     MODBUS_HOST_PLAYON: str
     MODBUS_PORT_PLAYON: int
