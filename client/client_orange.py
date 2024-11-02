@@ -46,7 +46,7 @@ def plc_start_seq(client):
     """
     print("Inicio de secuencia")
     prLightPurple("set register 0 to value 100")
-    client.write_registers(0, 100, unit=1)  # reset bit comunicación
+    client.write_registers(0, 100, 1)  # reset bit comunicación
 
 
 def is_plc_weight_rdy(client):
@@ -61,13 +61,13 @@ def is_plc_weight_rdy(client):
     return False
 
 
-def send_bit_de_vida(client, interval_sec, MODBUS_TYPE):
+def send_bit_de_vida(client, interval_sec):
     while True:
-        print(f"-----Send bit de vida-----{MODBUS_TYPE}--")
-        client.write_registers(10, 25, unit=1)  # reset bit comunicación
+        print("-----Send bit de vida-----")
+        client.write_registers(10, 25, 1)  # reset bit comunicación
         time.sleep(interval_sec)
 
-def setup_startup(MODBUS_HOST: str, MODBUS_PORT:int, MODBUS_TYPE):
+def setup_startup(MODBUS_HOST: str, MODBUS_PORT:int):
     """
     Setup PLC connection and RFID reader
     """
@@ -80,7 +80,6 @@ def setup_startup(MODBUS_HOST: str, MODBUS_PORT:int, MODBUS_TYPE):
         args=(
             client,
             5,
-            MODBUS_TYPE
         ),
         daemon=True,
         name="Background",
@@ -96,7 +95,7 @@ def read_rfid(reader):
 
 def ingreso_playon():
     if not settings.DISABLE_PLC:
-        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_PLAYON,MODBUS_PORT = settings.MODBUS_PORT_PLAYON, MODBUS_TYPE='ingreso playon')
+        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_PLAYON,MODBUS_PORT = settings.MODBUS_PORT_PLAYON)
     if not settings.DISABLE_RFID:
         reader = SimpleMFRC522()
     try:
@@ -156,7 +155,7 @@ def ingreso_playon():
 
 def ingreso_balanza():
     if not settings.DISABLE_PLC:
-        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_INGRESO_BALANZA,MODBUS_PORT = settings.MODBUS_PORT_INGRESO_BALANZA, MODBUS_TYPE='ingreso balanza')
+        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_INGRESO_BALANZA,MODBUS_PORT = settings.MODBUS_PORT_INGRESO_BALANZA)
     if not settings.DISABLE_RFID:
         reader = SimpleMFRC522()
     try:
@@ -215,7 +214,7 @@ def ingreso_balanza():
                         prLightPurple(f"Register 2 value:{peso_pesada}")
                         prLightPurple("set register 1 to value 25")
                         time.sleep(7)
-                        client.write_registers(1, 25, unit=1)  # reset to PLC knows that i read it
+                        client.write_registers(1, 25, 1)  # reset to PLC knows that i read it
                     else:
                         peso_pesada = settings.EXAMPLE_PESO_IN
 
@@ -239,7 +238,7 @@ def ingreso_balanza():
 
 def egreso_balanza():
     if not settings.DISABLE_PLC:
-        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_EGRESO_BALANZA,MODBUS_PORT = settings.MODBUS_PORT_EGRESO_BALANZA, MODBUS_TYPE='egreso balanza')
+        client = setup_startup(MODBUS_HOST = settings.MODBUS_HOST_EGRESO_BALANZA,MODBUS_PORT = settings.MODBUS_PORT_EGRESO_BALANZA)
     if not settings.DISABLE_RFID:
         reader = SimpleMFRC522()
     try:
@@ -300,7 +299,7 @@ def egreso_balanza():
                         prLightPurple(f"Register 2 value:{peso_pesada}")
                         prLightPurple("set register 1 to value 25")
                         time.sleep(7)
-                        client.write_registers(1, 25, unit=1)  # reset to PLC knows that i read it
+                        client.write_registers(1, 25, 1)  # reset to PLC knows that i read it
                     else:
                         peso_pesada = settings.EXAMPLE_PESO_OUT
 

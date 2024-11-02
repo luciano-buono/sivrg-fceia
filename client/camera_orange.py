@@ -5,6 +5,8 @@ import os
 def take_photo():
     # Check which /dev/video* you need to use!
     cam = cv2.VideoCapture(1)
+    cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1024)
 
     img_directory = "../FOTOS/"
     ret, frame = cam.read()
@@ -12,6 +14,7 @@ def take_photo():
         print("failed to grab frame")
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = '1'
     img_name = os.path.join(img_directory, f"{timestamp}.png")
     cv2.imwrite(img_name, frame)
     print("{} written!".format(img_name))
